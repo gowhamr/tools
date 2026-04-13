@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov Image &amp; PDF Tool</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">&#128196;</span>
+        <span class="logo-text">Gov Image &amp; PDF Tool</span>
+      </div>
+      <p class="tagline">Create · Compress · Convert · Validate</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Tab Nav -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="compressor" role="tab">Compressor</button>
+      <button class="tab-btn" data-tab="converter" role="tab">Converter</button>
+      <button class="tab-btn" data-tab="creator" role="tab">Image Creator</button>
+      <button class="tab-btn" data-tab="pdf" role="tab">PDF Tools</button>
+      <button class="tab-btn" data-tab="validator" role="tab">Validator</button>
+    </nav>
+
+    <!-- ===== COMPRESSOR ===== -->
+    <section id="tab-compressor" class="tab-panel active">
+      <h2>File Compressor</h2>
+      <p class="hint">Compress images (target &le;100 KB) or PDFs (target &le;1 MB).</p>
+
+      <div class="upload-zone" id="compressor-drop">
+        <span class="upload-icon">&#128228;</span>
+        <p>Drag &amp; drop or <label class="link" for="compressor-input">browse</label></p>
+        <p class="small">Supports JPG, PNG, GIF, PDF</p>
+        <input type="file" id="compressor-input" accept=".jpg,.jpeg,.png,.gif,.pdf" multiple />
+      </div>
+
+      <div class="options-row">
+        <label>
+          Target image size (KB):
+          <input type="number" id="img-target-kb" value="100" min="10" max="500" />
+        </label>
+        <label>
+          Max width (px):
+          <input type="number" id="img-max-width" value="1000" min="100" max="4000" />
+        </label>
+        <label>
+          Target PDF size (MB):
+          <input type="number" id="pdf-target-mb" value="1" min="0.1" max="10" step="0.1" />
+        </label>
+      </div>
+
+      <div id="compressor-file-list" class="file-list"></div>
+      <div id="compressor-results" class="results-area"></div>
+    </section>
+
+    <!-- ===== CONVERTER ===== -->
+    <section id="tab-converter" class="tab-panel">
+      <h2>Format Converter</h2>
+      <p class="hint">Convert between JPG, PNG, GIF and PDF.</p>
+
+      <div class="upload-zone" id="converter-drop">
+        <span class="upload-icon">&#128260;</span>
+        <p>Drag &amp; drop or <label class="link" for="converter-input">browse</label></p>
+        <p class="small">Supports JPG, PNG, GIF, PDF</p>
+        <input type="file" id="converter-input" accept=".jpg,.jpeg,.png,.gif,.pdf" multiple />
+      </div>
+
+      <div class="options-row">
+        <label>
+          Convert to:
+          <select id="convert-to-format">
+            <option value="jpg">JPG</option>
+            <option value="png">PNG</option>
+            <option value="gif">GIF</option>
+            <option value="pdf">PDF</option>
+          </select>
+        </label>
+        <label>
+          Quality (JPG/GIF):
+          <input type="range" id="convert-quality" min="0.1" max="1" step="0.05" value="0.85" />
+          <span id="convert-quality-val">85%</span>
+        </label>
+      </div>
+
+      <div id="converter-file-list" class="file-list"></div>
+      <button class="btn btn-primary" id="convert-btn" disabled>Convert Files</button>
+      <div id="converter-results" class="results-area"></div>
+    </section>
+
+    <!-- ===== IMAGE CREATOR ===== -->
+    <section id="tab-creator" class="tab-panel">
+      <h2>Image Creator</h2>
+      <p class="hint">Create a new image or resize an existing one with a white/light background.</p>
+
+      <div class="two-col">
+        <div>
+          <h3>Document Presets</h3>
+          <div class="preset-grid">
+            <button class="preset-btn" data-w="200" data-h="230" data-label="Passport Photo">
+              <span>&#128100;</span> Passport Photo<br/><small>200&times;230 px</small>
+            </button>
+            <button class="preset-btn" data-w="140" data-h="60" data-label="Signature">
+              <span>&#9998;</span> Signature<br/><small>140&times;60 px</small>
+            </button>
+            <button class="preset-btn" data-w="200" data-h="200" data-label="Thumb Impression">
+              <span>&#128397;</span> Thumb Impression<br/><small>200&times;200 px</small>
+            </button>
+            <button class="preset-btn" data-w="1000" data-h="700" data-label="ID Proof">
+              <span>&#128196;</span> ID Proof<br/><small>1000&times;700 px</small>
+            </button>
+          </div>
+
+          <h3>Custom Size</h3>
+          <div class="options-row">
+            <label>
+              Width (px):
+              <input type="number" id="create-width" value="200" min="1" max="4000" />
+            </label>
+            <label>
+              Height (px):
+              <input type="number" id="create-height" value="230" min="1" max="4000" />
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="create-lock-ratio" checked />
+              Lock aspect ratio
+            </label>
+          </div>
+
+          <div class="options-row">
+            <label>
+              Background:
+              <select id="create-bg">
+                <option value="#ffffff">White</option>
+                <option value="#f5f5f5">Light Gray</option>
+                <option value="#fffde7">Light Yellow</option>
+                <option value="#e8f5e9">Light Green</option>
+              </select>
+            </label>
+            <label>
+              Output format:
+              <select id="create-format">
+                <option value="jpeg">JPG</option>
+                <option value="png">PNG</option>
+                <option value="gif">GIF</option>
+              </select>
+            </label>
+          </div>
+
+          <h3>Upload Image to Resize</h3>
+          <div class="upload-zone small-zone" id="creator-drop">
+            <span class="upload-icon">&#128247;</span>
+            <p>Optional: <label class="link" for="creator-input">browse image</label></p>
+            <input type="file" id="creator-input" accept=".jpg,.jpeg,.png,.gif" />
+          </div>
+
+          <button class="btn btn-primary" id="create-btn" style="margin-top:12px;">Create / Resize</button>
+        </div>
+
+        <div>
+          <h3>Preview</h3>
+          <div id="creator-preview-wrap" class="preview-wrap">
+            <canvas id="creator-canvas"></canvas>
+            <p id="creator-preview-hint" class="preview-hint">Preview will appear here</p>
+          </div>
+          <div id="creator-result" class="results-area"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PDF TOOLS ===== -->
+    <section id="tab-pdf" class="tab-panel">
+      <h2>PDF Tools</h2>
+
+      <div class="pdf-tool-tabs">
+        <button class="pdf-tab active" data-pdf-tab="img-to-pdf">Images &rarr; PDF</button>
+        <button class="pdf-tab" data-pdf-tab="merge-pdf">Merge PDFs</button>
+        <button class="pdf-tab" data-pdf-tab="pdf-compress">Compress PDF</button>
+      </div>
+
+      <!-- Images to PDF -->
+      <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
+        <p class="hint">Combine one or more images into a single PDF.</p>
+        <div class="upload-zone" id="img-to-pdf-drop">
+          <span class="upload-icon">&#128247;</span>
+          <p>Drag &amp; drop images or <label class="link" for="img-to-pdf-input">browse</label></p>
+          <p class="small">JPG, PNG, GIF</p>
+          <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.png,.gif" multiple />
+        </div>
+        <div id="img-to-pdf-list" class="file-list sortable-list"></div>
+        <div class="options-row">
+          <label>
+            Page size:
+            <select id="pdf-page-size">
+              <option value="a4">A4</option>
+              <option value="letter">Letter</option>
+              <option value="fit">Fit to image</option>
+            </select>
+          </label>
+          <label>
+            Orientation:
+            <select id="pdf-orientation">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn btn-primary" id="img-to-pdf-btn" disabled>Create PDF</button>
+        <div id="img-to-pdf-result" class="results-area"></div>
+      </div>
+
+      <!-- Merge PDFs -->
+      <div id="pdf-tab-merge-pdf" class="pdf-panel">
+        <p class="hint">Merge multiple PDF files into one.</p>
+        <div class="upload-zone" id="merge-pdf-drop">
+          <span class="upload-icon">&#128203;</span>
+          <p>Drag &amp; drop PDFs or <label class="link" for="merge-pdf-input">browse</label></p>
+          <p class="small">PDF only</p>
+          <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
+        </div>
+        <div id="merge-pdf-list" class="file-list sortable-list"></div>
+        <button class="btn btn-primary" id="merge-pdf-btn" disabled>Merge PDFs</button>
+        <div id="merge-pdf-result" class="results-area"></div>
+      </div>
+
+      <!-- Compress PDF -->
+      <div id="pdf-tab-pdf-compress" class="pdf-panel">
+        <p class="hint">Reduce PDF file size. Target: &le;1 MB.</p>
+        <div class="upload-zone" id="pdf-compress-drop">
+          <span class="upload-icon">&#128230;</span>
+          <p>Drag &amp; drop a PDF or <label class="link" for="pdf-compress-input">browse</label></p>
+          <input type="file" id="pdf-compress-input" accept=".pdf" />
+        </div>
+        <div id="pdf-compress-list" class="file-list"></div>
+        <div class="options-row">
+          <label>
+            Image quality inside PDF:
+            <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
+            <span id="pdf-img-quality-val">60%</span>
+          </label>
+        </div>
+        <button class="btn btn-primary" id="pdf-compress-btn" disabled>Compress PDF</button>
+        <div id="pdf-compress-result" class="results-area"></div>
+      </div>
+    </section>
+
+    <!-- ===== VALIDATOR ===== -->
+    <section id="tab-validator" class="tab-panel">
+      <h2>File Validator</h2>
+      <p class="hint">Check if your file meets government portal requirements.</p>
+
+      <div class="upload-zone" id="validator-drop">
+        <span class="upload-icon">&#9989;</span>
+        <p>Drag &amp; drop or <label class="link" for="validator-input">browse</label></p>
+        <p class="small">JPG, JPEG, PNG, GIF, PDF</p>
+        <input type="file" id="validator-input" accept=".jpg,.jpeg,.png,.gif,.pdf" />
+      </div>
+
+      <div class="options-row">
+        <label>
+          Document type:
+          <select id="validator-doc-type">
+            <option value="general">General (any)</option>
+            <option value="passport_photo">Passport Photo</option>
+            <option value="signature">Signature</option>
+            <option value="id_proof">ID Proof</option>
+            <option value="thumb_impression">Thumb Impression</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="validator-result" class="results-area"></div>
+
+      <!-- Rules table -->
+      <details class="rules-details">
+        <summary>View validation rules</summary>
+        <table class="rules-table">
+          <thead><tr><th>Document</th><th>Format</th><th>Size</th><th>Dimensions</th><th>Background</th></tr></thead>
+          <tbody>
+            <tr><td>Passport Photo</td><td>JPG/JPEG</td><td>10–200 KB</td><td>200&times;230 px</td><td>White/Light</td></tr>
+            <tr><td>Signature</td><td>JPG/JPEG</td><td>4–50 KB</td><td>140&times;60 px</td><td>White</td></tr>
+            <tr><td>ID Proof</td><td>JPG/PNG/PDF</td><td>100–1000 KB</td><td>—</td><td>—</td></tr>
+            <tr><td>Thumb Impression</td><td>JPG</td><td>10–50 KB</td><td>—</td><td>—</td></tr>
+            <tr><td>General</td><td>JPG/PNG/GIF/PDF</td><td>—</td><td>max 1000 px wide</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <p>Gov Image &amp; PDF Tool &mdash; All processing is done locally in your browser. No files are uploaded to any server.</p>
+  </footer>
+
+  <!-- Libraries via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- App scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/validator.js"></script>
+  <script src="js/image-tools.js"></script>
+  <script src="js/pdf-tools.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
