@@ -2,9 +2,29 @@
 
 const ImageTools = (() => {
 
-  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
 
-  function isImage(file) { return IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|gif)$/i.test(file.name); }
+  function isImage(file) { return IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|gif|webp|avif)$/i.test(file.name); }
+
+  /**
+   * Resolve the best MIME type for a target format key, falling back to JPEG
+   * if the browser's canvas does not support the requested type (e.g. AVIF on older browsers).
+   */
+  async function resolveMime(fmtKey) {
+    const map = {
+      jpg: 'image/jpeg', jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/png',   // canvas cannot encode real GIF; PNG is visually identical
+      webp: 'image/webp',
+      avif: 'image/avif'
+    };
+    const mime = map[fmtKey] || 'image/jpeg';
+    if (mime === 'image/avif' || mime === 'image/webp') {
+      const ok = await Utils.supportsFormat(mime);
+      if (!ok) return { mime: 'image/jpeg', fallback: true, fmtKey: 'jpg' };
+    }
+    return { mime, fallback: false, fmtKey };
+  }
 
   /**
    * Compress an image file.
@@ -16,31 +36,36 @@ const ImageTools = (() => {
     const targetKB = opts.targetKB || 100;
     const maxWidth = opts.maxWidth || 1000;
 
+    // Prefer the source format for lossless types; JPEG for everything else
+    const srcExt = Utils.getExt(file.name);
+    const lossless = srcExt === 'png';
+    const { mime } = lossless
+      ? { mime: 'image/png' }
+      : await resolveMime(srcExt === 'webp' ? 'webp' : srcExt === 'avif' ? 'avif' : 'jpg');
+
     const dataUrl = await Utils.readAsDataURL(file);
     const img = await Utils.loadImage(dataUrl);
 
     let quality = 0.85;
     let canvas = Utils.drawResized(img, maxWidth, null);
-    let blob = await Utils.canvasToBlob(canvas, 'image/jpeg', quality);
+    let blob = await Utils.canvasToBlob(canvas, mime, quality);
     let iterations = 0;
     const maxIter = 12;
 
-    // Iteratively reduce quality
     while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < maxIter) {
       quality = Math.max(0.1, quality - 0.08);
-      blob = await Utils.canvasToBlob(canvas, 'image/jpeg', quality);
+      blob = await Utils.canvasToBlob(canvas, mime, quality);
       iterations++;
     }
 
-    // If still too large, shrink dimensions
     if (blob.size > targetKB * 1024) {
-      let scale = Math.sqrt((targetKB * 1024) / blob.size);
+      const scale = Math.sqrt((targetKB * 1024) / blob.size);
       const newW = Math.max(50, Math.round(canvas.width * scale));
       canvas = Utils.drawResized(img, newW, null);
-      blob = await Utils.canvasToBlob(canvas, 'image/jpeg', quality);
+      blob = await Utils.canvasToBlob(canvas, mime, quality);
     }
 
-    return { blob, width: canvas.width, height: canvas.height, quality, iterations };
+    return { blob, width: canvas.width, height: canvas.height, quality, iterations, mime };
   }
 
   /**
@@ -54,9 +79,9 @@ const ImageTools = (() => {
     const dataUrl = await Utils.readAsDataURL(file);
     const img = await Utils.loadImage(dataUrl);
     const canvas = Utils.drawResized(img, null, null);
-    const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/png' }; // canvas can't export real GIF; use PNG fallback
-    const mime = mimeMap[targetFmt] || 'image/jpeg';
-    return Utils.canvasToBlob(canvas, mime, quality);
+    const { mime, fallback, fmtKey } = await resolveMime(targetFmt);
+    const blob = await Utils.canvasToBlob(canvas, mime, quality);
+    return { blob, mime, fallback, fmtKey };
   }
 
   /**
@@ -99,10 +124,9 @@ const ImageTools = (() => {
       ctx.drawImage(img, dx, dy, sw, sh);
     }
 
-    const mimeMap = { jpeg: 'image/jpeg', jpg: 'image/jpeg', png: 'image/png', gif: 'image/png' };
-    const mime = mimeMap[format] || 'image/jpeg';
+    const { mime, fallback, fmtKey } = await resolveMime(format);
     const blob = await Utils.canvasToBlob(canvas, mime, 0.9);
-    return { blob, canvas };
+    return { blob, canvas, mime, fallback, fmtKey };
   }
 
   /**
@@ -142,5 +166,5 @@ const ImageTools = (() => {
     return blob;
   }
 
-  return { isImage, compress, convert, create, autoFix };
+  return { isImage, compress, convert, create, autoFix, resolveMime };
 })();

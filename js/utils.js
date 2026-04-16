@@ -83,14 +83,34 @@ const Utils = (() => {
 
   /** MIME type from extension */
   function mimeFromExt(ext) {
-    const map = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', pdf: 'application/pdf' };
+    const map = {
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+      gif: 'image/gif', webp: 'image/webp', avif: 'image/avif',
+      pdf: 'application/pdf'
+    };
     return map[ext.toLowerCase()] || 'application/octet-stream';
   }
 
   /** Extension from MIME type */
   function extFromMime(mime) {
-    const map = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'application/pdf': 'pdf' };
+    const map = {
+      'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
+      'image/webp': 'webp', 'image/avif': 'avif', 'application/pdf': 'pdf'
+    };
     return map[mime] || 'bin';
+  }
+
+  /**
+   * Test if canvas.toBlob supports a given MIME type.
+   * Returns a Promise<boolean>.
+   */
+  function supportsFormat(mime) {
+    return new Promise(resolve => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 2;
+      c.getContext('2d').fillRect(0, 0, 2, 2);
+      c.toBlob(b => resolve(b !== null && b.type === mime), mime, 0.9);
+    });
   }
 
   /** Replace file extension */
@@ -140,5 +160,5 @@ const Utils = (() => {
 
   return { formatBytes, safeName, hasSpecialChars, readAsDataURL, readAsArrayBuffer,
            loadImage, downloadBlob, drawResized, canvasToBlob, mimeFromExt, extFromMime,
-           replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars };
+           supportsFormat, replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars };
 })();

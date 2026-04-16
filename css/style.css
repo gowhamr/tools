@@ -343,6 +343,28 @@ main {
 .preset-btn span { font-size: 1.3rem; display: block; margin-bottom: 4px; }
 .preset-btn small { color: var(--gray-600); font-size: .75rem; }
 
+/* ===== Quick dim input ===== */
+.dim-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+.dim-quick-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--gray-400);
+  border-radius: 6px;
+  font-size: .9rem;
+  font-family: monospace;
+  min-width: 120px;
+}
+.dim-quick-input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+.dim-quick-hint { font-size: .75rem; color: var(--gray-400); margin-top: 3px; display: block; }
+
+/* ===== Modern format note ===== */
+.fmt-note { color: var(--warn); font-size: .83rem; margin-top: -8px; margin-bottom: 10px; }
+
 /* ===== Preview wrap ===== */
 .preview-wrap {
   min-height: 180px;

@@ -150,6 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('convert-btn').disabled = files.length === 0;
   });
 
+  // Show note when WebP/AVIF selected
+  document.getElementById('convert-to-format').addEventListener('change', function () {
+    const note = document.getElementById('modern-fmt-note');
+    if (this.value === 'webp' || this.value === 'avif') {
+      note.style.display = '';
+      note.textContent = `✦ ${this.value.toUpperCase()} is a modern format. Supported in Chrome 80+, Firefox 93+, Safari 16+. Falls back to JPG if your browser canvas does not support it.`;
+    } else {
+      note.style.display = 'none';
+    }
+  });
+
   document.getElementById('convert-btn').addEventListener('click', async () => {
     const resultsEl = document.getElementById('converter-results');
     if (!converterFiles.length) return;
@@ -163,17 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const srcExt = Utils.getExt(file.name);
         if (targetFmt === 'pdf') {
-          // image → PDF (single page)
           const blob = await PdfTools.imagesToPdf([file], 'fit', 'portrait');
           html += buildResultCard(file, blob, 'converted', 'pdf', targetFmt);
         } else if (srcExt === 'pdf') {
-          // PDF → image (page 1)
-          const { blob } = await PdfTools.pdfPageToImage(file, 1, targetFmt === 'png' ? 'png' : 'jpeg', 2);
+          const fmt = (targetFmt === 'png' || targetFmt === 'webp' || targetFmt === 'avif') ? targetFmt : 'jpeg';
+          const { blob } = await PdfTools.pdfPageToImage(file, 1, fmt, 2);
           html += buildResultCard(file, blob, 'converted', 'img', targetFmt);
         } else {
-          // image → image
-          const blob = await ImageTools.convert(file, targetFmt, quality);
-          html += buildResultCard(file, blob, 'converted', 'img', targetFmt);
+          const { blob, fmtKey, fallback } = await ImageTools.convert(file, targetFmt, quality);
+          const note = fallback ? ` <em>(browser fallback: saved as JPG)</em>` : '';
+          html += buildResultCard(file, blob, 'converted', 'img', fmtKey, note);
         }
       } catch (err) {
         html += errorCard(file.name, err.message);
@@ -222,6 +232,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lockRatio.checked) creatorAspect = widthInput.value / heightInput.value;
   });
 
+  // Quick dimension input (e.g. "578x385")
+  document.getElementById('create-dim-apply').addEventListener('click', () => {
+    const raw = document.getElementById('create-dim-quick').value.trim();
+    const match = raw.match(/^(\d+)\s*[xX×*,\s]\s*(\d+)$/);
+    if (match) {
+      const w = parseInt(match[1]), h = parseInt(match[2]);
+      if (w > 0 && h > 0 && w <= 10000 && h <= 10000) {
+        widthInput.value  = w;
+        heightInput.value = h;
+        creatorAspect = w / h;
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('create-dim-quick').style.borderColor = 'var(--success)';
+        setTimeout(() => document.getElementById('create-dim-quick').style.borderColor = '', 1200);
+        return;
+      }
+    }
+    document.getElementById('create-dim-quick').style.borderColor = 'var(--error)';
+    setTimeout(() => document.getElementById('create-dim-quick').style.borderColor = '', 1200);
+  });
+  document.getElementById('create-dim-quick').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('create-dim-apply').click();
+  });
+
   // Creator drop zone (optional source image)
   const creatorZone  = document.getElementById('creator-drop');
   const creatorInput = document.getElementById('creator-input');
@@ -251,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const fmt = document.getElementById('create-format').value;
       const lock = lockRatio.checked;
 
-      const { blob, canvas: c } = await ImageTools.create({ width: w, height: h, bg, format: fmt, srcFile: creatorSrcFile, lockRatio: lock });
+      const { blob, canvas: c, fmtKey, fallback } = await ImageTools.create({ width: w, height: h, bg, format: fmt, srcFile: creatorSrcFile, lockRatio: lock });
 
       // Show preview
       const ctx = canvas.getContext('2d');
@@ -261,15 +294,15 @@ document.addEventListener('DOMContentLoaded', () => {
       canvas.style.display = 'block';
       hint.style.display = 'none';
 
-      // Download button
-      const ext = fmt === 'jpeg' ? 'jpg' : fmt;
+      const ext = fmtKey === 'jpeg' ? 'jpg' : fmtKey;
+      const fallbackNote = fallback ? ` <em style="color:var(--warn)">(saved as JPG – browser lacks ${fmt.toUpperCase()} canvas support)</em>` : '';
       const filename = `created_${w}x${h}.${ext}`;
       const url = URL.createObjectURL(blob);
       resultEl.innerHTML = `
         <div class="result-card success">
           <div class="result-header"><h4>${Utils.escHtml(filename)}</h4>
             <span class="status-badge badge-success">Ready</span></div>
-          <div class="result-meta"><span>${w}&times;${h} px</span><span>${Utils.formatBytes(blob.size)}</span></div>
+          <div class="result-meta"><span>${w}&times;${h} px</span><span>${Utils.formatBytes(blob.size)}</span>${fallbackNote}</div>
           <div class="download-row">
             <a class="btn btn-success btn-small" href="${url}" download="${filename}">&#11015; Download</a>
           </div>
@@ -460,11 +493,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ════════════════════════════════════════════════════════════
   //  Helpers
   // ════════════════════════════════════════════════════════════
-  function buildResultCard(origFile, blob, verb, kind, targetFmt) {
+  function buildResultCard(origFile, blob, verb, kind, targetFmt, extraNote = '') {
     const newExt  = targetFmt || (kind === 'pdf' ? 'pdf' : Utils.getExt(origFile.name));
+    const extOut  = newExt === 'jpeg' ? 'jpg' : newExt;
     const newName = verb === 'converted'
-      ? Utils.replaceExt(origFile.name, newExt)
-      : Utils.replaceExt(origFile.name, 'jpg').replace(/\.jpg$/, `_${verb}.jpg`);
+      ? Utils.replaceExt(origFile.name, extOut)
+      : Utils.replaceExt(origFile.name, extOut).replace(new RegExp(`\\.${extOut}$`), `_${verb}.${extOut}`);
 
     const url = URL.createObjectURL(blob);
     const saved = origFile.size - blob.size;
@@ -482,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       ${previewHtml}
       ${Utils.sizeBars(origFile.size, blob.size)}
-      <div class="result-meta"><span>${Utils.formatBytes(blob.size)}${savedStr}</span></div>
+      <div class="result-meta"><span>${Utils.formatBytes(blob.size)}${savedStr}</span>${extraNote}</div>
       <div class="download-row">
         <a class="btn btn-success btn-small" href="${url}" download="${newName}">&#11015; Download</a>
       </div>
