@@ -18,7 +18,7 @@
 
   --text:          #0f172a;
   --text-2:        #475569;
-  --text-3:        #94a3b8;
+  --text-3:        #64748b;
   --border:        #e2e8f0;
   --border-focus:  #6366f1;
   --bg-page:       #f1f5f9;
@@ -35,7 +35,7 @@
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-html { font-size: 16px; scroll-behavior: smooth; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font);
   color: var(--text);
@@ -44,7 +44,12 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
 }
+
+/* ── App-like tap highlight ── */
+* { -webkit-tap-highlight-color: transparent; }
+a, button { touch-action: manipulation; }
 
 /* ═══════════════════════════════════════════════════
    HERO
@@ -218,6 +223,7 @@ main {
   align-items: center;
   gap: 6px;
   padding: 14px 20px;
+  min-height: 44px;
   border: none;
   background: transparent;
   color: var(--text-2);
@@ -431,7 +437,7 @@ input[type="range"]:focus { box-shadow: none; }
 }
 .btn-ghost:not(:disabled):hover { background: var(--border); color: var(--text); }
 
-.btn-small { padding: 6px 14px; font-size: .8rem; }
+.btn-small { padding: 6px 14px; font-size: .8rem; min-height: 44px; }
 
 /* ── File List ── */
 .file-list { margin-bottom: 16px; }
@@ -469,7 +475,12 @@ input[type="range"]:focus { box-shadow: none; }
   cursor: pointer;
   font-size: 1rem;
   color: var(--text-3);
-  padding: 0 4px;
+  padding: 0 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   transition: color var(--transition), background var(--transition);
   line-height: 1;
@@ -568,6 +579,9 @@ input[type="range"]:focus { box-shadow: none; }
 }
 .pdf-tab {
   padding: 8px 16px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   border: 1.5px solid var(--border);
   background: var(--bg-input);
   color: var(--text-2);
