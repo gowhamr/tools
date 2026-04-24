@@ -84,8 +84,12 @@ const Utils = (() => {
   /** MIME type from extension */
   function mimeFromExt(ext) {
     const map = {
-      jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
-      gif: 'image/gif', webp: 'image/webp', avif: 'image/avif',
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', jfif: 'image/jpeg',
+      png: 'image/png', gif: 'image/gif',
+      webp: 'image/webp', avif: 'image/avif',
+      tiff: 'image/tiff', tif: 'image/tiff',
+      bmp: 'image/bmp',
+      heic: 'image/heic', heif: 'image/heif',
       pdf: 'application/pdf'
     };
     return map[ext.toLowerCase()] || 'application/octet-stream';
@@ -95,7 +99,10 @@ const Utils = (() => {
   function extFromMime(mime) {
     const map = {
       'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
-      'image/webp': 'webp', 'image/avif': 'avif', 'application/pdf': 'pdf'
+      'image/webp': 'webp', 'image/avif': 'avif',
+      'image/tiff': 'tiff', 'image/bmp': 'bmp',
+      'image/heic': 'heic', 'image/heif': 'heif',
+      'application/pdf': 'pdf'
     };
     return map[mime] || 'bin';
   }

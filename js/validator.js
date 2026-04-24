@@ -2,7 +2,7 @@
 
 const Validator = (() => {
 
-  const ALLOWED_FORMATS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'pdf'];
+  const ALLOWED_FORMATS = ['jpg','jpeg','jfif','png','gif','webp','avif','tiff','tif','bmp','heic','heif','pdf'];
 
   const DOC_RULES = {
     passport_photo: {

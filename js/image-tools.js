@@ -2,19 +2,18 @@
 
 const ImageTools = (() => {
 
-  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
-
-  function isImage(file) { return IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|gif|webp|avif)$/i.test(file.name); }
+  function isImage(file) { return FormatUtils.isImage(file); }
 
   /**
-   * Resolve the best MIME type for a target format key, falling back to JPEG
-   * if the browser's canvas does not support the requested type (e.g. AVIF on older browsers).
+   * Resolve MIME and extension for canvas-native formats (JPEG, PNG, WebP, AVIF).
+   * Returns { mime, fmtKey, fallback }.
+   * BMP/TIFF are handled outside canvas; this function is not called for them.
    */
   async function resolveMime(fmtKey) {
     const map = {
-      jpg: 'image/jpeg', jpeg: 'image/jpeg',
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', jfif: 'image/jpeg',
       png: 'image/png',
-      gif: 'image/png',   // canvas cannot encode real GIF; PNG is visually identical
+      gif: 'image/png',   // canvas cannot encode real GIF; PNG is visually correct
       webp: 'image/webp',
       avif: 'image/avif'
     };
@@ -28,134 +27,120 @@ const ImageTools = (() => {
 
   /**
    * Compress an image file.
-   * @param {File} file
-   * @param {Object} opts – { targetKB, maxWidth, quality }
-   * @returns {Promise<{blob, width, height, iterations}>}
+   * Preserves PNG lossless; uses JPEG (or WebP/AVIF) for lossy types.
    */
   async function compress(file, opts = {}) {
     const targetKB = opts.targetKB || 100;
-    const maxWidth = opts.maxWidth || 1000;
+    const maxWidth = opts.maxWidth  || 1000;
+    const srcExt   = Utils.getExt(file.name);
 
-    // Prefer the source format for lossless types; JPEG for everything else
-    const srcExt = Utils.getExt(file.name);
+    const src = await FormatUtils.loadAny(file);
+    let canvas = FormatUtils.drawElement(src, maxWidth, null);
+
+    // Decide encode mime
     const lossless = srcExt === 'png';
-    const { mime } = lossless
-      ? { mime: 'image/png' }
-      : await resolveMime(srcExt === 'webp' ? 'webp' : srcExt === 'avif' ? 'avif' : 'jpg');
-
-    const dataUrl = await Utils.readAsDataURL(file);
-    const img = await Utils.loadImage(dataUrl);
+    let { mime, fmtKey } = lossless
+      ? { mime: 'image/png', fmtKey: 'png' }
+      : await resolveMime(['webp','avif'].includes(srcExt) ? srcExt : 'jpg');
 
     let quality = 0.85;
-    let canvas = Utils.drawResized(img, maxWidth, null);
     let blob = await Utils.canvasToBlob(canvas, mime, quality);
     let iterations = 0;
-    const maxIter = 12;
 
-    while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < maxIter) {
+    while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < 12) {
       quality = Math.max(0.1, quality - 0.08);
       blob = await Utils.canvasToBlob(canvas, mime, quality);
       iterations++;
     }
-
     if (blob.size > targetKB * 1024) {
       const scale = Math.sqrt((targetKB * 1024) / blob.size);
-      const newW = Math.max(50, Math.round(canvas.width * scale));
-      canvas = Utils.drawResized(img, newW, null);
+      canvas = FormatUtils.drawElement(src, Math.max(50, Math.round(canvas.width * scale)), null);
       blob = await Utils.canvasToBlob(canvas, mime, quality);
     }
 
-    return { blob, width: canvas.width, height: canvas.height, quality, iterations, mime };
+    return { blob, width: canvas.width, height: canvas.height, quality, iterations, mime, fmtKey };
   }
 
   /**
-   * Convert an image file to a target format.
-   * @param {File} file
-   * @param {string} targetFmt – 'jpg'|'png'|'gif'
-   * @param {number} quality – 0–1
-   * @returns {Promise<Blob>}
+   * Convert an image file to any target format.
+   * Returns { blob, mime, fmtKey, fallback }.
    */
   async function convert(file, targetFmt, quality = 0.85) {
-    const dataUrl = await Utils.readAsDataURL(file);
-    const img = await Utils.loadImage(dataUrl);
-    const canvas = Utils.drawResized(img, null, null);
+    const src    = await FormatUtils.loadAny(file);
+    const canvas = FormatUtils.drawElement(src, null, null);
+
+    if (targetFmt === 'bmp') {
+      return { blob: FormatUtils.encodeBmp(canvas), mime: 'image/bmp', fmtKey: 'bmp', fallback: false };
+    }
+    if (targetFmt === 'tiff' || targetFmt === 'tif') {
+      return { blob: FormatUtils.encodeTiff(canvas), mime: 'image/tiff', fmtKey: 'tiff', fallback: false };
+    }
+    if (targetFmt === 'heic' || targetFmt === 'heif') {
+      throw new Error('HEIC/HEIF export is not supported in browsers. Convert to another format.');
+    }
     const { mime, fallback, fmtKey } = await resolveMime(targetFmt);
     const blob = await Utils.canvasToBlob(canvas, mime, quality);
     return { blob, mime, fallback, fmtKey };
   }
 
   /**
-   * Create a new canvas image with a solid background colour, optionally compositing a source image.
-   * @param {Object} opts
-   * @param {number} opts.width
-   * @param {number} opts.height
-   * @param {string} opts.bg        – CSS colour
-   * @param {string} opts.format    – 'jpeg'|'png'|'gif'
-   * @param {File|null} opts.srcFile – optional image to draw inside
-   * @param {boolean} opts.lockRatio – preserve aspect ratio when fitting srcFile
-   * @returns {Promise<{blob, canvas}>}
+   * Create a new image with a solid background, optionally compositing a source image.
    */
   async function create(opts) {
     const { width, height, bg = '#ffffff', format = 'jpeg', srcFile = null, lockRatio = true } = opts;
 
     const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = width; canvas.height = height;
     const ctx = canvas.getContext('2d');
-
-    // Fill background
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, width, height);
 
     if (srcFile) {
-      const dataUrl = await Utils.readAsDataURL(srcFile);
-      const img = await Utils.loadImage(dataUrl);
-
-      let sw = img.naturalWidth, sh = img.naturalHeight;
+      const src = await FormatUtils.loadAny(srcFile);
+      const sw0 = src.naturalWidth  ?? src.width;
+      const sh0 = src.naturalHeight ?? src.height;
+      let sw = sw0, sh = sh0;
       if (lockRatio) {
-        const ratio = Math.min(width / sw, height / sh);
-        sw = Math.round(sw * ratio);
-        sh = Math.round(sh * ratio);
-      } else {
-        sw = width; sh = height;
-      }
-      const dx = Math.round((width - sw) / 2);
-      const dy = Math.round((height - sh) / 2);
-      ctx.drawImage(img, dx, dy, sw, sh);
+        const ratio = Math.min(width / sw0, height / sh0);
+        sw = Math.round(sw0 * ratio); sh = Math.round(sh0 * ratio);
+      } else { sw = width; sh = height; }
+      ctx.drawImage(src, Math.round((width - sw) / 2), Math.round((height - sh) / 2), sw, sh);
     }
 
+    if (format === 'bmp') {
+      return { blob: FormatUtils.encodeBmp(canvas), canvas, fmtKey: 'bmp', fallback: false };
+    }
+    if (format === 'tiff') {
+      return { blob: FormatUtils.encodeTiff(canvas), canvas, fmtKey: 'tiff', fallback: false };
+    }
     const { mime, fallback, fmtKey } = await resolveMime(format);
     const blob = await Utils.canvasToBlob(canvas, mime, 0.9);
     return { blob, canvas, mime, fallback, fmtKey };
   }
 
   /**
-   * Auto-fix an image: resize + compress to meet document-type rules.
-   * @param {File} file
-   * @param {string} docType
-   * @returns {Promise<Blob>}
+   * Auto-fix an image to meet document-type rules (resize + compress).
    */
   async function autoFix(file, docType) {
-    const rules = Validator.getRules()[docType] || Validator.getRules().general;
+    const rules   = Validator.getRules()[docType] || Validator.getRules().general;
     const targetKB = rules.maxKB || 100;
-    const targetW = rules.exactW || rules.maxWidthPx || 1000;
-    const targetH = rules.exactH || null;
+    const targetW  = rules.exactW || rules.maxWidthPx || 1000;
+    const targetH  = rules.exactH || null;
 
-    const dataUrl = await Utils.readAsDataURL(file);
-    const img = await Utils.loadImage(dataUrl);
+    const src = await FormatUtils.loadAny(file);
+    const sw0 = src.naturalWidth  ?? src.width;
+    const sh0 = src.naturalHeight ?? src.height;
 
     const canvas = document.createElement('canvas');
-    canvas.width = targetW;
-    canvas.height = targetH || Math.round(img.naturalHeight * targetW / img.naturalWidth);
+    canvas.width  = targetW;
+    canvas.height = targetH || Math.round(sh0 * targetW / sw0);
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Center-fit source
-    const ratio = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
-    const sw = Math.round(img.naturalWidth * ratio);
-    const sh = Math.round(img.naturalHeight * ratio);
-    ctx.drawImage(img, Math.round((canvas.width - sw) / 2), Math.round((canvas.height - sh) / 2), sw, sh);
+    const ratio = Math.min(canvas.width / sw0, canvas.height / sh0);
+    const sw = Math.round(sw0 * ratio), sh = Math.round(sh0 * ratio);
+    ctx.drawImage(src, Math.round((canvas.width - sw) / 2), Math.round((canvas.height - sh) / 2), sw, sh);
 
     let quality = 0.85;
     let blob = await Utils.canvasToBlob(canvas, 'image/jpeg', quality);
