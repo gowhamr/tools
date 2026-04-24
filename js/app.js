@@ -2,15 +2,29 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── Tab navigation ──────────────────────────────────────────
+  // ── Tab switching helper ────────────────────────────────────
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
+    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  }
+
+  // ── Tab navigation (top bar) ────────────────────────────────
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-    });
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  // ── Mobile bottom nav ───────────────────────────────────────
+  const bnav = document.getElementById('mobile-bnav');
+  if (bnav) {
+    bnav.querySelectorAll('.bnav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchTab(btn.dataset.tab);
+        const app = document.getElementById('app');
+        if (app) app.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
 
   // ── PDF sub-tabs ────────────────────────────────────────────
   document.querySelectorAll('.pdf-tab').forEach(btn => {

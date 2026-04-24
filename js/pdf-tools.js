@@ -1,10 +1,20 @@
 /* ===== pdf-tools.js – PDF creation, merge, compress ===== */
 
+const PDFJS_WORKER_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
 const PdfTools = (() => {
 
   /** Wait for jsPDF / pdf-lib to be available */
   function jsPDF() { return window.jspdf ? window.jspdf.jsPDF : null; }
   function pdfLib() { return window.PDFLib || null; }
+
+  function getPdfjsLib() {
+    const lib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+    if (lib && lib.GlobalWorkerOptions.workerSrc !== PDFJS_WORKER_SRC) {
+      lib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_SRC;
+    }
+    return lib;
+  }
 
   // ── A4 dimensions in pt (jsPDF default unit) ──
   const A4_W = 595.28, A4_H = 841.89;
@@ -93,11 +103,8 @@ const PdfTools = (() => {
     const JsPDF = jsPDF();
     if (!JsPDF) throw new Error('jsPDF not loaded');
 
-    const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+    const pdfjsLib = getPdfjsLib();
     if (!pdfjsLib) throw new Error('PDF.js not loaded');
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     const ab = await Utils.readAsArrayBuffer(file);
     const loadingTask = pdfjsLib.getDocument({ data: ab });
@@ -141,10 +148,8 @@ const PdfTools = (() => {
    * @returns {Promise<{blob, width, height}>}
    */
   async function pdfPageToImage(file, pageNum = 1, format = 'jpeg', scale = 2) {
-    const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+    const pdfjsLib = getPdfjsLib();
     if (!pdfjsLib) throw new Error('PDF.js not loaded');
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     const ab = await Utils.readAsArrayBuffer(file);
     const pdfDoc = await pdfjsLib.getDocument({ data: ab }).promise;

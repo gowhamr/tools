@@ -3,10 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gov Image &amp; PDF Tool</title>
+  <title>KaruviLab — Simple tools, fast results.</title>
+
+  <!-- SEO -->
+  <meta name="description" content="KaruviLab: free browser-based tool to compress, convert, create and validate images and PDFs. 8 formats, 16 calculators. 100% private — no uploads." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://wanderseven.com/" />
+  <meta name="author" content="R Gowtham, KaruviLab" />
+  <meta name="keywords" content="KaruviLab, image compressor, PDF compressor, image converter, JPG PNG WebP AVIF TIFF BMP HEIC, passport photo tool, SIP calculator, browser tool, no upload" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="KaruviLab" />
+  <meta property="og:title" content="KaruviLab — Simple tools, fast results." />
+  <meta property="og:description" content="Free image &amp; PDF tools + 16 calculators. Compress, convert, create, validate — 100% private, all in your browser." />
+  <meta property="og:url" content="https://wanderseven.com/" />
+  <meta property="og:image" content="https://wanderseven.com/icons/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KaruviLab — Simple tools, fast results." />
+  <meta name="twitter:description" content="Free image &amp; PDF tools + 16 calculators. 100% private — all processing is local." />
+  <meta name="twitter:image" content="https://wanderseven.com/icons/og-image.png" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ImgPDF Tool" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+
+  <!-- Google Search Console — replace TOKEN with your verification code -->
+  <meta name="google-site-verification" content="PASTE_YOUR_GSC_TOKEN_HERE" />
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -14,20 +51,66 @@
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <header class="hero">
     <div class="hero-inner">
-      <div class="hero-badge">&#127970; Government Portal Ready</div>
-      <h1 class="hero-title">Gov Image &amp; PDF Tool</h1>
-      <p class="hero-sub">Create &middot; Compress &middot; Convert &middot; Validate &mdash; 100% in Your Browser</p>
+      <div class="hero-badge">&#9879; Simple tools, fast results.</div>
+      <h1 class="hero-title">KaruviLab</h1>
+      <p class="hero-sub">Compress &middot; Convert &middot; Create &middot; Validate &middot; Calculate &mdash; 100% in your browser</p>
       <div class="hero-stats">
         <div class="hero-stat"><span class="stat-num">8</span><span class="stat-lbl">Formats</span></div>
         <div class="hero-divider"></div>
-        <div class="hero-stat"><span class="stat-num">5</span><span class="stat-lbl">Tools</span></div>
+        <div class="hero-stat"><span class="stat-num">6</span><span class="stat-lbl">Tools</span></div>
         <div class="hero-divider"></div>
-        <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-lbl">Private</span></div>
+        <div class="hero-stat"><span class="stat-num">16</span><span class="stat-lbl">Calculators</span></div>
         <div class="hero-divider"></div>
         <div class="hero-stat"><span class="stat-num">0</span><span class="stat-lbl">Uploads</span></div>
       </div>
+      <div class="hero-cta-row">
+        <a href="#app" class="hero-cta-btn hero-cta-primary">&#9654; Launch Tool Free</a>
+        <a href="pages/calculators.html" class="hero-cta-btn hero-cta-ghost">&#129518; Calculator Hub</a>
+      </div>
     </div>
   </header>
+
+  <!-- ═══════════════════ FEATURES ═══════════════════ -->
+  <section class="lp-section lp-features-section" id="features">
+    <div class="lp-inner">
+      <div class="lp-head">
+        <h2>Everything you need, built into your browser</h2>
+        <p>No server. No account. No cost. Open the page and start — your files never leave your device.</p>
+      </div>
+      <div class="lp-features-grid">
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#128274;</span>
+          <h3>100% Private</h3>
+          <p>All processing happens locally using browser APIs. Zero uploads, zero tracking, zero data collection.</p>
+        </div>
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#128230;</span>
+          <h3>Compress Images &amp; PDFs</h3>
+          <p>Reduce image size to under 100 KB and PDFs to under 1 MB — perfect for government portal submissions.</p>
+        </div>
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#128260;</span>
+          <h3>8 Format Support</h3>
+          <p>Convert between JPG, PNG, GIF, WebP, AVIF, TIFF, BMP and HEIC. Read Apple HEIC photos in any browser.</p>
+        </div>
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#128247;</span>
+          <h3>Passport &amp; ID Photos</h3>
+          <p>Create government-spec passport photos, signatures and ID images with exact pixel dimensions.</p>
+        </div>
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#9989;</span>
+          <h3>Portal Validator</h3>
+          <p>Validate files against passport.gov.in, UIDAI, income tax and other portal requirements instantly.</p>
+        </div>
+        <div class="lp-feat-card">
+          <span class="lp-feat-icon">&#128241;</span>
+          <h3>Installable PWA</h3>
+          <p>Add to your home screen and use offline. Works like a native app on Android, iOS, Windows and Mac.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══════════════════ FORMAT SHOWCASE ═══════════════════ -->
   <section class="formats-section">
@@ -121,7 +204,7 @@
   </section>
 
   <!-- ═══════════════════ MAIN APP ═══════════════════ -->
-  <main>
+  <main id="app">
     <div class="app-card">
 
       <!-- Tab Nav -->
@@ -140,6 +223,9 @@
         </button>
         <button class="tab-btn" data-tab="validator" role="tab">
           <span class="tab-icon">&#9989;</span> Validator
+        </button>
+        <button class="tab-btn" data-tab="calculators" role="tab">
+          <span class="tab-icon">&#129518;</span> Calculators
         </button>
       </nav>
 
@@ -475,20 +561,142 @@
           </details>
         </section>
 
+        <!-- ===== CALCULATORS ===== -->
+        <section id="tab-calculators" class="tab-panel">
+          <div class="panel-header">
+            <h2>Calculator Hub</h2>
+            <p class="hint">16 free calculators — SIP, EMI, GST, compound interest, age, currency and unit conversions.</p>
+          </div>
+          <div class="calc-frame-wrap">
+            <iframe
+              src="pages/calculators.html"
+              title="Calculator Hub — 16 free online calculators"
+              loading="lazy"
+              class="calc-frame"
+            ></iframe>
+          </div>
+        </section>
+
       </div><!-- /panels-wrap -->
     </div><!-- /app-card -->
   </main>
 
+  <!-- ═══════════════════ PRICING ═══════════════════ -->
+  <section class="lp-section lp-pricing-section" id="pricing">
+    <div class="lp-inner">
+      <div class="lp-head">
+        <h2>Simple, transparent pricing</h2>
+        <p>Every feature is free. No hidden tiers, no expiry, no credit card.</p>
+      </div>
+      <div class="pricing-cards">
+
+        <div class="pricing-card pricing-free">
+          <div class="pricing-badge">Free Forever</div>
+          <div class="pricing-price">&#8377;0 <span>/ always</span></div>
+          <p class="pricing-tagline">Everything you need, at zero cost</p>
+          <ul class="pricing-features">
+            <li>&#10003; Image Compressor (target &lt; 100 KB)</li>
+            <li>&#10003; PDF Compressor (target &lt; 1 MB)</li>
+            <li>&#10003; Format Converter — 8 formats</li>
+            <li>&#10003; Image Creator &amp; resizer</li>
+            <li>&#10003; Passport / signature tools</li>
+            <li>&#10003; PDF merge, split &amp; convert</li>
+            <li>&#10003; Government portal validator</li>
+            <li>&#10003; 16 online calculators</li>
+            <li>&#10003; Offline / PWA support</li>
+            <li>&#10003; No uploads &middot; No account</li>
+          </ul>
+          <a href="#app" class="btn-pricing">Start Free Now &#8594;</a>
+        </div>
+
+        <div class="pricing-card pricing-donate">
+          <div class="pricing-badge pricing-badge-gold">Support the Project</div>
+          <div class="pricing-price">Your choice <span>/ one-time</span></div>
+          <p class="pricing-tagline">Keep the tool free for everyone</p>
+          <ul class="pricing-features">
+            <li>&#9733; Same features as the free tier</li>
+            <li>&#9733; Help us cover hosting &amp; domain costs</li>
+            <li>&#9733; Support future features &amp; calculators</li>
+            <li>&#9733; Our sincere thanks</li>
+          </ul>
+          <a href="mailto:wanderseven@proton.me?subject=Donation" class="btn-pricing btn-pricing-outline">Get in Touch &#9993;</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FAQ ═══════════════════ -->
+  <section class="lp-section lp-faq-section" id="faq">
+    <div class="lp-inner lp-inner-narrow">
+      <div class="lp-head">
+        <h2>Frequently asked questions</h2>
+        <p>Everything you need to know before you start.</p>
+      </div>
+      <div class="faq-list">
+
+        <details class="faq-item-lp">
+          <summary>Is the tool completely free?</summary>
+          <p>Yes — 100% free, forever. No subscription, no sign-up, no limits. Every feature listed on this page is available at no cost.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>Are my files safe and private?</summary>
+          <p>Absolutely. All image and PDF processing runs entirely inside your browser using JavaScript. Your files are never sent to any server — they stay on your device the entire time.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>Does it work offline?</summary>
+          <p>Yes. Install the tool via the "Add to Home Screen" prompt (Android/Chrome) or the install icon in your browser's address bar. Once installed, the full tool works without an internet connection.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>Which browsers are supported?</summary>
+          <p>Chrome 90+, Edge 90+, Firefox 90+, and Safari 15+. WebP and AVIF export require Chrome/Edge 90+ or Firefox 65+. HEIC reading works in all modern browsers via the heic2any library.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>What is the maximum file size I can process?</summary>
+          <p>There is no hard limit imposed by the tool — the practical limit is your device's available RAM. Very large files (over 50 MB) may be slow on lower-end devices.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>Will compressed images pass government portal uploads?</summary>
+          <p>The tool implements known portal requirements as of April 2026, but government portals can change their rules at any time. Always verify the current requirements on the official portal before your final submission. Use the Validator tab to check compliance.</p>
+        </details>
+
+        <details class="faq-item-lp">
+          <summary>Which calculators are included?</summary>
+          <p>16 calculators across four categories: Financial (SIP, Compound Interest, EMI, GST, Discount, Currency), Date &amp; Time (Age, Date, Time, Global Clock), Math (Standard, Percentage, Numeral), and Conversions (Data Storage, Temperature, Speed).</p>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ FINAL CTA ═══════════════════ -->
+  <section class="lp-cta-section">
+    <div class="lp-inner">
+      <h2>Ready to prepare your files?</h2>
+      <p>No sign-up. No upload. No cost. Just drag, drop and download.</p>
+      <div class="lp-cta-btns">
+        <a href="#app" class="hero-cta-btn hero-cta-primary">&#9654; Start Free Now</a>
+        <a href="#faq" class="hero-cta-btn hero-cta-ghost">Have questions? &#8595;</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══════════════════ FOOTER ═══════════════════ -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="footer-logo">&#128196; Gov Image &amp; PDF Tool</p>
+      <p class="footer-logo">&#9879; KaruviLab</p>
       <p class="footer-note">All processing is done locally in your browser. No files are ever uploaded to any server.</p>
       <div class="footer-tags">
         <span>JPG</span><span>PNG</span><span>GIF</span><span>WebP</span>
         <span>AVIF</span><span>TIFF</span><span>BMP</span><span>HEIC</span><span>PDF</span>
       </div>
       <nav class="footer-nav" style="margin-top:18px">
+        <a href="pages/calculators.html">&#129518; Calculators</a>
         <a href="pages/about.html">About Us</a>
         <a href="pages/contact.html">Contact Us</a>
         <a href="pages/privacy.html">Privacy Policy</a>
@@ -496,7 +704,7 @@
         <a href="pages/disclaimer.html">Disclaimer</a>
       </nav>
       <div class="footer-brand">
-        <p>&copy; 2026 <strong>Wanderseven</strong> by R Gowtham. All rights reserved.</p>
+        <p>&copy; 2026 <strong>KaruviLab</strong> by R Gowtham. All rights reserved.</p>
         <p>
           <a href="mailto:wanderseven@proton.me">&#9993; wanderseven@proton.me</a>
           &ensp;&middot;&ensp;
@@ -520,5 +728,42 @@
   <script src="js/image-tools.js"></script>
   <script src="js/pdf-tools.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- ── Mobile Bottom Navigation ── -->
+  <nav class="mobile-bnav" id="mobile-bnav" aria-label="Tool navigation">
+    <button class="bnav-btn active" data-tab="compressor" aria-label="Compressor">
+      <span class="bnav-icon">&#128230;</span>
+      <span class="bnav-lbl">Compress</span>
+    </button>
+    <button class="bnav-btn" data-tab="converter" aria-label="Converter">
+      <span class="bnav-icon">&#128260;</span>
+      <span class="bnav-lbl">Convert</span>
+    </button>
+    <button class="bnav-btn" data-tab="creator" aria-label="Image Creator">
+      <span class="bnav-icon">&#128247;</span>
+      <span class="bnav-lbl">Create</span>
+    </button>
+    <button class="bnav-btn" data-tab="pdf" aria-label="PDF Tools">
+      <span class="bnav-icon">&#128196;</span>
+      <span class="bnav-lbl">PDF</span>
+    </button>
+    <button class="bnav-btn" data-tab="validator" aria-label="Validator">
+      <span class="bnav-icon">&#9989;</span>
+      <span class="bnav-lbl">Validate</span>
+    </button>
+    <button class="bnav-btn" data-tab="calculators" aria-label="Calculators">
+      <span class="bnav-icon">&#129518;</span>
+      <span class="bnav-lbl">Calc</span>
+    </button>
+  </nav>
+
+  <!-- ── PWA Service Worker ── -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
