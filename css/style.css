@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   Image & PDF Tool — Blog-Modern Design System
+   KaruviLab — Design System
    ═══════════════════════════════════════════════════ */
 
 /* ── Reset ── */
@@ -7,10 +7,10 @@
 
 /* ── Tokens ── */
 :root {
-  --primary:       #4f46e5;
-  --primary-dark:  #3730a3;
-  --primary-light: #eef2ff;
-  --primary-glow:  rgba(79,70,229,.18);
+  --primary:       #2563EB;
+  --primary-dark:  #1D4ED8;
+  --primary-light: #EFF6FF;
+  --primary-glow:  rgba(37,99,235,.18);
   --accent:        #f59e0b;
   --success:       #10b981;
   --error:         #ef4444;
@@ -20,7 +20,7 @@
   --text-2:        #475569;
   --text-3:        #64748b;
   --border:        #e2e8f0;
-  --border-focus:  #6366f1;
+  --border-focus:  #3B82F6;
   --bg-page:       #f1f5f9;
   --bg-card:       #ffffff;
   --bg-input:      #f8fafc;
@@ -32,7 +32,9 @@
   --shadow:     0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.05);
   --shadow-lg:  0 12px 40px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.06);
   --transition: .18s ease;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Poppins', 'Inter', -apple-system, sans-serif;
+  --bnav-h: 62px;
 }
 
 html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -45,17 +47,31 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: contain;
+  /* Reserve space for mobile bottom nav */
+  padding-bottom: 0;
 }
 
 /* ── App-like tap highlight ── */
 * { -webkit-tap-highlight-color: transparent; }
 a, button { touch-action: manipulation; }
 
+/* ── Prevent iOS zoom on input focus (font-size must be >= 16px) ── */
+input, select, textarea {
+  font-size: max(16px, 1em);
+}
+
+/* ── Safe area for notched phones ── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body.has-bnav {
+    padding-bottom: calc(var(--bnav-h) + env(safe-area-inset-bottom));
+  }
+}
+
 /* ═══════════════════════════════════════════════════
    HERO
    ═══════════════════════════════════════════════════ */
 .hero {
-  background: linear-gradient(135deg, #0f0a2e 0%, #1e1b4b 40%, #312e81 75%, #3730a3 100%);
+  background: linear-gradient(135deg, #020818 0%, #0F1C5A 35%, #1E3A8A 70%, #2563EB 100%);
   position: relative;
   overflow: hidden;
   padding: 56px 20px 52px;
@@ -66,8 +82,8 @@ a, button { touch-action: manipulation; }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 20% 60%, rgba(99,102,241,.25) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(139,92,246,.2) 0%, transparent 70%);
+    radial-gradient(ellipse 60% 50% at 20% 60%, rgba(37,99,235,.3) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(59,130,246,.2) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
@@ -88,11 +104,12 @@ a, button { touch-action: manipulation; }
 }
 
 .hero-title {
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 6vw, 3.4rem);
   font-weight: 800;
   color: #fff;
   letter-spacing: -.5px;
-  line-height: 1.15;
+  line-height: 1.1;
   margin-bottom: 14px;
 }
 .hero-sub {
@@ -410,11 +427,11 @@ input[type="range"]:focus { box-shadow: none; }
 .btn:not(:disabled):active { transform: scale(.97); }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
-  box-shadow: 0 2px 8px rgba(79,70,229,.3);
+  box-shadow: 0 2px 8px rgba(37,99,235,.3);
 }
-.btn-primary:not(:disabled):hover { box-shadow: 0 4px 16px rgba(79,70,229,.45); filter: brightness(1.06); }
+.btn-primary:not(:disabled):hover { box-shadow: 0 4px 16px rgba(37,99,235,.45); filter: brightness(1.06); }
 
 .btn-success {
   background: linear-gradient(135deg, var(--success), #059669);
@@ -827,11 +844,11 @@ input[type="range"]:focus { box-shadow: none; }
   white-space: nowrap;
 }
 .hero-cta-primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(99,102,241,.45);
+  box-shadow: 0 4px 20px rgba(37,99,235,.5);
 }
-.hero-cta-primary:hover { box-shadow: 0 6px 28px rgba(99,102,241,.6); filter: brightness(1.08); transform: translateY(-2px); }
+.hero-cta-primary:hover { box-shadow: 0 6px 28px rgba(37,99,235,.65); filter: brightness(1.08); transform: translateY(-2px); }
 .hero-cta-ghost {
   background: rgba(255,255,255,.12);
   color: rgba(255,255,255,.9);
@@ -1033,7 +1050,7 @@ input[type="range"]:focus { box-shadow: none; }
 
 /* ── Final CTA ── */
 .lp-cta-section {
-  background: linear-gradient(135deg, #0f0a2e 0%, #1e1b4b 50%, #312e81 100%);
+  background: linear-gradient(135deg, #020818 0%, #0F1C5A 50%, #1E3A8A 100%);
   padding: 72px 20px;
   text-align: center;
 }
@@ -1068,4 +1085,97 @@ input[type="range"]:focus { box-shadow: none; }
 }
 @media (max-width: 400px) {
   .lp-features-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE BOTTOM NAV
+   ═══════════════════════════════════════════════════ */
+.mobile-bnav {
+  display: none; /* hidden on desktop */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bnav-h);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-top: 1px solid var(--border);
+  display: none;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.06);
+}
+
+.bnav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 6px 2px 0;
+  transition: color var(--transition), transform .12s ease;
+  position: relative;
+}
+.bnav-btn:active { transform: scale(.92); }
+.bnav-btn.active { color: var(--primary); }
+.bnav-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2.5px;
+  background: var(--primary);
+  border-radius: 0 0 3px 3px;
+}
+
+.bnav-icon { font-size: 1.35rem; line-height: 1; }
+.bnav-lbl  { font-size: .6rem; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
+
+/* ── Show bottom nav only on mobile ── */
+@media (max-width: 640px) {
+  .mobile-bnav { display: flex; }
+  body { padding-bottom: calc(var(--bnav-h) + env(safe-area-inset-bottom, 0px)); }
+
+  /* Compact hero on mobile to get the tool in view faster */
+  .hero { padding: 32px 16px 28px; }
+  .hero-title { font-size: 2rem; }
+  .hero-sub { font-size: .88rem; margin-bottom: 20px; }
+  .hero-stats { gap: 10px; padding: 10px 14px; }
+  .stat-num { font-size: 1.05rem; }
+  .hero-cta-row { margin-top: 18px; gap: 8px; }
+  .hero-cta-btn { font-size: .85rem; padding: 10px 18px; min-height: 44px; }
+
+  /* Hide the in-app horizontal tab nav on mobile — bottom nav replaces it */
+  .tab-nav { display: none; }
+
+  /* Give app card less outer margin on mobile */
+  main { margin: 8px auto 12px; padding: 0 8px; }
+  .panels-wrap { padding: 16px 14px 20px; }
+
+  /* Larger mobile format cards */
+  .formats-section { padding: 28px 12px; }
+  .formats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Landing sections tighter on mobile */
+  .lp-section { padding: 36px 14px; }
+  .lp-cta-section { padding: 40px 14px; }
+  .lp-head { margin-bottom: 28px; }
+  .pricing-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 360px) {
+  .bnav-lbl { display: none; }
+  .bnav-icon { font-size: 1.5rem; }
+  .bnav-btn { padding-top: 10px; }
 }

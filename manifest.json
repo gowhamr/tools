@@ -1,7 +1,7 @@
 {
-  "name": "Image & PDF Tool",
-  "short_name": "ImgPDF Tool",
-  "description": "Compress, convert, create and validate images and PDFs — 100% private, runs locally in your browser.",
+  "name": "KaruviLab",
+  "short_name": "KaruviLab",
+  "description": "Simple tools, fast results. Compress, convert, create and validate images and PDFs — 100% private, runs locally in your browser.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

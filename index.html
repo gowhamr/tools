@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Image &amp; PDF Tool — Compress, Convert &amp; Validate</title>
+  <title>KaruviLab — Simple tools, fast results.</title>
 
   <!-- SEO -->
-  <meta name="description" content="Free browser-based tool to compress, convert, create and validate images and PDF files. Supports JPG, PNG, WebP, AVIF, TIFF, BMP, HEIC. 100% private — no file uploads." />
+  <meta name="description" content="KaruviLab: free browser-based tool to compress, convert, create and validate images and PDFs. 8 formats, 16 calculators. 100% private — no uploads." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://wanderseven.com/" />
-  <meta name="author" content="R Gowtham, Wanderseven" />
-  <meta name="keywords" content="image compressor, PDF compressor, image converter, JPG PNG WebP AVIF TIFF BMP HEIC, passport photo tool, browser tool, no upload" />
+  <meta name="author" content="R Gowtham, KaruviLab" />
+  <meta name="keywords" content="KaruviLab, image compressor, PDF compressor, image converter, JPG PNG WebP AVIF TIFF BMP HEIC, passport photo tool, SIP calculator, browser tool, no upload" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Image &amp; PDF Tool" />
-  <meta property="og:title" content="Image &amp; PDF Tool — Compress, Convert &amp; Validate" />
-  <meta property="og:description" content="Free browser-based tool to compress, convert, create and validate images and PDFs. Supports 8 formats. 100% private — all processing is local." />
+  <meta property="og:site_name" content="KaruviLab" />
+  <meta property="og:title" content="KaruviLab — Simple tools, fast results." />
+  <meta property="og:description" content="Free image &amp; PDF tools + 16 calculators. Compress, convert, create, validate — 100% private, all in your browser." />
   <meta property="og:url" content="https://wanderseven.com/" />
   <meta property="og:image" content="https://wanderseven.com/icons/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -24,8 +24,8 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Image &amp; PDF Tool — Compress, Convert &amp; Validate" />
-  <meta name="twitter:description" content="Free browser-based tool to compress, convert, create and validate images and PDFs. 100% private — all processing is local." />
+  <meta name="twitter:title" content="KaruviLab — Simple tools, fast results." />
+  <meta name="twitter:description" content="Free image &amp; PDF tools + 16 calculators. 100% private — all processing is local." />
   <meta name="twitter:image" content="https://wanderseven.com/icons/og-image.png" />
 
   <!-- PWA -->
@@ -43,7 +43,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -51,9 +51,9 @@
   <!-- ═══════════════════ HERO ═══════════════════ -->
   <header class="hero">
     <div class="hero-inner">
-      <div class="hero-badge">&#127970; Government Portal Ready</div>
-      <h1 class="hero-title">Image &amp; PDF Tool</h1>
-      <p class="hero-sub">Create &middot; Compress &middot; Convert &middot; Validate &mdash; 100% in Your Browser</p>
+      <div class="hero-badge">&#9879; Simple tools, fast results.</div>
+      <h1 class="hero-title">KaruviLab</h1>
+      <p class="hero-sub">Compress &middot; Convert &middot; Create &middot; Validate &middot; Calculate &mdash; 100% in your browser</p>
       <div class="hero-stats">
         <div class="hero-stat"><span class="stat-num">8</span><span class="stat-lbl">Formats</span></div>
         <div class="hero-divider"></div>
@@ -689,7 +689,7 @@
   <!-- ═══════════════════ FOOTER ═══════════════════ -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="footer-logo">&#128196; Image &amp; PDF Tool</p>
+      <p class="footer-logo">&#9879; KaruviLab</p>
       <p class="footer-note">All processing is done locally in your browser. No files are ever uploaded to any server.</p>
       <div class="footer-tags">
         <span>JPG</span><span>PNG</span><span>GIF</span><span>WebP</span>
@@ -704,7 +704,7 @@
         <a href="pages/disclaimer.html">Disclaimer</a>
       </nav>
       <div class="footer-brand">
-        <p>&copy; 2026 <strong>Wanderseven</strong> by R Gowtham. All rights reserved.</p>
+        <p>&copy; 2026 <strong>KaruviLab</strong> by R Gowtham. All rights reserved.</p>
         <p>
           <a href="mailto:wanderseven@proton.me">&#9993; wanderseven@proton.me</a>
           &ensp;&middot;&ensp;
@@ -728,6 +728,34 @@
   <script src="js/image-tools.js"></script>
   <script src="js/pdf-tools.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- ── Mobile Bottom Navigation ── -->
+  <nav class="mobile-bnav" id="mobile-bnav" aria-label="Tool navigation">
+    <button class="bnav-btn active" data-tab="compressor" aria-label="Compressor">
+      <span class="bnav-icon">&#128230;</span>
+      <span class="bnav-lbl">Compress</span>
+    </button>
+    <button class="bnav-btn" data-tab="converter" aria-label="Converter">
+      <span class="bnav-icon">&#128260;</span>
+      <span class="bnav-lbl">Convert</span>
+    </button>
+    <button class="bnav-btn" data-tab="creator" aria-label="Image Creator">
+      <span class="bnav-icon">&#128247;</span>
+      <span class="bnav-lbl">Create</span>
+    </button>
+    <button class="bnav-btn" data-tab="pdf" aria-label="PDF Tools">
+      <span class="bnav-icon">&#128196;</span>
+      <span class="bnav-lbl">PDF</span>
+    </button>
+    <button class="bnav-btn" data-tab="validator" aria-label="Validator">
+      <span class="bnav-icon">&#9989;</span>
+      <span class="bnav-lbl">Validate</span>
+    </button>
+    <button class="bnav-btn" data-tab="calculators" aria-label="Calculators">
+      <span class="bnav-icon">&#129518;</span>
+      <span class="bnav-lbl">Calc</span>
+    </button>
+  </nav>
 
   <!-- ── PWA Service Worker ── -->
   <script>
