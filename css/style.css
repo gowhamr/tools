@@ -52,29 +52,38 @@ input, select, textarea { font-size: max(16px, 1em); }
 }
 
 /* ── Base ── */
-html { font-size: 16px; -webkit-text-size-adjust: 100%; height: 100%; height: 100dvh; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;
+  color: var(--text);
+  background: var(--bg-page, #f1f5f9);
+  min-height: 100vh;
+}
+
+/* ── App shell (index.html only) ── */
+html:has(body.app-shell) { height: 100%; height: 100dvh; }
+body.app-shell {
   overscroll-behavior: none;
   height: 100%; height: 100dvh;
   overflow: hidden;
   background: linear-gradient(135deg, #020818 0%, #0c1840 30%, #1a3368 60%, #1e3a8a 100%);
   background-attachment: fixed;
   position: relative;
+  color: #fff;
 }
 
-/* Ambient blobs */
-body::before, body::after {
+/* Ambient blobs — app shell only */
+body.app-shell::before, body.app-shell::after {
   content: ''; position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
 }
-body::before {
+body.app-shell::before {
   width: 600px; height: 600px;
   background: radial-gradient(circle, rgba(37,99,235,.18) 0%, transparent 70%);
   top: -200px; right: -150px;
   animation: blob 14s ease-in-out infinite alternate;
 }
-body::after {
+body.app-shell::after {
   width: 450px; height: 450px;
   background: radial-gradient(circle, rgba(99,102,241,.13) 0%, transparent 70%);
   bottom: -100px; left: -100px;
@@ -86,17 +95,18 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════
-   PRIVACY STRIPE
+   PRIVACY STRIPE  (app-shell only)
    ═══════════════════════════════════════════════════ */
-.privacy-stripe {
+.app-shell .privacy-stripe {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--stripe-h); z-index: 200;
   background: rgba(2,8,24,.78);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255,255,255,.08);
   display: flex; align-items: center; justify-content: center;
-  gap: 10px; padding: 0 12px;
+  gap: 8px; padding: 0 12px;
 }
+.privacy-stripe svg { flex-shrink: 0; }
 .ps-badge {
   font-size: .65rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
   color: #34d399; background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.25);
@@ -108,9 +118,9 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════
-   GLASS SCREEN + PANEL CONTAINER
+   GLASS SCREEN + PANEL CONTAINER  (app-shell only)
    ═══════════════════════════════════════════════════ */
-.glass-screen {
+.app-shell .glass-screen {
   position: fixed;
   top: var(--stripe-h); bottom: var(--dock-h); left: 0; right: 0;
   z-index: 1; display: flex; align-items: center; justify-content: center;
@@ -153,9 +163,10 @@ body::after {
   min-height: 0;
 }
 .hero-logo-mark {
-  font-size: 2.2rem; line-height: 1;
-  filter: drop-shadow(0 0 14px rgba(37,99,235,.7));
+  display: flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 0 18px rgba(37,99,235,.5));
 }
+.hero-logo-mark svg { display: block; }
 .hero-app-name {
   font-size: clamp(1.8rem, 5.5vw, 2.8rem); font-weight: 800;
   letter-spacing: -.02em; line-height: 1.1;
@@ -196,28 +207,32 @@ body::after {
 .hero-cta:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(37,99,235,.65); }
 .hero-cta:active { transform: translateY(0); }
 
-/* Tool grid */
-.tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+/* Tool grid — Google Pay style */
+.tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
 .tool-card {
-  background: rgba(255,255,255,.06); outline: 1px solid rgba(255,255,255,.09);
-  border-radius: 14px; padding: 14px 10px; border: none;
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  cursor: pointer; transition: background .2s, outline-color .2s, transform .15s;
+  background: rgba(255,255,255,.08); outline: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px; padding: 16px 10px 14px; border: none;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s;
   text-align: center; color: #fff; font-family: var(--font);
-  min-height: 80px;
 }
-.tool-card:hover, .tool-card:focus-visible {
-  background: rgba(37,99,235,.22); outline-color: rgba(37,99,235,.5); transform: translateY(-2px);
+.tool-card:hover { background: rgba(255,255,255,.13); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
+.tool-card:active { transform: scale(.97); }
+/* Colored icon bubble */
+.tool-card-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--ic-bg, rgba(255,255,255,.15));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-.tool-card:active { transform: translateY(0); }
-.tool-card-icon { font-size: 1.6rem; line-height: 1; }
-.tool-card-name { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.92); }
-.tool-card-desc { font-size: .63rem; color: rgba(255,255,255,.5); line-height: 1.3; }
+.tool-card-icon svg { width: 24px; height: 24px; color: var(--ic-fg, #fff); }
+.tool-card-name { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.92); line-height: 1.2; }
+.tool-card-desc { font-size: .62rem; color: rgba(255,255,255,.48); line-height: 1.3; }
 
 /* ═══════════════════════════════════════════════════
-   GLASS DOCK
+   GLASS DOCK  (app-shell only)
    ═══════════════════════════════════════════════════ */
-.glass-dock {
+.app-shell .glass-dock {
   position: fixed; bottom: 0; left: 0; right: 0;
   height: var(--dock-h); padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 200; background: rgba(2,8,24,.84);
@@ -238,7 +253,7 @@ body::after {
 .dock-btn.active .dock-icon { transform: scale(1.1); }
 .dock-btn.dock-faq { color: rgba(167,139,250,.6); }
 .dock-btn.dock-faq:hover, .dock-btn.dock-faq.active { color: #a78bfa; background: rgba(167,139,250,.14); }
-.dock-icon { font-size: 1.25rem; line-height: 1; transition: transform .2s; }
+.dock-icon { width: 22px; height: 22px; flex-shrink: 0; transition: transform .2s; }
 .dock-lbl  { font-size: .58rem; font-weight: 600; letter-spacing: .2px; line-height: 1; }
 
 /* ═══════════════════════════════════════════════════
@@ -508,9 +523,9 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .tool-card     { padding: 12px 8px; min-height: 72px; }
   .two-col       { grid-template-columns: 1fr; }
   .options-row   { flex-direction: column; }
-  .dock-lbl      { font-size: .52rem; }
-  .dock-icon     { font-size: 1.1rem; }
-  .dock-btn      { min-width: 34px; padding: 5px 3px; }
+  .dock-lbl  { font-size: .52rem; }
+  .dock-icon { width: 20px; height: 20px; }
+  .dock-btn  { min-width: 34px; padding: 5px 3px; }
   .faq-sheet     { padding: 16px 16px calc(20px + env(safe-area-inset-bottom,0px)); }
 }
 @media (min-width: 641px) {
