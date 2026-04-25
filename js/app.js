@@ -1,4 +1,4 @@
-/* ===== app.js – KaruviLab Glass Dashboard ===== */
+/* ===== app.js – KaruviLab ===== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -6,13 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
   //  PANEL NAVIGATION
   // ══════════════════════════════════════════════════════
   let activePanel = 'home';
+  const homePanel = document.getElementById('panel-home');
 
   function showPanel(panelId) {
     if (panelId === activePanel) return;
-    const prev = document.querySelector('.glass-panel.active');
+
+    // Deactivate current tool panel (if any)
+    const prev = document.querySelector('.panel.active');
     if (prev) prev.classList.remove('active');
-    const next = document.getElementById('panel-' + panelId);
-    if (next) next.classList.add('active');
+
+    if (panelId === 'home') {
+      // Slide home back in from left
+      homePanel?.classList.remove('pushed');
+    } else {
+      // Push home left, slide new panel in from right
+      homePanel?.classList.add('pushed');
+      const next = document.getElementById('panel-' + panelId);
+      if (next) next.classList.add('active');
+    }
+
+    // Update dock highlight
     document.querySelectorAll('.dock-btn[data-panel]').forEach(b => {
       b.classList.toggle('active', b.dataset.panel === panelId);
     });
@@ -24,9 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
-  // Tool grid cards on home panel
-  document.querySelectorAll('.tool-card[data-panel]').forEach(card => {
+  // Home shortcuts (.sc cards)
+  document.querySelectorAll('.sc[data-panel]').forEach(card => {
     card.addEventListener('click', () => showPanel(card.dataset.panel));
+  });
+
+  // Back buttons inside tool panels
+  document.querySelectorAll('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => showPanel('home'));
   });
 
   // ══════════════════════════════════════════════════════
