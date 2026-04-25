@@ -551,4 +551,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function attachDownloads() {}  // hook for future use
+
+  // ── Sticky top bar ─────────────────────────────────────────
+  const topbar = document.getElementById('topbar');
+  if (topbar) {
+    const heroEl = document.querySelector('.hero');
+    if (heroEl) {
+      new IntersectionObserver(
+        ([e]) => topbar.classList.toggle('visible', !e.isIntersecting),
+        { threshold: 0.15 }
+      ).observe(heroEl);
+    }
+  }
 });

@@ -60,13 +60,6 @@ input, select, textarea {
   font-size: max(16px, 1em);
 }
 
-/* ── Safe area for notched phones ── */
-@supports (padding: env(safe-area-inset-bottom)) {
-  body.has-bnav {
-    padding-bottom: calc(var(--bnav-h) + env(safe-area-inset-bottom));
-  }
-}
-
 /* ═══════════════════════════════════════════════════
    HERO
    ═══════════════════════════════════════════════════ */
@@ -266,10 +259,18 @@ main {
 .panels-wrap { padding: 28px 28px 32px; }
 
 .tab-panel { display: none; }
-.tab-panel.active { display: block; }
+.tab-panel.active {
+  display: block;
+  animation: panelFadeIn .22s ease forwards;
+}
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .panel-header { margin-bottom: 20px; }
 .panel-header h2 {
+  font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--text);
@@ -799,26 +800,6 @@ input[type="range"]:focus { box-shadow: none; }
 .footer-brand a:hover { color: #fff; text-decoration: underline; }
 
 /* ═══════════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════════ */
-@media (max-width: 640px) {
-  .hero { padding: 36px 16px 32px; }
-  .hero-stats { gap: 12px; padding: 10px 16px; }
-  .stat-num { font-size: 1.1rem; }
-  main { padding: 0 10px; margin: 16px auto 24px; }
-  .panels-wrap { padding: 18px 16px 24px; }
-  .tab-btn { padding: 11px 14px; font-size: .8rem; }
-  .upload-zone { padding: 24px 14px; }
-  .formats-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-  .preset-grid { grid-template-columns: 1fr 1fr; }
-  .options-row { gap: 12px; }
-}
-@media (max-width: 400px) {
-  .hero-stats { flex-direction: column; gap: 8px; }
-  .hero-divider { width: 60px; height: 1px; }
-}
-
-/* ═══════════════════════════════════════════════════
    HERO CTA BUTTONS
    ═══════════════════════════════════════════════════ */
 .hero-cta-row {
@@ -875,6 +856,7 @@ input[type="range"]:focus { box-shadow: none; }
   margin-bottom: 48px;
 }
 .lp-head h2 {
+  font-family: var(--font-heading);
   font-size: clamp(1.5rem, 3.5vw, 2.1rem);
   font-weight: 800;
   color: var(--text);
@@ -991,12 +973,12 @@ input[type="range"]:focus { box-shadow: none; }
   font-size: .95rem;
   font-weight: 700;
   text-decoration: none;
-  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
   transition: all var(--transition);
-  box-shadow: 0 2px 8px rgba(79,70,229,.3);
+  box-shadow: 0 2px 8px rgba(37,99,235,.3);
 }
-.btn-pricing:hover { box-shadow: 0 4px 16px rgba(79,70,229,.45); filter: brightness(1.06); }
+.btn-pricing:hover { box-shadow: 0 4px 16px rgba(37,99,235,.45); filter: brightness(1.06); }
 .btn-pricing-outline {
   background: transparent;
   color: var(--text-2);
@@ -1055,6 +1037,7 @@ input[type="range"]:focus { box-shadow: none; }
   text-align: center;
 }
 .lp-cta-section h2 {
+  font-family: var(--font-heading);
   font-size: clamp(1.5rem, 4vw, 2.3rem);
   font-weight: 800;
   color: #fff;
@@ -1077,21 +1060,16 @@ input[type="range"]:focus { box-shadow: none; }
 @media (max-width: 640px) {
   .lp-section { padding: 48px 16px; }
   .lp-cta-section { padding: 48px 16px; }
-  .lp-features-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lp-features-grid { grid-template-columns: 1fr; gap: 12px; }
   .lp-feat-card { padding: 18px; }
   .pricing-cards { grid-template-columns: 1fr; max-width: 400px; }
   .hero-cta-row { gap: 10px; }
   .hero-cta-btn { font-size: .9rem; padding: 11px 20px; }
 }
-@media (max-width: 400px) {
-  .lp-features-grid { grid-template-columns: 1fr; }
-}
-
 /* ═══════════════════════════════════════════════════
    MOBILE BOTTOM NAV
    ═══════════════════════════════════════════════════ */
 .mobile-bnav {
-  display: none; /* hidden on desktop */
   position: fixed;
   bottom: 0;
   left: 0;
@@ -1156,6 +1134,11 @@ input[type="range"]:focus { box-shadow: none; }
   .hero-cta-row { margin-top: 18px; gap: 8px; }
   .hero-cta-btn { font-size: .85rem; padding: 10px 18px; min-height: 44px; }
 
+  /* Stats: 2x2 grid on narrow screens */
+  .hero-stats { flex-wrap: wrap; justify-content: center; gap: 8px 0; }
+  .hero-stat { min-width: 72px; }
+  .hero-divider:nth-child(4) { display: none; }
+
   /* Hide the in-app horizontal tab nav on mobile — bottom nav replaces it */
   .tab-nav { display: none; }
 
@@ -1174,8 +1157,106 @@ input[type="range"]:focus { box-shadow: none; }
   .pricing-cards { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 400px) {
+  .hero-stats { gap: 6px 0; }
+  .hero-divider { display: none; }
+  .hero-stat { min-width: 80px; }
+}
+
 @media (max-width: 360px) {
   .bnav-lbl { display: none; }
   .bnav-icon { font-size: 1.5rem; }
   .bnav-btn { padding-top: 10px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   STICKY TOP BAR (appears on scroll)
+   ═══════════════════════════════════════════════════ */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: rgba(15,28,90,.94);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  z-index: 900;
+  transform: translateY(-100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1), box-shadow .28s ease;
+  box-shadow: none;
+}
+.topbar.visible {
+  transform: translateY(0);
+  box-shadow: 0 2px 20px rgba(0,0,0,.3);
+}
+.topbar-inner {
+  max-width: 1020px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.topbar-brand {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -.3px;
+  flex-shrink: 0;
+}
+.topbar-nav {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+.topbar-nav a {
+  font-size: .82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.topbar-nav a:hover { color: #fff; }
+.topbar-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 18px;
+  background: var(--primary);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background var(--transition), box-shadow var(--transition);
+  flex-shrink: 0;
+  min-height: 36px;
+}
+.topbar-cta:hover { background: var(--primary-dark); box-shadow: 0 2px 10px rgba(37,99,235,.4); }
+
+/* On mobile, topbar hides nav links — just shows brand + cta */
+@media (max-width: 640px) {
+  .topbar-nav { display: none; }
+  .topbar-inner { gap: 16px; padding: 0 14px; }
+  .topbar-cta { font-size: .78rem; padding: 6px 14px; }
+}
+
+/* ── Focus-visible styles (keyboard navigation) ── */
+:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+button:focus-visible, a:focus-visible {
+  outline: 2.5px solid #60A5FA;
+  outline-offset: 3px;
+}
+
+/* Offset anchors for sticky topbar */
+#app, #features, #pricing, #faq {
+  scroll-margin-top: 60px;
 }
