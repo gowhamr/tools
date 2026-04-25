@@ -16,7 +16,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="KaruviLab" />
   <meta property="og:title" content="KaruviLab — Simple tools, fast results." />
-  <meta property="og:description" content="Free image &amp; PDF tools + 16 calculators. Compress, convert, create, validate — 100% private, all in your browser." />
+  <meta property="og:description" content="Image &amp; PDF tools + 16 calculators. Compress, convert, create, validate — 100% private, all in your browser." />
   <meta property="og:url" content="https://wanderseven.com/" />
   <meta property="og:image" content="https://wanderseven.com/icons/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -25,694 +25,533 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KaruviLab — Simple tools, fast results." />
-  <meta name="twitter:description" content="Free image &amp; PDF tools + 16 calculators. 100% private — all processing is local." />
+  <meta name="twitter:description" content="Image &amp; PDF tools + 16 calculators. 100% private — all processing is local." />
   <meta name="twitter:image" content="https://wanderseven.com/icons/og-image.png" />
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#4f46e5" />
+  <meta name="theme-color" content="#2563EB" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="ImgPDF Tool" />
+  <meta name="apple-mobile-web-app-title" content="KaruviLab" />
   <link rel="apple-touch-icon" href="icons/icon.svg" />
 
-  <!-- Google Search Console — replace TOKEN with your verification code -->
+  <!-- Google Search Console -->
   <meta name="google-site-verification" content="PASTE_YOUR_GSC_TOKEN_HERE" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-  <!-- ═══════════════════ HERO ═══════════════════ -->
-  <header class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">&#9879; Simple tools, fast results.</div>
-      <h1 class="hero-title">KaruviLab</h1>
-      <p class="hero-sub">Compress &middot; Convert &middot; Create &middot; Validate &middot; Calculate &mdash; 100% in your browser</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><span class="stat-num">8</span><span class="stat-lbl">Formats</span></div>
-        <div class="hero-divider"></div>
-        <div class="hero-stat"><span class="stat-num">6</span><span class="stat-lbl">Tools</span></div>
-        <div class="hero-divider"></div>
-        <div class="hero-stat"><span class="stat-num">16</span><span class="stat-lbl">Calculators</span></div>
-        <div class="hero-divider"></div>
-        <div class="hero-stat"><span class="stat-num">0</span><span class="stat-lbl">Uploads</span></div>
+  <!-- ── Privacy Stripe ── -->
+  <div class="privacy-stripe" role="status">
+    <span class="ps-badge">&#128274; Private</span>
+    <span class="ps-text">No uploads &middot; No server &middot; No account &middot; Works offline</span>
+  </div>
+
+  <!-- ── Glass Screen ── -->
+  <div class="glass-screen">
+    <div class="panel-container">
+
+      <!-- ══════════ HOME PANEL ══════════ -->
+      <div class="glass-panel active" id="panel-home" data-panel="home">
+        <div class="hero-inner">
+
+          <div class="hero-logo-mark">&#9879;</div>
+          <h1 class="hero-app-name">KaruviLab</h1>
+          <p class="hero-tagline">Compress &middot; Convert &middot; Create &middot; Validate &middot; Calculate<br>&mdash; 100% in your browser</p>
+
+          <div class="stats-row">
+            <div class="stat-pill"><span class="stat-num" data-target="8">8</span><span class="stat-lbl">Formats</span></div>
+            <div class="stat-pill"><span class="stat-num" data-target="6">6</span><span class="stat-lbl">Tools</span></div>
+            <div class="stat-pill"><span class="stat-num" data-target="16">16</span><span class="stat-lbl">Calculators</span></div>
+            <div class="stat-pill stat-zero"><span class="stat-num">0</span><span class="stat-lbl">Uploads</span></div>
+          </div>
+
+          <button class="hero-cta" id="launch-btn" data-panel="compressor">&#9654; Launch Tool Free</button>
+
+          <div class="tool-grid">
+            <button class="tool-card" data-panel="compressor">
+              <span class="tool-card-icon">&#128230;</span>
+              <span class="tool-card-name">Compress</span>
+              <span class="tool-card-desc">Target &lt;100&nbsp;KB &middot; &lt;1&nbsp;MB PDF</span>
+            </button>
+            <button class="tool-card" data-panel="converter">
+              <span class="tool-card-icon">&#128260;</span>
+              <span class="tool-card-name">Convert</span>
+              <span class="tool-card-desc">8 image formats</span>
+            </button>
+            <button class="tool-card" data-panel="creator">
+              <span class="tool-card-icon">&#128247;</span>
+              <span class="tool-card-name">Create</span>
+              <span class="tool-card-desc">Resize &amp; passport photos</span>
+            </button>
+            <button class="tool-card" data-panel="pdf">
+              <span class="tool-card-icon">&#128196;</span>
+              <span class="tool-card-name">PDF</span>
+              <span class="tool-card-desc">Merge, split, convert</span>
+            </button>
+            <button class="tool-card" data-panel="validator">
+              <span class="tool-card-icon">&#9989;</span>
+              <span class="tool-card-name">Validate</span>
+              <span class="tool-card-desc">Check gov portals</span>
+            </button>
+            <button class="tool-card" data-panel="calculators">
+              <span class="tool-card-icon">&#129518;</span>
+              <span class="tool-card-name">Calc</span>
+              <span class="tool-card-desc">16 online calculators</span>
+            </button>
+          </div>
+
+        </div>
       </div>
-      <div class="hero-cta-row">
-        <a href="#app" class="hero-cta-btn hero-cta-primary">&#9654; Launch Tool Free</a>
-        <a href="pages/calculators.html" class="hero-cta-btn hero-cta-ghost">&#129518; Calculator Hub</a>
+
+      <!-- ══════════ COMPRESSOR ══════════ -->
+      <div class="glass-panel" id="panel-compressor" data-panel="compressor">
+        <div class="panel-header">
+          <h2>&#128230; File Compressor</h2>
+          <p class="hint">Compress images (target &le;100&nbsp;KB) or PDFs (target &le;1&nbsp;MB).</p>
+        </div>
+
+        <div class="upload-zone" id="compressor-drop">
+          <span class="upload-icon">&#128228;</span>
+          <p class="upload-main">Drag &amp; drop files here</p>
+          <p class="upload-or">or <label class="link" for="compressor-input">browse your device</label></p>
+          <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
+          <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
+        </div>
+
+        <div class="options-row">
+          <label class="opt-label">
+            <span class="opt-title">Target image size</span>
+            <div class="input-with-unit">
+              <input type="number" id="img-target-kb" value="100" min="10" max="2000" />
+              <span class="unit">KB</span>
+            </div>
+          </label>
+          <label class="opt-label">
+            <span class="opt-title">Max width</span>
+            <div class="input-with-unit">
+              <input type="number" id="img-max-width" value="1000" min="100" max="10000" />
+              <span class="unit">px</span>
+            </div>
+          </label>
+          <label class="opt-label">
+            <span class="opt-title">Target PDF size</span>
+            <div class="input-with-unit">
+              <input type="number" id="pdf-target-mb" value="1" min="0.1" max="10" step="0.1" />
+              <span class="unit">MB</span>
+            </div>
+          </label>
+        </div>
+
+        <div id="compressor-file-list" class="file-list"></div>
+        <div id="compressor-results" class="results-area"></div>
       </div>
-    </div>
-  </header>
 
-  <!-- ═══════════════════ FEATURES ═══════════════════ -->
-  <section class="lp-section lp-features-section" id="features">
-    <div class="lp-inner">
-      <div class="lp-head">
-        <h2>Everything you need, built into your browser</h2>
-        <p>No server. No account. No cost. Open the page and start — your files never leave your device.</p>
+      <!-- ══════════ CONVERTER ══════════ -->
+      <div class="glass-panel" id="panel-converter" data-panel="converter">
+        <div class="panel-header">
+          <h2>&#128260; Format Converter</h2>
+          <p class="hint">Convert between all 8 image formats and PDF.</p>
+        </div>
+
+        <div class="upload-zone" id="converter-drop">
+          <span class="upload-icon">&#128260;</span>
+          <p class="upload-main">Drag &amp; drop files here</p>
+          <p class="upload-or">or <label class="link" for="converter-input">browse your device</label></p>
+          <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
+          <input type="file" id="converter-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
+        </div>
+
+        <div class="options-row">
+          <label class="opt-label">
+            <span class="opt-title">Convert to</span>
+            <select id="convert-to-format" class="select-styled">
+              <optgroup label="Classic">
+                <option value="jpg">JPG / JPEG</option>
+                <option value="jfif">JFIF</option>
+                <option value="png">PNG</option>
+                <option value="gif">GIF</option>
+                <option value="bmp">BMP</option>
+                <option value="tiff">TIFF</option>
+              </optgroup>
+              <optgroup label="Modern">
+                <option value="webp">WebP ✦</option>
+                <option value="avif">AVIF ✦</option>
+              </optgroup>
+              <optgroup label="Document">
+                <option value="pdf">PDF</option>
+              </optgroup>
+            </select>
+          </label>
+          <label class="opt-label">
+            <span class="opt-title">Quality <span id="convert-quality-val" class="quality-pct">85%</span></span>
+            <input type="range" id="convert-quality" min="0.1" max="1" step="0.05" value="0.85" />
+          </label>
+        </div>
+        <p id="modern-fmt-note" class="fmt-note" style="display:none"></p>
+
+        <div id="converter-file-list" class="file-list"></div>
+        <button class="btn btn-primary" id="convert-btn" disabled>
+          <span>&#128260;</span> Convert Files
+        </button>
+        <div id="converter-results" class="results-area"></div>
       </div>
-      <div class="lp-features-grid">
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#128274;</span>
-          <h3>100% Private</h3>
-          <p>All processing happens locally using browser APIs. Zero uploads, zero tracking, zero data collection.</p>
-        </div>
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#128230;</span>
-          <h3>Compress Images &amp; PDFs</h3>
-          <p>Reduce image size to under 100 KB and PDFs to under 1 MB — perfect for government portal submissions.</p>
-        </div>
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#128260;</span>
-          <h3>8 Format Support</h3>
-          <p>Convert between JPG, PNG, GIF, WebP, AVIF, TIFF, BMP and HEIC. Read Apple HEIC photos in any browser.</p>
-        </div>
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#128247;</span>
-          <h3>Passport &amp; ID Photos</h3>
-          <p>Create government-spec passport photos, signatures and ID images with exact pixel dimensions.</p>
-        </div>
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#9989;</span>
-          <h3>Portal Validator</h3>
-          <p>Validate files against passport.gov.in, UIDAI, income tax and other portal requirements instantly.</p>
-        </div>
-        <div class="lp-feat-card">
-          <span class="lp-feat-icon">&#128241;</span>
-          <h3>Installable PWA</h3>
-          <p>Add to your home screen and use offline. Works like a native app on Android, iOS, Windows and Mac.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ═══════════════════ FORMAT SHOWCASE ═══════════════════ -->
-  <section class="formats-section">
-    <div class="formats-inner">
-      <h2 class="formats-heading">Supported Image Formats</h2>
-      <p class="formats-sub">All 8 major image types supported for reading. Export to 7 formats directly from your browser.</p>
-      <div class="formats-grid">
-
-        <div class="fmt-card" style="--fmt-color:#f97316">
-          <div class="fmt-badge" style="background:#fff3e0;color:#f97316">JPG</div>
-          <div class="fmt-body">
-            <p class="fmt-name">JPEG / JFIF</p>
-            <p class="fmt-exts">.jpg &middot; .jpeg &middot; .jfif</p>
-            <p class="fmt-desc">Standard photo format offering high compression with excellent quality.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span></div>
-          </div>
+      <!-- ══════════ IMAGE CREATOR ══════════ -->
+      <div class="glass-panel" id="panel-creator" data-panel="creator">
+        <div class="panel-header">
+          <h2>&#128247; Image Creator</h2>
+          <p class="hint">Create a new image or resize an existing one with a white/light background.</p>
         </div>
 
-        <div class="fmt-card" style="--fmt-color:#0ea5e9">
-          <div class="fmt-badge" style="background:#e0f2fe;color:#0ea5e9">PNG</div>
-          <div class="fmt-body">
-            <p class="fmt-name">Portable Network Graphics</p>
-            <p class="fmt-exts">.png</p>
-            <p class="fmt-desc">Popular for web graphics with transparency and lossless compression.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#8b5cf6">
-          <div class="fmt-badge" style="background:#f3e8ff;color:#8b5cf6">GIF</div>
-          <div class="fmt-body">
-            <p class="fmt-name">Graphics Interchange Format</p>
-            <p class="fmt-exts">.gif</p>
-            <p class="fmt-desc">Used for simple animated images and icons with 256-color palette.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#10b981">
-          <div class="fmt-badge" style="background:#d1fae5;color:#10b981">WebP</div>
-          <div class="fmt-body">
-            <p class="fmt-name">Web Picture Format</p>
-            <p class="fmt-exts">.webp</p>
-            <p class="fmt-desc">Modern format with superior lossy &amp; lossless compression for web images.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span><span class="sup-badge sup-modern">Modern</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#6366f1">
-          <div class="fmt-badge" style="background:#eef2ff;color:#6366f1">AVIF</div>
-          <div class="fmt-body">
-            <p class="fmt-name">AV1 Image File Format</p>
-            <p class="fmt-exts">.avif</p>
-            <p class="fmt-desc">Highly efficient, next-generation compression. Smaller than WebP.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span><span class="sup-badge sup-modern">Modern</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#f59e0b">
-          <div class="fmt-badge" style="background:#fffbeb;color:#f59e0b">TIFF</div>
-          <div class="fmt-body">
-            <p class="fmt-name">Tagged Image File Format</p>
-            <p class="fmt-exts">.tiff &middot; .tif</p>
-            <p class="fmt-desc">High-quality, print-ready images. Used by professionals &amp; scanners.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#64748b">
-          <div class="fmt-badge" style="background:#f1f5f9;color:#64748b">BMP</div>
-          <div class="fmt-body">
-            <p class="fmt-name">Windows Bitmap</p>
-            <p class="fmt-exts">.bmp</p>
-            <p class="fmt-desc">Uncompressed, high-quality Windows format. Large file sizes.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-write">Write</span></div>
-          </div>
-        </div>
-
-        <div class="fmt-card" style="--fmt-color:#ec4899">
-          <div class="fmt-badge" style="background:#fdf2f8;color:#ec4899">HEIC</div>
-          <div class="fmt-body">
-            <p class="fmt-name">High Efficiency Image Container</p>
-            <p class="fmt-exts">.heic &middot; .heif</p>
-            <p class="fmt-desc">Used by Apple devices. High quality with small file sizes.</p>
-            <div class="fmt-support"><span class="sup-badge sup-read">Read</span><span class="sup-badge sup-nowrite">Export: JPG</span></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════ MAIN APP ═══════════════════ -->
-  <main id="app">
-    <div class="app-card">
-
-      <!-- Tab Nav -->
-      <nav class="tab-nav" role="tablist">
-        <button class="tab-btn active" data-tab="compressor" role="tab">
-          <span class="tab-icon">&#128230;</span> Compressor
-        </button>
-        <button class="tab-btn" data-tab="converter" role="tab">
-          <span class="tab-icon">&#128260;</span> Converter
-        </button>
-        <button class="tab-btn" data-tab="creator" role="tab">
-          <span class="tab-icon">&#128247;</span> Creator
-        </button>
-        <button class="tab-btn" data-tab="pdf" role="tab">
-          <span class="tab-icon">&#128196;</span> PDF Tools
-        </button>
-        <button class="tab-btn" data-tab="validator" role="tab">
-          <span class="tab-icon">&#9989;</span> Validator
-        </button>
-        <button class="tab-btn" data-tab="calculators" role="tab">
-          <span class="tab-icon">&#129518;</span> Calculators
-        </button>
-      </nav>
-
-      <div class="panels-wrap">
-
-        <!-- ===== COMPRESSOR ===== -->
-        <section id="tab-compressor" class="tab-panel active">
-          <div class="panel-header">
-            <h2>File Compressor</h2>
-            <p class="hint">Compress images (target &le;100 KB) or PDFs (target &le;1 MB).</p>
-          </div>
-
-          <div class="upload-zone" id="compressor-drop">
-            <span class="upload-icon">&#128228;</span>
-            <p class="upload-main">Drag &amp; drop files here</p>
-            <p class="upload-or">or <label class="link" for="compressor-input">browse your device</label></p>
-            <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
-            <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
-          </div>
-
-          <div class="options-row">
-            <label class="opt-label">
-              <span class="opt-title">Target image size</span>
-              <div class="input-with-unit">
-                <input type="number" id="img-target-kb" value="100" min="10" max="2000" />
-                <span class="unit">KB</span>
-              </div>
-            </label>
-            <label class="opt-label">
-              <span class="opt-title">Max width</span>
-              <div class="input-with-unit">
-                <input type="number" id="img-max-width" value="1000" min="100" max="10000" />
-                <span class="unit">px</span>
-              </div>
-            </label>
-            <label class="opt-label">
-              <span class="opt-title">Target PDF size</span>
-              <div class="input-with-unit">
-                <input type="number" id="pdf-target-mb" value="1" min="0.1" max="10" step="0.1" />
-                <span class="unit">MB</span>
-              </div>
-            </label>
-          </div>
-
-          <div id="compressor-file-list" class="file-list"></div>
-          <div id="compressor-results" class="results-area"></div>
-        </section>
-
-        <!-- ===== CONVERTER ===== -->
-        <section id="tab-converter" class="tab-panel">
-          <div class="panel-header">
-            <h2>Format Converter</h2>
-            <p class="hint">Convert between all 8 image formats and PDF.</p>
-          </div>
-
-          <div class="upload-zone" id="converter-drop">
-            <span class="upload-icon">&#128260;</span>
-            <p class="upload-main">Drag &amp; drop files here</p>
-            <p class="upload-or">or <label class="link" for="converter-input">browse your device</label></p>
-            <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
-            <input type="file" id="converter-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
-          </div>
-
-          <div class="options-row">
-            <label class="opt-label">
-              <span class="opt-title">Convert to</span>
-              <select id="convert-to-format" class="select-styled">
-                <optgroup label="Classic">
-                  <option value="jpg">JPG / JPEG</option>
-                  <option value="jfif">JFIF</option>
-                  <option value="png">PNG</option>
-                  <option value="gif">GIF</option>
-                  <option value="bmp">BMP</option>
-                  <option value="tiff">TIFF</option>
-                </optgroup>
-                <optgroup label="Modern">
-                  <option value="webp">WebP ✦</option>
-                  <option value="avif">AVIF ✦</option>
-                </optgroup>
-                <optgroup label="Document">
-                  <option value="pdf">PDF</option>
-                </optgroup>
-              </select>
-            </label>
-            <label class="opt-label">
-              <span class="opt-title">Quality <span id="convert-quality-val" class="quality-pct">85%</span></span>
-              <input type="range" id="convert-quality" min="0.1" max="1" step="0.05" value="0.85" />
-            </label>
-          </div>
-          <p id="modern-fmt-note" class="fmt-note" style="display:none"></p>
-
-          <div id="converter-file-list" class="file-list"></div>
-          <button class="btn btn-primary" id="convert-btn" disabled>
-            <span>&#128260;</span> Convert Files
-          </button>
-          <div id="converter-results" class="results-area"></div>
-        </section>
-
-        <!-- ===== IMAGE CREATOR ===== -->
-        <section id="tab-creator" class="tab-panel">
-          <div class="panel-header">
-            <h2>Image Creator</h2>
-            <p class="hint">Create a new image or resize an existing one with a white/light background.</p>
-          </div>
-
-          <div class="two-col">
-            <div class="creator-controls">
-              <h3 class="section-sub">Document Presets</h3>
-              <div class="preset-grid">
-                <button class="preset-btn" data-w="200" data-h="230" data-label="Passport Photo">
-                  <span class="preset-icon">&#128100;</span>
-                  <span class="preset-name">Passport Photo</span>
-                  <span class="preset-dim">200 &times; 230 px</span>
-                </button>
-                <button class="preset-btn" data-w="140" data-h="60" data-label="Signature">
-                  <span class="preset-icon">&#9998;</span>
-                  <span class="preset-name">Signature</span>
-                  <span class="preset-dim">140 &times; 60 px</span>
-                </button>
-                <button class="preset-btn" data-w="200" data-h="200" data-label="Thumb Impression">
-                  <span class="preset-icon">&#128397;</span>
-                  <span class="preset-name">Thumb Print</span>
-                  <span class="preset-dim">200 &times; 200 px</span>
-                </button>
-                <button class="preset-btn" data-w="1000" data-h="700" data-label="ID Proof">
-                  <span class="preset-icon">&#128196;</span>
-                  <span class="preset-name">ID Proof</span>
-                  <span class="preset-dim">1000 &times; 700 px</span>
-                </button>
-              </div>
-
-              <h3 class="section-sub">Custom Dimensions</h3>
-              <div class="dim-quick-wrap">
-                <input type="text" id="create-dim-quick" placeholder="e.g. 578x385 or 1920x1080" class="dim-quick-input" />
-                <button class="btn btn-outline btn-small" id="create-dim-apply">Apply</button>
-              </div>
-              <p class="dim-quick-hint">Accepts: 578x385 &middot; 578×385 &middot; 578,385 &middot; 578*385</p>
-
-              <div class="options-row" style="margin-top:12px">
-                <label class="opt-label">
-                  <span class="opt-title">Width</span>
-                  <div class="input-with-unit">
-                    <input type="number" id="create-width" value="200" min="1" max="10000" />
-                    <span class="unit">px</span>
-                  </div>
-                </label>
-                <label class="opt-label">
-                  <span class="opt-title">Height</span>
-                  <div class="input-with-unit">
-                    <input type="number" id="create-height" value="230" min="1" max="10000" />
-                    <span class="unit">px</span>
-                  </div>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="create-lock-ratio" checked />
-                  <span>Lock ratio</span>
-                </label>
-              </div>
-
-              <div class="options-row">
-                <label class="opt-label">
-                  <span class="opt-title">Background</span>
-                  <select id="create-bg" class="select-styled">
-                    <option value="#ffffff">White</option>
-                    <option value="#f5f5f5">Light Gray</option>
-                    <option value="#fffde7">Light Yellow</option>
-                    <option value="#e8f5e9">Light Green</option>
-                  </select>
-                </label>
-                <label class="opt-label">
-                  <span class="opt-title">Output format</span>
-                  <select id="create-format" class="select-styled">
-                    <optgroup label="Classic">
-                      <option value="jpeg">JPG</option>
-                      <option value="png">PNG</option>
-                      <option value="gif">GIF</option>
-                      <option value="bmp">BMP</option>
-                      <option value="tiff">TIFF</option>
-                    </optgroup>
-                    <optgroup label="Modern">
-                      <option value="webp">WebP ✦</option>
-                      <option value="avif">AVIF ✦</option>
-                    </optgroup>
-                  </select>
-                </label>
-              </div>
-
-              <h3 class="section-sub">Upload Image to Resize</h3>
-              <div class="upload-zone small-zone" id="creator-drop">
-                <span class="upload-icon">&#128247;</span>
-                <p class="upload-or">Optional: <label class="link" for="creator-input">browse image</label></p>
-                <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC</p>
-                <input type="file" id="creator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" />
-              </div>
-
-              <button class="btn btn-primary" id="create-btn" style="margin-top:14px;width:100%">
-                <span>&#9654;</span> Create / Resize
+        <div class="two-col">
+          <div class="creator-controls">
+            <h3 class="section-sub">Document Presets</h3>
+            <div class="preset-grid">
+              <button class="preset-btn" data-w="200" data-h="230" data-label="Passport Photo">
+                <span class="preset-icon">&#128100;</span>
+                <span class="preset-name">Passport Photo</span>
+                <span class="preset-dim">200 &times; 230 px</span>
+              </button>
+              <button class="preset-btn" data-w="140" data-h="60" data-label="Signature">
+                <span class="preset-icon">&#9998;</span>
+                <span class="preset-name">Signature</span>
+                <span class="preset-dim">140 &times; 60 px</span>
+              </button>
+              <button class="preset-btn" data-w="200" data-h="200" data-label="Thumb Impression">
+                <span class="preset-icon">&#128397;</span>
+                <span class="preset-name">Thumb Print</span>
+                <span class="preset-dim">200 &times; 200 px</span>
+              </button>
+              <button class="preset-btn" data-w="1000" data-h="700" data-label="ID Proof">
+                <span class="preset-icon">&#128196;</span>
+                <span class="preset-name">ID Proof</span>
+                <span class="preset-dim">1000 &times; 700 px</span>
               </button>
             </div>
 
-            <div class="creator-preview">
-              <h3 class="section-sub">Preview</h3>
-              <div id="creator-preview-wrap" class="preview-wrap">
-                <canvas id="creator-canvas"></canvas>
-                <p id="creator-preview-hint" class="preview-hint">Preview will appear here</p>
-              </div>
-              <div id="creator-result" class="results-area"></div>
+            <h3 class="section-sub">Custom Dimensions</h3>
+            <div class="dim-quick-wrap">
+              <input type="text" id="create-dim-quick" placeholder="e.g. 578x385 or 1920x1080" class="dim-quick-input" />
+              <button class="btn btn-outline btn-small" id="create-dim-apply">Apply</button>
             </div>
-          </div>
-        </section>
+            <p class="dim-quick-hint">Accepts: 578x385 &middot; 578×385 &middot; 578,385 &middot; 578*385</p>
 
-        <!-- ===== PDF TOOLS ===== -->
-        <section id="tab-pdf" class="tab-panel">
-          <div class="panel-header">
-            <h2>PDF Tools</h2>
-          </div>
+            <div class="options-row" style="margin-top:12px">
+              <label class="opt-label">
+                <span class="opt-title">Width</span>
+                <div class="input-with-unit">
+                  <input type="number" id="create-width" value="200" min="1" max="10000" />
+                  <span class="unit">px</span>
+                </div>
+              </label>
+              <label class="opt-label">
+                <span class="opt-title">Height</span>
+                <div class="input-with-unit">
+                  <input type="number" id="create-height" value="230" min="1" max="10000" />
+                  <span class="unit">px</span>
+                </div>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="create-lock-ratio" checked />
+                <span>Lock ratio</span>
+              </label>
+            </div>
 
-          <div class="pdf-tool-tabs">
-            <button class="pdf-tab active" data-pdf-tab="img-to-pdf">&#128247; Images &rarr; PDF</button>
-            <button class="pdf-tab" data-pdf-tab="merge-pdf">&#128203; Merge PDFs</button>
-            <button class="pdf-tab" data-pdf-tab="pdf-compress">&#128230; Compress PDF</button>
-          </div>
+            <div class="options-row">
+              <label class="opt-label">
+                <span class="opt-title">Background</span>
+                <select id="create-bg" class="select-styled">
+                  <option value="#ffffff">White</option>
+                  <option value="#f5f5f5">Light Gray</option>
+                  <option value="#fffde7">Light Yellow</option>
+                  <option value="#e8f5e9">Light Green</option>
+                </select>
+              </label>
+              <label class="opt-label">
+                <span class="opt-title">Output format</span>
+                <select id="create-format" class="select-styled">
+                  <optgroup label="Classic">
+                    <option value="jpeg">JPG</option>
+                    <option value="png">PNG</option>
+                    <option value="gif">GIF</option>
+                    <option value="bmp">BMP</option>
+                    <option value="tiff">TIFF</option>
+                  </optgroup>
+                  <optgroup label="Modern">
+                    <option value="webp">WebP ✦</option>
+                    <option value="avif">AVIF ✦</option>
+                  </optgroup>
+                </select>
+              </label>
+            </div>
 
-          <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
-            <p class="hint">Combine one or more images into a single PDF.</p>
-            <div class="upload-zone" id="img-to-pdf-drop">
+            <h3 class="section-sub">Upload Image to Resize</h3>
+            <div class="upload-zone small-zone" id="creator-drop">
               <span class="upload-icon">&#128247;</span>
-              <p class="upload-main">Drag &amp; drop images here</p>
-              <p class="upload-or">or <label class="link" for="img-to-pdf-input">browse</label></p>
+              <p class="upload-or">Optional: <label class="link" for="creator-input">browse image</label></p>
               <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC</p>
-              <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" multiple />
+              <input type="file" id="creator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" />
             </div>
-            <div id="img-to-pdf-list" class="file-list"></div>
-            <div class="options-row">
-              <label class="opt-label">
-                <span class="opt-title">Page size</span>
-                <select id="pdf-page-size" class="select-styled">
-                  <option value="a4">A4</option>
-                  <option value="letter">Letter</option>
-                  <option value="fit">Fit to image</option>
-                </select>
-              </label>
-              <label class="opt-label">
-                <span class="opt-title">Orientation</span>
-                <select id="pdf-orientation" class="select-styled">
-                  <option value="portrait">Portrait</option>
-                  <option value="landscape">Landscape</option>
-                </select>
-              </label>
-            </div>
-            <button class="btn btn-primary" id="img-to-pdf-btn" disabled>&#128196; Create PDF</button>
-            <div id="img-to-pdf-result" class="results-area"></div>
+
+            <button class="btn btn-primary" id="create-btn" style="margin-top:14px;width:100%">
+              <span>&#9654;</span> Create / Resize
+            </button>
           </div>
 
-          <div id="pdf-tab-merge-pdf" class="pdf-panel">
-            <p class="hint">Merge multiple PDF files into one.</p>
-            <div class="upload-zone" id="merge-pdf-drop">
-              <span class="upload-icon">&#128203;</span>
-              <p class="upload-main">Drag &amp; drop PDFs here</p>
-              <p class="upload-or">or <label class="link" for="merge-pdf-input">browse</label></p>
-              <p class="upload-formats">PDF only</p>
-              <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
+          <div class="creator-preview">
+            <h3 class="section-sub">Preview</h3>
+            <div id="creator-preview-wrap" class="preview-wrap">
+              <canvas id="creator-canvas"></canvas>
+              <p id="creator-preview-hint" class="preview-hint">Preview will appear here</p>
             </div>
-            <div id="merge-pdf-list" class="file-list"></div>
-            <button class="btn btn-primary" id="merge-pdf-btn" disabled>&#128203; Merge PDFs</button>
-            <div id="merge-pdf-result" class="results-area"></div>
+            <div id="creator-result" class="results-area"></div>
           </div>
+        </div>
+      </div>
 
-          <div id="pdf-tab-pdf-compress" class="pdf-panel">
-            <p class="hint">Reduce PDF file size. Target: &le;1 MB.</p>
-            <div class="upload-zone" id="pdf-compress-drop">
-              <span class="upload-icon">&#128230;</span>
-              <p class="upload-main">Drag &amp; drop a PDF here</p>
-              <p class="upload-or">or <label class="link" for="pdf-compress-input">browse</label></p>
-              <input type="file" id="pdf-compress-input" accept=".pdf" />
-            </div>
-            <div id="pdf-compress-list" class="file-list"></div>
-            <div class="options-row">
-              <label class="opt-label" style="min-width:260px">
-                <span class="opt-title">Image quality inside PDF &nbsp;<span id="pdf-img-quality-val" class="quality-pct">60%</span></span>
-                <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
-              </label>
-            </div>
-            <button class="btn btn-primary" id="pdf-compress-btn" disabled>&#128230; Compress PDF</button>
-            <div id="pdf-compress-result" class="results-area"></div>
+      <!-- ══════════ PDF TOOLS ══════════ -->
+      <div class="glass-panel" id="panel-pdf" data-panel="pdf">
+        <div class="panel-header">
+          <h2>&#128196; PDF Tools</h2>
+        </div>
+
+        <div class="pdf-tool-tabs">
+          <button class="pdf-tab active" data-pdf-tab="img-to-pdf">&#128247; Images &rarr; PDF</button>
+          <button class="pdf-tab" data-pdf-tab="merge-pdf">&#128203; Merge PDFs</button>
+          <button class="pdf-tab" data-pdf-tab="pdf-compress">&#128230; Compress PDF</button>
+        </div>
+
+        <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
+          <p class="hint">Combine one or more images into a single PDF.</p>
+          <div class="upload-zone" id="img-to-pdf-drop">
+            <span class="upload-icon">&#128247;</span>
+            <p class="upload-main">Drag &amp; drop images here</p>
+            <p class="upload-or">or <label class="link" for="img-to-pdf-input">browse</label></p>
+            <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC</p>
+            <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" multiple />
           </div>
-        </section>
-
-        <!-- ===== VALIDATOR ===== -->
-        <section id="tab-validator" class="tab-panel">
-          <div class="panel-header">
-            <h2>File Validator</h2>
-            <p class="hint">Check if your file meets government portal requirements and auto-fix issues.</p>
-          </div>
-
-          <div class="upload-zone" id="validator-drop">
-            <span class="upload-icon">&#9989;</span>
-            <p class="upload-main">Drag &amp; drop your file here</p>
-            <p class="upload-or">or <label class="link" for="validator-input">browse your device</label></p>
-            <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
-            <input type="file" id="validator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" />
-          </div>
-
+          <div id="img-to-pdf-list" class="file-list"></div>
           <div class="options-row">
             <label class="opt-label">
-              <span class="opt-title">Document type</span>
-              <select id="validator-doc-type" class="select-styled">
-                <option value="general">General (any)</option>
-                <option value="passport_photo">Passport Photo</option>
-                <option value="signature">Signature</option>
-                <option value="id_proof">ID Proof</option>
-                <option value="thumb_impression">Thumb Impression</option>
+              <span class="opt-title">Page size</span>
+              <select id="pdf-page-size" class="select-styled">
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+                <option value="fit">Fit to image</option>
+              </select>
+            </label>
+            <label class="opt-label">
+              <span class="opt-title">Orientation</span>
+              <select id="pdf-orientation" class="select-styled">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
               </select>
             </label>
           </div>
-
-          <div id="validator-result" class="results-area"></div>
-
-          <details class="rules-details">
-            <summary>View validation rules</summary>
-            <div class="rules-table-wrap">
-              <table class="rules-table">
-                <thead><tr><th>Document</th><th>Format</th><th>Size</th><th>Dimensions</th><th>Background</th></tr></thead>
-                <tbody>
-                  <tr><td>Passport Photo</td><td>JPG/JPEG</td><td>10–200 KB</td><td>200&times;230 px</td><td>White/Light</td></tr>
-                  <tr><td>Signature</td><td>JPG/JPEG</td><td>4–50 KB</td><td>140&times;60 px</td><td>White</td></tr>
-                  <tr><td>ID Proof</td><td>JPG/PNG/PDF</td><td>100–1000 KB</td><td>—</td><td>—</td></tr>
-                  <tr><td>Thumb Impression</td><td>JPG</td><td>10–50 KB</td><td>—</td><td>—</td></tr>
-                  <tr><td>General</td><td>All formats</td><td>—</td><td>max 1000 px wide</td><td>—</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </details>
-        </section>
-
-        <!-- ===== CALCULATORS ===== -->
-        <section id="tab-calculators" class="tab-panel">
-          <div class="panel-header">
-            <h2>Calculator Hub</h2>
-            <p class="hint">16 free calculators — SIP, EMI, GST, compound interest, age, currency and unit conversions.</p>
-          </div>
-          <div class="calc-frame-wrap">
-            <iframe
-              src="pages/calculators.html"
-              title="Calculator Hub — 16 free online calculators"
-              loading="lazy"
-              class="calc-frame"
-            ></iframe>
-          </div>
-        </section>
-
-      </div><!-- /panels-wrap -->
-    </div><!-- /app-card -->
-  </main>
-
-  <!-- ═══════════════════ PRICING ═══════════════════ -->
-  <section class="lp-section lp-pricing-section" id="pricing">
-    <div class="lp-inner">
-      <div class="lp-head">
-        <h2>Simple, transparent pricing</h2>
-        <p>Every feature is free. No hidden tiers, no expiry, no credit card.</p>
-      </div>
-      <div class="pricing-cards">
-
-        <div class="pricing-card pricing-free">
-          <div class="pricing-badge">Free Forever</div>
-          <div class="pricing-price">&#8377;0 <span>/ always</span></div>
-          <p class="pricing-tagline">Everything you need, at zero cost</p>
-          <ul class="pricing-features">
-            <li>&#10003; Image Compressor (target &lt; 100 KB)</li>
-            <li>&#10003; PDF Compressor (target &lt; 1 MB)</li>
-            <li>&#10003; Format Converter — 8 formats</li>
-            <li>&#10003; Image Creator &amp; resizer</li>
-            <li>&#10003; Passport / signature tools</li>
-            <li>&#10003; PDF merge, split &amp; convert</li>
-            <li>&#10003; Government portal validator</li>
-            <li>&#10003; 16 online calculators</li>
-            <li>&#10003; Offline / PWA support</li>
-            <li>&#10003; No uploads &middot; No account</li>
-          </ul>
-          <a href="#app" class="btn-pricing">Start Free Now &#8594;</a>
+          <button class="btn btn-primary" id="img-to-pdf-btn" disabled>&#128196; Create PDF</button>
+          <div id="img-to-pdf-result" class="results-area"></div>
         </div>
 
-        <div class="pricing-card pricing-donate">
-          <div class="pricing-badge pricing-badge-gold">Support the Project</div>
-          <div class="pricing-price">Your choice <span>/ one-time</span></div>
-          <p class="pricing-tagline">Keep the tool free for everyone</p>
-          <ul class="pricing-features">
-            <li>&#9733; Same features as the free tier</li>
-            <li>&#9733; Help us cover hosting &amp; domain costs</li>
-            <li>&#9733; Support future features &amp; calculators</li>
-            <li>&#9733; Our sincere thanks</li>
-          </ul>
-          <a href="mailto:wanderseven@proton.me?subject=Donation" class="btn-pricing btn-pricing-outline">Get in Touch &#9993;</a>
+        <div id="pdf-tab-merge-pdf" class="pdf-panel">
+          <p class="hint">Merge multiple PDF files into one.</p>
+          <div class="upload-zone" id="merge-pdf-drop">
+            <span class="upload-icon">&#128203;</span>
+            <p class="upload-main">Drag &amp; drop PDFs here</p>
+            <p class="upload-or">or <label class="link" for="merge-pdf-input">browse</label></p>
+            <p class="upload-formats">PDF only</p>
+            <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
+          </div>
+          <div id="merge-pdf-list" class="file-list"></div>
+          <button class="btn btn-primary" id="merge-pdf-btn" disabled>&#128203; Merge PDFs</button>
+          <div id="merge-pdf-result" class="results-area"></div>
         </div>
 
+        <div id="pdf-tab-pdf-compress" class="pdf-panel">
+          <p class="hint">Reduce PDF file size. Target: &le;1&nbsp;MB.</p>
+          <div class="upload-zone" id="pdf-compress-drop">
+            <span class="upload-icon">&#128230;</span>
+            <p class="upload-main">Drag &amp; drop a PDF here</p>
+            <p class="upload-or">or <label class="link" for="pdf-compress-input">browse</label></p>
+            <input type="file" id="pdf-compress-input" accept=".pdf" />
+          </div>
+          <div id="pdf-compress-list" class="file-list"></div>
+          <div class="options-row">
+            <label class="opt-label" style="min-width:260px">
+              <span class="opt-title">Image quality inside PDF &nbsp;<span id="pdf-img-quality-val" class="quality-pct">60%</span></span>
+              <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
+            </label>
+          </div>
+          <button class="btn btn-primary" id="pdf-compress-btn" disabled>&#128230; Compress PDF</button>
+          <div id="pdf-compress-result" class="results-area"></div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ═══════════════════ FAQ ═══════════════════ -->
-  <section class="lp-section lp-faq-section" id="faq">
-    <div class="lp-inner lp-inner-narrow">
-      <div class="lp-head">
-        <h2>Frequently asked questions</h2>
-        <p>Everything you need to know before you start.</p>
+      <!-- ══════════ VALIDATOR ══════════ -->
+      <div class="glass-panel" id="panel-validator" data-panel="validator">
+        <div class="panel-header">
+          <h2>&#9989; File Validator</h2>
+          <p class="hint">Check if your file meets government portal requirements and auto-fix issues.</p>
+        </div>
+
+        <div class="upload-zone" id="validator-drop">
+          <span class="upload-icon">&#9989;</span>
+          <p class="upload-main">Drag &amp; drop your file here</p>
+          <p class="upload-or">or <label class="link" for="validator-input">browse your device</label></p>
+          <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
+          <input type="file" id="validator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" />
+        </div>
+
+        <div class="options-row">
+          <label class="opt-label">
+            <span class="opt-title">Document type</span>
+            <select id="validator-doc-type" class="select-styled">
+              <option value="general">General (any)</option>
+              <option value="passport_photo">Passport Photo</option>
+              <option value="signature">Signature</option>
+              <option value="id_proof">ID Proof</option>
+              <option value="thumb_impression">Thumb Impression</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="validator-result" class="results-area"></div>
+
+        <details class="rules-details">
+          <summary>View validation rules</summary>
+          <div class="rules-table-wrap">
+            <table class="rules-table">
+              <thead><tr><th>Document</th><th>Format</th><th>Size</th><th>Dimensions</th><th>Background</th></tr></thead>
+              <tbody>
+                <tr><td>Passport Photo</td><td>JPG/JPEG</td><td>10–200 KB</td><td>200&times;230 px</td><td>White/Light</td></tr>
+                <tr><td>Signature</td><td>JPG/JPEG</td><td>4–50 KB</td><td>140&times;60 px</td><td>White</td></tr>
+                <tr><td>ID Proof</td><td>JPG/PNG/PDF</td><td>100–1000 KB</td><td>—</td><td>—</td></tr>
+                <tr><td>Thumb Impression</td><td>JPG</td><td>10–50 KB</td><td>—</td><td>—</td></tr>
+                <tr><td>General</td><td>All formats</td><td>—</td><td>max 1000 px wide</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
       </div>
-      <div class="faq-list">
 
-        <details class="faq-item-lp">
-          <summary>Is the tool completely free?</summary>
-          <p>Yes — 100% free, forever. No subscription, no sign-up, no limits. Every feature listed on this page is available at no cost.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>Are my files safe and private?</summary>
-          <p>Absolutely. All image and PDF processing runs entirely inside your browser using JavaScript. Your files are never sent to any server — they stay on your device the entire time.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>Does it work offline?</summary>
-          <p>Yes. Install the tool via the "Add to Home Screen" prompt (Android/Chrome) or the install icon in your browser's address bar. Once installed, the full tool works without an internet connection.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>Which browsers are supported?</summary>
-          <p>Chrome 90+, Edge 90+, Firefox 90+, and Safari 15+. WebP and AVIF export require Chrome/Edge 90+ or Firefox 65+. HEIC reading works in all modern browsers via the heic2any library.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>What is the maximum file size I can process?</summary>
-          <p>There is no hard limit imposed by the tool — the practical limit is your device's available RAM. Very large files (over 50 MB) may be slow on lower-end devices.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>Will compressed images pass government portal uploads?</summary>
-          <p>The tool implements known portal requirements as of April 2026, but government portals can change their rules at any time. Always verify the current requirements on the official portal before your final submission. Use the Validator tab to check compliance.</p>
-        </details>
-
-        <details class="faq-item-lp">
-          <summary>Which calculators are included?</summary>
-          <p>16 calculators across four categories: Financial (SIP, Compound Interest, EMI, GST, Discount, Currency), Date &amp; Time (Age, Date, Time, Global Clock), Math (Standard, Percentage, Numeral), and Conversions (Data Storage, Temperature, Speed).</p>
-        </details>
-
+      <!-- ══════════ CALCULATORS ══════════ -->
+      <div class="glass-panel" id="panel-calculators" data-panel="calculators">
+        <div class="panel-header">
+          <h2>&#129518; Calculator Hub</h2>
+          <p class="hint">16 free calculators — SIP, EMI, GST, compound interest, age, currency and unit conversions.</p>
+        </div>
+        <div class="calc-frame-wrap">
+          <iframe
+            src="pages/calculators.html"
+            title="Calculator Hub — 16 free online calculators"
+            loading="lazy"
+            class="calc-frame"
+          ></iframe>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ═══════════════════ FINAL CTA ═══════════════════ -->
-  <section class="lp-cta-section">
-    <div class="lp-inner">
-      <h2>Ready to prepare your files?</h2>
-      <p>No sign-up. No upload. No cost. Just drag, drop and download.</p>
-      <div class="lp-cta-btns">
-        <a href="#app" class="hero-cta-btn hero-cta-primary">&#9654; Start Free Now</a>
-        <a href="#faq" class="hero-cta-btn hero-cta-ghost">Have questions? &#8595;</a>
-      </div>
-    </div>
-  </section>
+    </div><!-- /panel-container -->
+  </div><!-- /glass-screen -->
 
-  <!-- ═══════════════════ FOOTER ═══════════════════ -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <p class="footer-logo">&#9879; KaruviLab</p>
-      <p class="footer-note">All processing is done locally in your browser. No files are ever uploaded to any server.</p>
-      <div class="footer-tags">
-        <span>JPG</span><span>PNG</span><span>GIF</span><span>WebP</span>
-        <span>AVIF</span><span>TIFF</span><span>BMP</span><span>HEIC</span><span>PDF</span>
+  <!-- ── Bottom Dock ── -->
+  <nav class="glass-dock" id="dock" aria-label="Tool navigation">
+    <button class="dock-btn active" data-panel="home" aria-label="Home">
+      <span class="dock-icon">&#9879;</span>
+      <span class="dock-lbl">Home</span>
+    </button>
+    <button class="dock-btn" data-panel="compressor" aria-label="Compressor">
+      <span class="dock-icon">&#128230;</span>
+      <span class="dock-lbl">Compress</span>
+    </button>
+    <button class="dock-btn" data-panel="converter" aria-label="Converter">
+      <span class="dock-icon">&#128260;</span>
+      <span class="dock-lbl">Convert</span>
+    </button>
+    <button class="dock-btn" data-panel="creator" aria-label="Image Creator">
+      <span class="dock-icon">&#128247;</span>
+      <span class="dock-lbl">Create</span>
+    </button>
+    <button class="dock-btn" data-panel="pdf" aria-label="PDF Tools">
+      <span class="dock-icon">&#128196;</span>
+      <span class="dock-lbl">PDF</span>
+    </button>
+    <button class="dock-btn" data-panel="validator" aria-label="Validator">
+      <span class="dock-icon">&#9989;</span>
+      <span class="dock-lbl">Validate</span>
+    </button>
+    <button class="dock-btn" data-panel="calculators" aria-label="Calculators">
+      <span class="dock-icon">&#129518;</span>
+      <span class="dock-lbl">Calc</span>
+    </button>
+    <button class="dock-btn dock-faq" id="faq-open-btn" aria-label="FAQ and Info">
+      <span class="dock-icon">&#63;</span>
+      <span class="dock-lbl">FAQ</span>
+    </button>
+  </nav>
+
+  <!-- ── FAQ Overlay ── -->
+  <div class="faq-overlay hidden" id="faq-overlay" role="dialog" aria-modal="true" aria-label="FAQ and Info">
+    <div class="faq-sheet">
+      <div class="faq-drag-handle"></div>
+      <div class="faq-sheet-header">
+        <h2>FAQ &amp; Info</h2>
+        <button class="faq-close" id="faq-close-btn" aria-label="Close">&#10005;</button>
       </div>
-      <nav class="footer-nav" style="margin-top:18px">
-        <a href="pages/calculators.html">&#129518; Calculators</a>
-        <a href="pages/about.html">About Us</a>
-        <a href="pages/contact.html">Contact Us</a>
-        <a href="pages/privacy.html">Privacy Policy</a>
-        <a href="pages/terms.html">Terms &amp; Conditions</a>
-        <a href="pages/disclaimer.html">Disclaimer</a>
-      </nav>
-      <div class="footer-brand">
-        <p>&copy; 2026 <strong>KaruviLab</strong> by R Gowtham. All rights reserved.</p>
-        <p>
+
+      <details class="faq-item" open>
+        <summary>Are my files safe and private?</summary>
+        <p>All image and PDF processing runs entirely inside your browser using JavaScript. Your files are never sent to any server — they stay on your device the entire time.</p>
+      </details>
+      <details class="faq-item" open>
+        <summary>Does it work offline?</summary>
+        <p>Yes. Install the tool via the "Add to Home Screen" prompt on Android/Chrome or the install icon in your browser's address bar. Once installed, the full tool works without an internet connection.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is it free to use?</summary>
+        <p>Yes — no payment, no sign-up, no limits. Every feature is available at no cost.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Which browsers are supported?</summary>
+        <p>Chrome 90+, Edge 90+, Firefox 90+, and Safari 15+. WebP and AVIF export require Chrome/Edge 90+ or Firefox 65+. HEIC reading works in all modern browsers via the heic2any library.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is the maximum file size I can process?</summary>
+        <p>There is no hard limit imposed by the tool — the practical limit is your device's available RAM. Very large files (over 50 MB) may be slow on lower-end devices.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Will compressed images pass government portal uploads?</summary>
+        <p>The tool implements known portal requirements as of April 2026. Government portals can change their rules at any time — always verify on the official portal before submission. Use the Validate tool to check compliance.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Which calculators are included?</summary>
+        <p>16 calculators: Financial (SIP, Compound Interest, EMI, GST, Discount, Currency), Date &amp; Time (Age, Date, Time, World Clock), Math (Standard, Percentage, Numeral), Conversions (Storage, Temperature, Speed).</p>
+      </details>
+
+      <div class="faq-footer">
+        <div class="faq-fmt-row">
+          <span>JPG</span><span>PNG</span><span>GIF</span><span>WebP</span>
+          <span>AVIF</span><span>TIFF</span><span>BMP</span><span>HEIC</span><span>PDF</span>
+        </div>
+        <nav class="faq-nav">
+          <a href="pages/calculators.html" target="_blank" rel="noopener">&#129518; Calculators</a>
+          <a href="pages/about.html" target="_blank" rel="noopener">About Us</a>
+          <a href="pages/contact.html" target="_blank" rel="noopener">Contact</a>
+          <a href="pages/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+          <a href="pages/terms.html" target="_blank" rel="noopener">Terms</a>
+          <a href="pages/disclaimer.html" target="_blank" rel="noopener">Disclaimer</a>
+        </nav>
+        <p class="faq-copy">&copy; 2026 KaruviLab by R Gowtham. All rights reserved.</p>
+        <p class="faq-contact">
           <a href="mailto:wanderseven@proton.me">&#9993; wanderseven@proton.me</a>
           &ensp;&middot;&ensp;
           <a href="https://wanderseven.com" target="_blank" rel="noopener">&#127760; wanderseven.com</a>
         </p>
       </div>
     </div>
-  </footer>
+  </div>
 
   <!-- ── CDN Libraries ── -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -728,34 +567,6 @@
   <script src="js/image-tools.js"></script>
   <script src="js/pdf-tools.js"></script>
   <script src="js/app.js"></script>
-
-  <!-- ── Mobile Bottom Navigation ── -->
-  <nav class="mobile-bnav" id="mobile-bnav" aria-label="Tool navigation">
-    <button class="bnav-btn active" data-tab="compressor" aria-label="Compressor">
-      <span class="bnav-icon">&#128230;</span>
-      <span class="bnav-lbl">Compress</span>
-    </button>
-    <button class="bnav-btn" data-tab="converter" aria-label="Converter">
-      <span class="bnav-icon">&#128260;</span>
-      <span class="bnav-lbl">Convert</span>
-    </button>
-    <button class="bnav-btn" data-tab="creator" aria-label="Image Creator">
-      <span class="bnav-icon">&#128247;</span>
-      <span class="bnav-lbl">Create</span>
-    </button>
-    <button class="bnav-btn" data-tab="pdf" aria-label="PDF Tools">
-      <span class="bnav-icon">&#128196;</span>
-      <span class="bnav-lbl">PDF</span>
-    </button>
-    <button class="bnav-btn" data-tab="validator" aria-label="Validator">
-      <span class="bnav-icon">&#9989;</span>
-      <span class="bnav-lbl">Validate</span>
-    </button>
-    <button class="bnav-btn" data-tab="calculators" aria-label="Calculators">
-      <span class="bnav-icon">&#129518;</span>
-      <span class="bnav-lbl">Calc</span>
-    </button>
-  </nav>
 
   <!-- ── PWA Service Worker ── -->
   <script>

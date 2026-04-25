@@ -1,42 +1,93 @@
-/* ===== app.js – UI wiring ===== */
+/* ===== app.js – KaruviLab Glass Dashboard ===== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── Tab switching helper ────────────────────────────────────
-  function switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
-    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  // ══════════════════════════════════════════════════════
+  //  PANEL NAVIGATION
+  // ══════════════════════════════════════════════════════
+  let activePanel = 'home';
+
+  function showPanel(panelId) {
+    if (panelId === activePanel) return;
+    const prev = document.querySelector('.glass-panel.active');
+    if (prev) prev.classList.remove('active');
+    const next = document.getElementById('panel-' + panelId);
+    if (next) next.classList.add('active');
+    document.querySelectorAll('.dock-btn[data-panel]').forEach(b => {
+      b.classList.toggle('active', b.dataset.panel === panelId);
+    });
+    activePanel = panelId;
   }
 
-  // ── Tab navigation (top bar) ────────────────────────────────
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  // Dock buttons
+  document.querySelectorAll('.dock-btn[data-panel]').forEach(btn => {
+    btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
-  // ── Mobile bottom nav ───────────────────────────────────────
-  const bnav = document.getElementById('mobile-bnav');
-  if (bnav) {
-    bnav.querySelectorAll('.bnav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        switchTab(btn.dataset.tab);
-        const app = document.getElementById('app');
-        if (app) app.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
+  // Hero launch button
+  document.getElementById('launch-btn')?.addEventListener('click', () => showPanel('compressor'));
+
+  // Tool grid cards on home panel
+  document.querySelectorAll('.tool-card[data-panel]').forEach(card => {
+    card.addEventListener('click', () => showPanel(card.dataset.panel));
+  });
+
+  // ══════════════════════════════════════════════════════
+  //  FAQ OVERLAY
+  // ══════════════════════════════════════════════════════
+  const faqOverlay = document.getElementById('faq-overlay');
+  const faqOpenBtn = document.getElementById('faq-open-btn');
+  const faqCloseBtn = document.getElementById('faq-close-btn');
+
+  function openFaq() {
+    faqOverlay?.classList.remove('hidden');
+    faqOpenBtn?.classList.add('active');
+  }
+  function closeFaq() {
+    faqOverlay?.classList.add('hidden');
+    faqOpenBtn?.classList.remove('active');
   }
 
-  // ── PDF sub-tabs ────────────────────────────────────────────
+  faqOpenBtn?.addEventListener('click', openFaq);
+  faqCloseBtn?.addEventListener('click', closeFaq);
+  faqOverlay?.addEventListener('click', e => { if (e.target === faqOverlay) closeFaq(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFaq(); });
+
+  // ══════════════════════════════════════════════════════
+  //  COUNT-UP ANIMATION (hero stats)
+  // ══════════════════════════════════════════════════════
+  function countUp(el, target, duration) {
+    const start = performance.now();
+    const tick = now => {
+      const p = Math.min((now - start) / duration, 1);
+      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  setTimeout(() => {
+    document.querySelectorAll('#panel-home .stat-num[data-target]').forEach(el => {
+      const t = parseInt(el.dataset.target, 10);
+      if (t > 0) countUp(el, t, 900);
+    });
+  }, 350);
+
+  // ══════════════════════════════════════════════════════
+  //  PDF SUB-TABS
+  // ══════════════════════════════════════════════════════
   document.querySelectorAll('.pdf-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.pdf-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.pdf-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('pdf-tab-' + btn.dataset.pdfTab).classList.add('active');
+      document.getElementById('pdf-tab-' + btn.dataset.pdfTab)?.classList.add('active');
     });
   });
 
-  // ── Drop zone factory ───────────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  //  DROP ZONE FACTORY
+  // ══════════════════════════════════════════════════════
   function setupDropZone(zoneId, inputId, fileListId, onFilesAdded) {
     const zone  = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
@@ -91,7 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Quality sliders ─────────────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  //  QUALITY SLIDERS
+  // ══════════════════════════════════════════════════════
   function bindSlider(sliderId, valId) {
     const s = document.getElementById(sliderId);
     const v = document.getElementById(valId);
@@ -103,21 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
   bindSlider('convert-quality', 'convert-quality-val');
   bindSlider('pdf-img-quality', 'pdf-img-quality-val');
 
-  // ── Copy to clipboard helper ────────────────────────────────
+  // ══════════════════════════════════════════════════════
+  //  CLIPBOARD HELPERS
+  // ══════════════════════════════════════════════════════
   async function copyBlobToClipboard(blob) {
     if (!navigator.clipboard || !window.ClipboardItem) return false;
     try {
-      const item = new ClipboardItem({ [blob.type]: blob });
-      await navigator.clipboard.write([item]);
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
       return true;
     } catch { return false; }
-  }
-
-  function clipboardBtn(blob) {
-    if (!navigator.clipboard || !window.ClipboardItem) return '';
-    const isPng = blob.type === 'image/png';
-    if (!isPng) return '';
-    return `<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>`;
   }
 
   function attachClipboardBtns(container, getBlob) {
@@ -132,26 +179,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  COMPRESSOR
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => {});
-  document.getElementById('compressor-drop').addEventListener('drop',   () => setTimeout(runCompressor, 120));
-  document.getElementById('compressor-input').addEventListener('change',() => setTimeout(runCompressor, 120));
+  document.getElementById('compressor-drop')?.addEventListener('drop',    () => setTimeout(runCompressor, 120));
+  document.getElementById('compressor-input')?.addEventListener('change', () => setTimeout(runCompressor, 120));
   ['img-target-kb','img-max-width','pdf-target-mb'].forEach(id =>
-    document.getElementById(id).addEventListener('change', runCompressor)
+    document.getElementById(id)?.addEventListener('change', runCompressor)
   );
 
   async function runCompressor() {
     const resultsEl = document.getElementById('compressor-results');
     if (!compressorFiles.length) { resultsEl.innerHTML = ''; return; }
     resultsEl.innerHTML = processingMsg(`Processing ${compressorFiles.length} file(s)…`);
-
     const targetKB = Number(document.getElementById('img-target-kb').value) || 100;
     const maxWidth = Number(document.getElementById('img-max-width').value)  || 1000;
     const resultBlobs = [];
     let html = '';
-
     for (const file of compressorFiles) {
       try {
         if (/\.pdf$/i.test(file.name)) {
@@ -170,21 +215,21 @@ document.addEventListener('DOMContentLoaded', () => {
     attachClipboardBtns(resultsEl, i => resultBlobs[i]);
   }
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  CONVERTER
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   const converterFiles = setupDropZone('converter-drop','converter-input','converter-file-list', files => {
     document.getElementById('convert-btn').disabled = files.length === 0;
   });
 
   const fmtNoteEl = document.getElementById('modern-fmt-note');
-  document.getElementById('convert-to-format').addEventListener('change', function () {
+  document.getElementById('convert-to-format')?.addEventListener('change', function () {
     if (['webp','avif'].includes(this.value)) {
       fmtNoteEl.style.display = '';
-      fmtNoteEl.textContent = `✦ ${this.value.toUpperCase()} is a modern format supported in Chrome 80+, Firefox 93+, Safari 16+. Falls back to JPG if your browser canvas does not support it.`;
+      fmtNoteEl.textContent = `✦ ${this.value.toUpperCase()} is a modern format. Supported in Chrome 80+, Firefox 93+, Safari 16+. Falls back to JPG if the browser canvas does not support it.`;
     } else if (this.value === 'tiff') {
       fmtNoteEl.style.display = '';
-      fmtNoteEl.textContent = 'TIFF files are large and uncompressed. Best for print / archival use.';
+      fmtNoteEl.textContent = 'TIFF files are large and uncompressed. Best for print/archival use.';
     } else if (this.value === 'bmp') {
       fmtNoteEl.style.display = '';
       fmtNoteEl.textContent = 'BMP files are uncompressed. Expect very large file sizes.';
@@ -193,13 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('convert-btn').addEventListener('click', async () => {
+  document.getElementById('convert-btn')?.addEventListener('click', async () => {
     const resultsEl = document.getElementById('converter-results');
     if (!converterFiles.length) return;
     const targetFmt = document.getElementById('convert-to-format').value;
     const quality   = Number(document.getElementById('convert-quality').value);
     resultsEl.innerHTML = processingMsg('Converting…');
-
     const resultBlobs = [];
     let html = '';
     for (const file of converterFiles) {
@@ -226,9 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
     attachClipboardBtns(resultsEl, i => resultBlobs[i]);
   });
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  IMAGE CREATOR
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   let creatorSrcFile = null;
   let creatorAspect  = null;
   const widthInput  = document.getElementById('create-width');
@@ -245,30 +289,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  widthInput.addEventListener('input', () => {
+  widthInput?.addEventListener('input', () => {
     if (lockRatio.checked && creatorAspect) heightInput.value = Math.round(widthInput.value / creatorAspect);
     else creatorAspect = widthInput.value / heightInput.value;
   });
-  heightInput.addEventListener('input', () => {
+  heightInput?.addEventListener('input', () => {
     if (lockRatio.checked && creatorAspect) widthInput.value = Math.round(heightInput.value * creatorAspect);
     else creatorAspect = widthInput.value / heightInput.value;
   });
-  lockRatio.addEventListener('change', () => {
+  lockRatio?.addEventListener('change', () => {
     if (lockRatio.checked) creatorAspect = widthInput.value / heightInput.value;
   });
 
-  // Quick dim input
-  document.getElementById('create-dim-apply').addEventListener('click', applyQuickDim);
-  document.getElementById('create-dim-quick').addEventListener('keydown', e => { if (e.key === 'Enter') applyQuickDim(); });
+  document.getElementById('create-dim-apply')?.addEventListener('click', applyQuickDim);
+  document.getElementById('create-dim-quick')?.addEventListener('keydown', e => { if (e.key === 'Enter') applyQuickDim(); });
   function applyQuickDim() {
-    const raw = document.getElementById('create-dim-quick').value.trim();
-    const m = raw.match(/^(\d+)\s*[xX×*,\s]\s*(\d+)$/);
     const inp = document.getElementById('create-dim-quick');
+    const m = inp.value.trim().match(/^(\d+)\s*[xX×*,\s]\s*(\d+)$/);
     if (m) {
       const w = parseInt(m[1]), h = parseInt(m[2]);
       if (w > 0 && h > 0 && w <= 10000 && h <= 10000) {
-        widthInput.value = w; heightInput.value = h;
-        creatorAspect = w / h;
+        widthInput.value = w; heightInput.value = h; creatorAspect = w / h;
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
         inp.style.borderColor = 'var(--success)';
         setTimeout(() => inp.style.borderColor = '', 1200);
@@ -279,20 +320,27 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => inp.style.borderColor = '', 1200);
   }
 
-  // Creator upload zone
   const creatorZone  = document.getElementById('creator-drop');
   const creatorInput = document.getElementById('creator-input');
-  creatorZone.addEventListener('click', e => { if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') creatorInput.click(); });
-  ['dragenter','dragover'].forEach(ev => creatorZone.addEventListener(ev, e => { e.preventDefault(); creatorZone.classList.add('drag-over'); }));
-  ['dragleave','drop'].forEach(ev => creatorZone.addEventListener(ev, e => { e.preventDefault(); creatorZone.classList.remove('drag-over'); }));
-  creatorZone.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) setCreatorFile(f); });
-  creatorInput.addEventListener('change', () => { if (creatorInput.files[0]) setCreatorFile(creatorInput.files[0]); creatorInput.value = ''; });
+  creatorZone?.addEventListener('click', e => {
+    if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') creatorInput.click();
+  });
+  ['dragenter','dragover'].forEach(ev =>
+    creatorZone?.addEventListener(ev, e => { e.preventDefault(); creatorZone.classList.add('drag-over'); })
+  );
+  ['dragleave','drop'].forEach(ev =>
+    creatorZone?.addEventListener(ev, e => { e.preventDefault(); creatorZone.classList.remove('drag-over'); })
+  );
+  creatorZone?.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) setCreatorFile(f); });
+  creatorInput?.addEventListener('change', () => { if (creatorInput.files[0]) setCreatorFile(creatorInput.files[0]); creatorInput.value = ''; });
+
   function setCreatorFile(f) {
     creatorSrcFile = f;
-    creatorZone.querySelector('.upload-or').innerHTML = `Loaded: <strong>${Utils.escHtml(f.name)}</strong> · <label class="link" for="creator-input">change</label>`;
+    const p = creatorZone?.querySelector('.upload-or');
+    if (p) p.innerHTML = `Loaded: <strong>${Utils.escHtml(f.name)}</strong> · <label class="link" for="creator-input">change</label>`;
   }
 
-  document.getElementById('create-btn').addEventListener('click', async () => {
+  document.getElementById('create-btn')?.addEventListener('click', async () => {
     const resultEl = document.getElementById('creator-result');
     const canvasEl = document.getElementById('creator-canvas');
     const hintEl   = document.getElementById('creator-preview-hint');
@@ -305,13 +353,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const { blob, canvas: c, fmtKey, fallback } = await ImageTools.create({
         width: w, height: h, bg, format: fmt, srcFile: creatorSrcFile, lockRatio: lockRatio.checked
       });
-
       const ctx = canvasEl.getContext('2d');
       canvasEl.width = c.width; canvasEl.height = c.height;
       ctx.drawImage(c, 0, 0);
       canvasEl.style.display = 'block';
-      hintEl.style.display   = 'none';
-
+      hintEl.style.display = 'none';
       const ext = fmtKey === 'jpeg' ? 'jpg' : fmtKey;
       const filename = `created_${w}x${h}.${ext}`;
       const url = URL.createObjectURL(blob);
@@ -336,13 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { resultEl.innerHTML = errorCard('Create', err.message); }
   });
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  PDF – Images → PDF
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   const imgToPdfFiles = setupDropZone('img-to-pdf-drop','img-to-pdf-input','img-to-pdf-list', files => {
     document.getElementById('img-to-pdf-btn').disabled = files.length === 0;
   });
-  document.getElementById('img-to-pdf-btn').addEventListener('click', async () => {
+  document.getElementById('img-to-pdf-btn')?.addEventListener('click', async () => {
     const resultEl = document.getElementById('img-to-pdf-result');
     resultEl.innerHTML = processingMsg('Building PDF…');
     try {
@@ -354,13 +400,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { resultEl.innerHTML = errorCard('PDF Creation', err.message); }
   });
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  PDF – Merge
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   const mergePdfFiles = setupDropZone('merge-pdf-drop','merge-pdf-input','merge-pdf-list', files => {
     document.getElementById('merge-pdf-btn').disabled = files.length < 2;
   });
-  document.getElementById('merge-pdf-btn').addEventListener('click', async () => {
+  document.getElementById('merge-pdf-btn')?.addEventListener('click', async () => {
     const resultEl = document.getElementById('merge-pdf-result');
     resultEl.innerHTML = processingMsg('Merging PDFs…');
     try {
@@ -370,33 +416,47 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { resultEl.innerHTML = errorCard('PDF Merge', err.message); }
   });
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  PDF – Compress
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   let pdfCompressFile = null;
   const pdfCompressDrop  = document.getElementById('pdf-compress-drop');
   const pdfCompressInput = document.getElementById('pdf-compress-input');
   const pdfCompressBtn   = document.getElementById('pdf-compress-btn');
 
-  pdfCompressDrop.addEventListener('click', e => { if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') pdfCompressInput.click(); });
-  ['dragenter','dragover'].forEach(ev => pdfCompressDrop.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.add('drag-over'); }));
-  ['dragleave','drop'].forEach(ev => pdfCompressDrop.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.remove('drag-over'); }));
-  pdfCompressDrop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f && /\.pdf$/i.test(f.name)) setPdfFile(f); });
-  pdfCompressInput.addEventListener('change', () => { if (pdfCompressInput.files[0]) setPdfFile(pdfCompressInput.files[0]); pdfCompressInput.value = ''; });
+  pdfCompressDrop?.addEventListener('click', e => {
+    if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') pdfCompressInput.click();
+  });
+  ['dragenter','dragover'].forEach(ev =>
+    pdfCompressDrop?.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.add('drag-over'); })
+  );
+  ['dragleave','drop'].forEach(ev =>
+    pdfCompressDrop?.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.remove('drag-over'); })
+  );
+  pdfCompressDrop?.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0];
+    if (f && /\.pdf$/i.test(f.name)) setPdfFile(f);
+  });
+  pdfCompressInput?.addEventListener('change', () => {
+    if (pdfCompressInput.files[0]) setPdfFile(pdfCompressInput.files[0]);
+    pdfCompressInput.value = '';
+  });
 
   function setPdfFile(f) {
     pdfCompressFile = f;
     document.getElementById('pdf-compress-list').innerHTML = `
       <div class="file-item">
         <span class="file-icon">&#128196;</span>
-        <div class="file-info"><div class="file-name">${Utils.escHtml(f.name)}</div>
-          <div class="file-meta">${Utils.formatBytes(f.size)}</div></div>
+        <div class="file-info">
+          <div class="file-name">${Utils.escHtml(f.name)}</div>
+          <div class="file-meta">${Utils.formatBytes(f.size)}</div>
+        </div>
         <span class="file-fmt-badge" style="background:#fecaca;color:#b91c1c">PDF</span>
       </div>`;
     pdfCompressBtn.disabled = false;
   }
 
-  pdfCompressBtn.addEventListener('click', async () => {
+  pdfCompressBtn?.addEventListener('click', async () => {
     if (!pdfCompressFile) return;
     const resultEl = document.getElementById('pdf-compress-result');
     const quality  = Number(document.getElementById('pdf-img-quality').value);
@@ -408,10 +468,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const dot  = pdfCompressFile.name.lastIndexOf('.');
       const base = dot > 0 ? pdfCompressFile.name.slice(0, dot) : pdfCompressFile.name;
       const filename = base + '_compressed.pdf';
-      const url = URL.createObjectURL(blob);
+      const url  = URL.createObjectURL(blob);
       const saved = pdfCompressFile.size - blob.size;
-      const cls = blob.size < pdfCompressFile.size ? 'success' : 'warn';
-      const badge = blob.size < pdfCompressFile.size ? '<span class="status-badge badge-success">Compressed</span>' : '<span class="status-badge badge-warn">Processed</span>';
+      const cls   = blob.size < pdfCompressFile.size ? 'success' : 'warn';
+      const badge = blob.size < pdfCompressFile.size
+        ? '<span class="status-badge badge-success">Compressed</span>'
+        : '<span class="status-badge badge-warn">Processed</span>';
       resultEl.innerHTML = `
         <div class="result-card ${cls}">
           <div class="result-header"><h4>${Utils.escHtml(filename)}</h4>${badge}</div>
@@ -424,19 +486,25 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { resultEl.innerHTML = errorCard('PDF Compression', err.message); }
   });
 
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   //  VALIDATOR
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
   let validatorFile = null;
   const validatorDrop  = document.getElementById('validator-drop');
   const validatorInput = document.getElementById('validator-input');
 
-  validatorDrop.addEventListener('click', e => { if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') validatorInput.click(); });
-  ['dragenter','dragover'].forEach(ev => validatorDrop.addEventListener(ev, e => { e.preventDefault(); validatorDrop.classList.add('drag-over'); }));
-  ['dragleave','drop'].forEach(ev => validatorDrop.addEventListener(ev, e => { e.preventDefault(); validatorDrop.classList.remove('drag-over'); }));
-  validatorDrop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) runValidator(f); });
-  validatorInput.addEventListener('change', () => { if (validatorInput.files[0]) runValidator(validatorInput.files[0]); validatorInput.value = ''; });
-  document.getElementById('validator-doc-type').addEventListener('change', () => { if (validatorFile) runValidator(validatorFile); });
+  validatorDrop?.addEventListener('click', e => {
+    if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') validatorInput.click();
+  });
+  ['dragenter','dragover'].forEach(ev =>
+    validatorDrop?.addEventListener(ev, e => { e.preventDefault(); validatorDrop.classList.add('drag-over'); })
+  );
+  ['dragleave','drop'].forEach(ev =>
+    validatorDrop?.addEventListener(ev, e => { e.preventDefault(); validatorDrop.classList.remove('drag-over'); })
+  );
+  validatorDrop?.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) runValidator(f); });
+  validatorInput?.addEventListener('change', () => { if (validatorInput.files[0]) runValidator(validatorInput.files[0]); validatorInput.value = ''; });
+  document.getElementById('validator-doc-type')?.addEventListener('change', () => { if (validatorFile) runValidator(validatorFile); });
 
   async function runValidator(file) {
     validatorFile = file;
@@ -482,9 +550,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) { resultEl.innerHTML = errorCard(file.name, err.message); }
   }
 
-  // ════════════════════════════════════════════════════════════
-  //  Shared helpers
-  // ════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════
+  //  SHARED HELPERS
+  // ══════════════════════════════════════════════════════
   function buildResultCard(origFile, blob, verb, kind, targetFmt, extraNote = '') {
     const rawExt = targetFmt || (kind === 'pdf' ? 'pdf' : Utils.getExt(origFile.name));
     const extOut = rawExt === 'jpeg' ? 'jpg' : rawExt;
@@ -495,16 +563,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const base = dot > 0 ? origFile.name.slice(0, dot) : origFile.name;
           return `${base}_${verb}.${extOut}`;
         })();
-
     const url   = URL.createObjectURL(blob);
     const saved = origFile.size - blob.size;
     const savedStr = saved > 0 ? `· saved ${Utils.formatBytes(saved)}` : '';
     const color = FormatUtils.colorFor(extOut);
-
-    const previewHtml = kind === 'img'
-      ? `<img src="${url}" class="preview-thumb" alt="preview" />`
-      : '';
-
+    const previewHtml = kind === 'img' ? `<img src="${url}" class="preview-thumb" alt="preview" />` : '';
     return `<div class="result-card success">
       <div class="result-header">
         <h4>${Utils.escHtml(newName)}</h4>
@@ -550,5 +613,4 @@ document.addEventListener('DOMContentLoaded', () => {
     return `<div class="processing-msg">${Utils.spinnerHTML()} ${Utils.escHtml(msg)}</div>`;
   }
 
-  function attachDownloads() {}  // hook for future use
 });
