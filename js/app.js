@@ -24,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
-  // Hero launch button
-  document.getElementById('launch-btn')?.addEventListener('click', () => showPanel('compressor'));
-
   // Tool grid cards on home panel
   document.querySelectorAll('.tool-card[data-panel]').forEach(card => {
     card.addEventListener('click', () => showPanel(card.dataset.panel));
@@ -52,26 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
   faqCloseBtn?.addEventListener('click', closeFaq);
   faqOverlay?.addEventListener('click', e => { if (e.target === faqOverlay) closeFaq(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFaq(); });
-
-  // ══════════════════════════════════════════════════════
-  //  COUNT-UP ANIMATION (hero stats)
-  // ══════════════════════════════════════════════════════
-  function countUp(el, target, duration) {
-    const start = performance.now();
-    const tick = now => {
-      const p = Math.min((now - start) / duration, 1);
-      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
-  setTimeout(() => {
-    document.querySelectorAll('#panel-home .stat-num[data-target]').forEach(el => {
-      const t = parseInt(el.dataset.target, 10);
-      if (t > 0) countUp(el, t, 900);
-    });
-  }, 350);
 
   // ══════════════════════════════════════════════════════
   //  PDF SUB-TABS
