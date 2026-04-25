@@ -444,6 +444,12 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 .size-bar-fill { height: 100%; border-radius: 3px; background: var(--primary); }
 .size-bar-fill.smaller { background: var(--success); }
 .size-bar-value { font-size: .71rem; color: var(--text-2); width: 58px; }
+/* sizeBars() utility classes (size-bar-wrap / fill-ok / fill-warn / fill-bad) */
+.size-bar-wrap { margin: 8px 0; }
+.size-bar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.size-bar-fill.fill-ok   { background: var(--success); }
+.size-bar-fill.fill-warn { background: var(--warn); }
+.size-bar-fill.fill-bad  { background: var(--error); }
 
 /* Processing */
 .processing-msg { display: flex; align-items: center; gap: 10px; padding: 14px; font-size: .84rem; color: var(--text-2); background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border); }

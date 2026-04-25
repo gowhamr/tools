@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="download-row">
             <a class="btn btn-success btn-small" href="${url}" download="${filename}">&#11015; Download</a>
-            ${blob.type === 'image/png' ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
+            ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
           </div>
         </div>`;
       attachClipboardBtns(resultEl, () => blob);
@@ -558,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="download-row">
         <a class="btn btn-success btn-small" href="${url}" download="${Utils.escHtml(newName)}">&#11015; Download</a>
-        ${blob.type === 'image/png' ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
+        ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
       </div>
     </div>`;
   }

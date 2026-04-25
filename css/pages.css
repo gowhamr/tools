@@ -1,4 +1,65 @@
-/* ===== pages.css – shared styles for About/Contact/Privacy/Terms/Disclaimer ===== */
+/* ===== pages.css – shared styles for About/Contact/Privacy/Terms/Disclaimer/Calculators ===== */
+
+/* ── Design tokens ── */
+:root {
+  --primary:       #2563EB;
+  --primary-dark:  #1D4ED8;
+  --primary-light: #EFF6FF;
+  --success:       #10b981;
+  --error:         #ef4444;
+  --warn:          #f59e0b;
+  --text:          #0f172a;
+  --text-2:        #475569;
+  --text-3:        #64748b;
+  --border:        #e2e8f0;
+  --bg-card:       #ffffff;
+  --bg-input:      #f8fafc;
+  --radius-sm:     6px;
+  --radius:        12px;
+  --radius-lg:     18px;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,.08);
+  --shadow:        0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:     0 12px 40px rgba(0,0,0,.12);
+  --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  color: var(--text);
+  background: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--primary); }
+
+/* ── Hero header ── */
+.hero {
+  background: linear-gradient(135deg, #020818 0%, #0c1840 40%, #1e3a8a 100%);
+  color: #fff;
+}
+.hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.hero-title {
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 8px;
+  letter-spacing: -.02em;
+}
+.hero-sub {
+  font-size: .9rem;
+  color: rgba(255,255,255,.72);
+  margin: 0;
+  line-height: 1.5;
+}
 
 .hero-sm { padding: 40px 20px 36px; }
 .hero-sm .hero-title { font-size: clamp(1.5rem, 4vw, 2.2rem); }

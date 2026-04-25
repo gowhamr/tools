@@ -88,7 +88,7 @@ const Validator = (() => {
     }
 
     // 4. Dimensions (images only)
-    if (!ext.includes('pdf')) {
+    if (ext !== 'pdf') {
       try {
         const dataUrl = await Utils.readAsDataURL(file);
         const img = await Utils.loadImage(dataUrl);
