@@ -197,14 +197,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
+  //  COMPRESSOR SLIDERS
+  // ══════════════════════════════════════════════════════
+  [
+    ['img-target-kb',  'img-target-kb-val',  v => v + ' KB'],
+    ['img-max-width',  'img-max-width-val',  v => v + ' px'],
+    ['pdf-target-mb',  'pdf-target-mb-val',  v => parseFloat(v).toFixed(1) + ' MB'],
+  ].forEach(([sliderId, valId, fmt]) => {
+    const slider = document.getElementById(sliderId);
+    const valEl  = document.getElementById(valId);
+    if (!slider || !valEl) return;
+    const upd = () => { valEl.textContent = fmt(slider.value); };
+    slider.addEventListener('input', upd);
+    slider.addEventListener('change', runCompressor);
+    upd();
+  });
+
+  // ══════════════════════════════════════════════════════
   //  COMPRESSOR
   // ══════════════════════════════════════════════════════
-  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => {});
+  const compressBtn = document.getElementById('compress-btn');
+
+  function syncCompressBtn() {
+    if (compressBtn) compressBtn.disabled = compressorFiles.length === 0;
+  }
+
+  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => { syncCompressBtn(); });
   document.getElementById('compressor-drop')?.addEventListener('drop',    () => setTimeout(runCompressor, 120));
   document.getElementById('compressor-input')?.addEventListener('change', () => setTimeout(runCompressor, 120));
-  ['img-target-kb','img-max-width','pdf-target-mb'].forEach(id =>
-    document.getElementById(id)?.addEventListener('change', runCompressor)
-  );
+  compressBtn?.addEventListener('click', runCompressor);
 
   async function runCompressor() {
     const resultsEl = document.getElementById('compressor-results');
