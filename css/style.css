@@ -842,6 +842,216 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 .calc-open-full:active { transform: scale(.98); }
 
 /* ════════════════════════════════════════════════════
+   DEVELOPER TOOLS — shared
+   ════════════════════════════════════════════════════ */
+.tool-tabs {
+  display: flex;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  gap: 4px;
+}
+.tool-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.tool-tab.active {
+  background: #fff;
+  color: var(--blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.tool-section { margin-bottom: 12px; }
+.tool-label {
+  display: block;
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.tool-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+  color: var(--text-1);
+  background: var(--surface);
+  resize: vertical;
+  outline: none;
+  transition: border-color .15s;
+}
+.tool-textarea:focus { border-color: var(--blue); }
+.fmt-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.fmt-btn {
+  padding: 9px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.fmt-btn:hover { border-color: var(--blue); color: var(--blue); }
+.fmt-btn-primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #6D28D9 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79,70,229,.3);
+}
+.fmt-btn-primary:hover { box-shadow: 0 6px 16px rgba(79,70,229,.4); color: #fff; }
+.tool-output-wrap {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.tool-output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-2);
+  background: var(--bg);
+}
+.tool-output-label {
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-3);
+}
+.tool-copy-btn {
+  padding: 4px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--blue);
+  cursor: pointer;
+  transition: background .15s;
+}
+.tool-copy-btn:hover { background: var(--blue-light); }
+.tool-copy-btn.copied { color: #059669; border-color: #059669; }
+.tool-output { border: none; border-radius: 0; background: var(--surface); }
+.fmt-pre {
+  margin: 0;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: .75rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text-1);
+  max-height: 340px;
+  overflow-y: auto;
+}
+.tool-error {
+  font-size: .78rem;
+  color: #DC2626;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 4px;
+}
+
+/* ── Regex specific ── */
+.regex-preset-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.regex-preset-chip {
+  padding: 5px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.regex-preset-chip:hover,
+.regex-preset-chip.active {
+  border-color: #DB2777;
+  color: #DB2777;
+  background: #FCE7F3;
+}
+.regex-pattern-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+.regex-pattern-row:focus-within { border-color: var(--blue); }
+.regex-slash { font-family: monospace; font-size: 1.1rem; color: var(--text-3); }
+.regex-pattern-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  color: var(--text-1);
+  outline: none;
+  min-width: 0;
+}
+.regex-flags { display: flex; gap: 10px; }
+.regex-flag-lbl {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.regex-highlighted {
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: .78rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text-1);
+  max-height: 260px;
+  overflow-y: auto;
+}
+.regex-highlighted mark {
+  background: #FDE68A;
+  color: #92400E;
+  border-radius: 3px;
+  padding: 1px 2px;
+}
+
+/* ════════════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
