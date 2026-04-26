@@ -89,13 +89,34 @@
         <circle cx="12" cy="12" r="10"/>
         <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/>
       </symbol>
+      <!-- Bolt / Workspace -->
+      <symbol id="ic-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </symbol>
+      <!-- Apps grid / Tools -->
+      <symbol id="ic-apps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </symbol>
     </defs>
   </svg>
 
-  <header class="top-stripe" role="status">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-    <span class="ts-badge">Private</span>
-    <span class="ts-text">No uploads &middot; No server &middot; Works offline</span>
+  <header class="top-stripe" role="banner">
+    <div class="ts-brand">
+      <div class="ts-logo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M9 3h6M10 3v6l-4 9a1 1 0 00.92 1.4h10.16A1 1 0 0018 18l-4-9V3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ts-brand-text">
+        <span class="ts-name">KaruviLab</span>
+        <span class="ts-tagline">Fast &middot; Private &middot; No uploads</span>
+      </div>
+    </div>
+    <span class="ts-badge">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Private
+    </span>
   </header>
 
   <!-- ── Viewport ── -->
@@ -106,50 +127,67 @@
       <div class="panel" id="panel-home" data-panel="home">
         <div class="home-wrap">
 
-          <div class="home-brand">
-            <div class="brand-mark">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M9 3h6M10 3v6l-4 9a1 1 0 00.92 1.4h10.16A1 1 0 0018 18l-4-9V3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="10.5" cy="15.5" r=".8" fill="#93c5fd"/>
-                <circle cx="13.5" cy="13" r=".6" fill="#93c5fd"/>
-              </svg>
-            </div>
-            <div class="brand-text">
-              <p class="brand-name">KaruviLab</p>
-              <p class="brand-sub">Image &amp; PDF tools &middot; 100% private</p>
-            </div>
+          <div class="home-hero">
+            <h1 class="home-hero-title">What will you create today?</h1>
+            <p class="home-hero-sub">Compress, convert &amp; validate — all in your browser.</p>
           </div>
 
-          <div class="home-privacy">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            <span class="home-privacy-text">No uploads &middot; No server &middot; Works offline</span>
+          <!-- Workspace input card -->
+          <div class="workspace-card">
+            <textarea class="workspace-input" id="workspace-input" placeholder="Paste text, URL or describe what you need…" rows="3"></textarea>
+            <button class="workspace-cta" id="workspace-start-btn">
+              <svg width="16" height="16"><use href="#ic-bolt"/></svg>
+              Start Working
+            </button>
           </div>
 
-          <p class="sec-label">Tools</p>
-          <div class="shortcuts">
-            <button class="sc" data-panel="compressor">
-              <span class="sc-circle" style="--c:#EFF6FF;--f:#2563EB"><svg><use href="#ic-compress"/></svg></span>
-              <span class="sc-name">Compress</span>
+          <p class="cat-label" id="file-tools-label">File Tools</p>
+          <div class="cat-grid" id="file-tools-grid">
+            <button class="cat-btn" data-panel="compressor">
+              <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg><use href="#ic-compress"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Compress</span>
+                <span class="cat-btn-desc">JPG, PNG, PDF</span>
+              </span>
             </button>
-            <button class="sc" data-panel="converter">
-              <span class="sc-circle" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
-              <span class="sc-name">Convert</span>
+            <button class="cat-btn" data-panel="converter">
+              <span class="cat-icon" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Convert</span>
+                <span class="cat-btn-desc">8 formats + PDF</span>
+              </span>
             </button>
-            <button class="sc" data-panel="creator">
-              <span class="sc-circle" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
-              <span class="sc-name">Create</span>
+            <button class="cat-btn" data-panel="creator">
+              <span class="cat-icon" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Create</span>
+                <span class="cat-btn-desc">Passport, banner</span>
+              </span>
             </button>
-            <button class="sc" data-panel="pdf">
-              <span class="sc-circle" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
-              <span class="sc-name">PDF</span>
+            <button class="cat-btn" data-panel="pdf">
+              <span class="cat-icon" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">PDF Tools</span>
+                <span class="cat-btn-desc">Merge, split, watermark</span>
+              </span>
             </button>
-            <button class="sc" data-panel="validator">
-              <span class="sc-circle" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
-              <span class="sc-name">Validate</span>
+          </div>
+
+          <p class="cat-label">Utilities</p>
+          <div class="cat-grid">
+            <button class="cat-btn" data-panel="validator">
+              <span class="cat-icon" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Validate</span>
+                <span class="cat-btn-desc">Portal requirements</span>
+              </span>
             </button>
-            <button class="sc" data-panel="calculators">
-              <span class="sc-circle" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
-              <span class="sc-name">Calc</span>
+            <button class="cat-btn" data-panel="calculators">
+              <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Calculators</span>
+                <span class="cat-btn-desc">16 financial tools</span>
+              </span>
             </button>
           </div>
 
@@ -173,33 +211,39 @@
           <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
         </div>
 
-        <div class="options-row">
-          <label class="opt-label">
-            <span class="opt-title">Target image size</span>
-            <div class="input-with-unit">
-              <input type="number" id="img-target-kb" value="100" min="10" max="2000" />
-              <span class="unit">KB</span>
+        <div class="slider-group">
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Image target size</span>
+              <span class="slider-val" id="img-target-kb-val">100 KB</span>
             </div>
-          </label>
-          <label class="opt-label">
-            <span class="opt-title">Max width</span>
-            <div class="input-with-unit">
-              <input type="number" id="img-max-width" value="1000" min="100" max="10000" />
-              <span class="unit">px</span>
+            <input type="range" id="img-target-kb" min="10" max="500" step="10" value="100" />
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Max width</span>
+              <span class="slider-val" id="img-max-width-val">1000 px</span>
             </div>
-          </label>
-          <label class="opt-label">
-            <span class="opt-title">Target PDF size</span>
-            <div class="input-with-unit">
-              <input type="number" id="pdf-target-mb" value="1" min="0.1" max="10" step="0.1" />
-              <span class="unit">MB</span>
+            <input type="range" id="img-max-width" min="200" max="4000" step="100" value="1000" />
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">PDF target size</span>
+              <span class="slider-val" id="pdf-target-mb-val">1.0 MB</span>
             </div>
-          </label>
+            <input type="range" id="pdf-target-mb" min="0.5" max="10" step="0.5" value="1" />
+          </div>
         </div>
 
         <div id="compressor-file-list" class="file-list"></div>
         <div id="compressor-results" class="results-area"></div>
         </div><!-- /panel-scroll -->
+        <div class="panel-cta-bar">
+          <button class="panel-cta-btn" id="compress-btn" disabled>
+            <svg width="18" height="18"><use href="#ic-compress"/></svg>
+            Compress Now
+          </button>
+        </div>
       </div>
 
       <!-- ══════════ CONVERTER ══════════ -->
@@ -516,19 +560,39 @@
           <span class="nav-title">Calculators</span>
         </div>
         <div class="panel-scroll">
-        <div class="panel-header">
-          <p class="hint">16 free calculators — SIP, EMI, GST, compound interest, age, currency and unit conversions.</p>
-        </div>
-        <a href="pages/calculators.html" class="calc-open-btn" target="_blank" rel="noopener">
-          <span class="calc-open-icon">&#129518;</span>
-          <span class="calc-open-title">16 Online Calculators</span>
-          <span class="calc-open-desc">
-            SIP &middot; EMI &middot; GST &middot; Compound Interest &middot; Discount &middot; Currency<br>
-            Age &middot; Date &middot; Time &middot; World Clock &middot; Percentage &middot; Numeral<br>
-            Data Storage &middot; Temperature &middot; Speed &middot; Standard
-          </span>
-          <span class="calc-open-cta">&#9654; Open Calculator Hub</span>
-        </a>
+          <div class="calc-hero">
+            <span class="calc-hero-icon">&#129518;</span>
+            <div>
+              <p class="calc-hero-title">16 Free Calculators</p>
+              <p class="calc-hero-sub">Financial &middot; Date &amp; Time &middot; Math &middot; Conversions</p>
+            </div>
+          </div>
+          <div class="calc-category-grid">
+            <a href="pages/calculators.html" class="calc-category-card" target="_blank" rel="noopener">
+              <span class="calc-cat-icon">&#128176;</span>
+              <span class="calc-cat-name">Financial</span>
+              <span class="calc-cat-items">SIP &middot; EMI &middot; GST<br>Interest &middot; Discount &middot; Currency</span>
+            </a>
+            <a href="pages/calculators.html" class="calc-category-card" target="_blank" rel="noopener">
+              <span class="calc-cat-icon">&#128197;</span>
+              <span class="calc-cat-name">Date &amp; Time</span>
+              <span class="calc-cat-items">Age &middot; Date &middot; Time<br>World Clock</span>
+            </a>
+            <a href="pages/calculators.html" class="calc-category-card" target="_blank" rel="noopener">
+              <span class="calc-cat-icon">&#128290;</span>
+              <span class="calc-cat-name">Math</span>
+              <span class="calc-cat-items">Standard &middot; Percentage<br>Numeral System</span>
+            </a>
+            <a href="pages/calculators.html" class="calc-category-card" target="_blank" rel="noopener">
+              <span class="calc-cat-icon">&#128207;</span>
+              <span class="calc-cat-name">Conversions</span>
+              <span class="calc-cat-items">Storage &middot; Temperature<br>Speed</span>
+            </a>
+          </div>
+          <a href="pages/calculators.html" class="calc-open-full" target="_blank" rel="noopener">
+            Open Calculator Hub
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div><!-- /panel-scroll -->
       </div>
 
@@ -536,39 +600,22 @@
   </div><!-- /viewport -->
 
   <!-- ── Bottom Dock ── -->
-  <!-- ── Bottom Dock ── -->
   <nav class="dock" id="dock" aria-label="Tool navigation">
-    <button class="dock-btn active" data-panel="home" aria-label="Home">
+    <button class="dock-btn active" data-dock="home" aria-label="Home">
       <svg class="dock-icon"><use href="#ic-home"/></svg>
       <span class="dock-lbl">Home</span>
     </button>
-    <button class="dock-btn" data-panel="compressor" aria-label="Compressor">
-      <svg class="dock-icon"><use href="#ic-compress"/></svg>
-      <span class="dock-lbl">Compress</span>
+    <button class="dock-btn" data-dock="tools" aria-label="Tools">
+      <svg class="dock-icon"><use href="#ic-apps"/></svg>
+      <span class="dock-lbl">Tools</span>
     </button>
-    <button class="dock-btn" data-panel="converter" aria-label="Converter">
-      <svg class="dock-icon"><use href="#ic-convert"/></svg>
-      <span class="dock-lbl">Convert</span>
+    <button class="dock-btn" data-dock="workspace" aria-label="Workspace">
+      <svg class="dock-icon"><use href="#ic-bolt"/></svg>
+      <span class="dock-lbl">Workspace</span>
     </button>
-    <button class="dock-btn" data-panel="creator" aria-label="Image Creator">
-      <svg class="dock-icon"><use href="#ic-create"/></svg>
-      <span class="dock-lbl">Create</span>
-    </button>
-    <button class="dock-btn" data-panel="pdf" aria-label="PDF Tools">
-      <svg class="dock-icon"><use href="#ic-pdf"/></svg>
-      <span class="dock-lbl">PDF</span>
-    </button>
-    <button class="dock-btn" data-panel="validator" aria-label="Validator">
-      <svg class="dock-icon"><use href="#ic-validate"/></svg>
-      <span class="dock-lbl">Validate</span>
-    </button>
-    <button class="dock-btn" data-panel="calculators" aria-label="Calculators">
-      <svg class="dock-icon"><use href="#ic-calc"/></svg>
-      <span class="dock-lbl">Calc</span>
-    </button>
-    <button class="dock-btn dock-faq" id="faq-open-btn" aria-label="FAQ and Info">
+    <button class="dock-btn" id="more-open-btn" data-dock="more" aria-label="More">
       <svg class="dock-icon"><use href="#ic-faq"/></svg>
-      <span class="dock-lbl">FAQ</span>
+      <span class="dock-lbl">More</span>
     </button>
   </nav>
 

@@ -8,38 +8,60 @@ document.addEventListener('DOMContentLoaded', () => {
   let activePanel = 'home';
   const homePanel = document.getElementById('panel-home');
 
+  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators'];
+
+  function setDockActive(dockId) {
+    document.querySelectorAll('.dock-btn[data-dock]').forEach(b => {
+      b.classList.toggle('active', b.dataset.dock === dockId);
+    });
+  }
+
   function showPanel(panelId) {
     if (panelId === activePanel) return;
-
-    // Deactivate current tool panel (if any)
     const prev = document.querySelector('.panel.active');
     if (prev) prev.classList.remove('active');
-
     if (panelId === 'home') {
-      // Slide home back in from left
       homePanel?.classList.remove('pushed');
+      setDockActive('home');
     } else {
-      // Push home left, slide new panel in from right
       homePanel?.classList.add('pushed');
       const next = document.getElementById('panel-' + panelId);
       if (next) next.classList.add('active');
+      setDockActive('tools');
     }
-
-    // Update dock highlight
-    document.querySelectorAll('.dock-btn[data-panel]').forEach(b => {
-      b.classList.toggle('active', b.dataset.panel === panelId);
-    });
     activePanel = panelId;
   }
 
-  // Dock buttons
-  document.querySelectorAll('.dock-btn[data-panel]').forEach(btn => {
-    btn.addEventListener('click', () => showPanel(btn.dataset.panel));
+  // 4-tab dock
+  document.querySelectorAll('.dock-btn[data-dock]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dockId = btn.dataset.dock;
+      if (dockId === 'home') {
+        showPanel('home');
+        homePanel?.querySelector('.panel-scroll, .home-wrap')?.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (dockId === 'tools') {
+        showPanel('home');
+        setTimeout(() => {
+          document.getElementById('file-tools-label')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+        setDockActive('tools');
+      } else if (dockId === 'workspace') {
+        showPanel('home');
+        setTimeout(() => {
+          const wc = document.querySelector('.workspace-card');
+          wc?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('workspace-input')?.focus();
+        }, 60);
+        setDockActive('workspace');
+      } else if (dockId === 'more') {
+        openFaq();
+      }
+    });
   });
 
-  // Home shortcuts (.sc cards)
-  document.querySelectorAll('.sc[data-panel]').forEach(card => {
-    card.addEventListener('click', () => showPanel(card.dataset.panel));
+  // Cat-grid tool buttons
+  document.querySelectorAll('.cat-btn[data-panel]').forEach(btn => {
+    btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
   // Back buttons inside tool panels
@@ -48,22 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ══════════════════════════════════════════════════════
-  //  FAQ OVERLAY
+  //  FAQ / MORE OVERLAY
   // ══════════════════════════════════════════════════════
   const faqOverlay = document.getElementById('faq-overlay');
-  const faqOpenBtn = document.getElementById('faq-open-btn');
+  const moreBtn    = document.getElementById('more-open-btn');
   const faqCloseBtn = document.getElementById('faq-close-btn');
 
   function openFaq() {
     faqOverlay?.classList.remove('hidden');
-    faqOpenBtn?.classList.add('active');
+    setDockActive('more');
   }
   function closeFaq() {
     faqOverlay?.classList.add('hidden');
-    faqOpenBtn?.classList.remove('active');
+    setDockActive(TOOL_PANELS.includes(activePanel) ? 'tools' : 'home');
   }
 
-  faqOpenBtn?.addEventListener('click', openFaq);
+  moreBtn?.addEventListener('click', openFaq);
   faqCloseBtn?.addEventListener('click', closeFaq);
   faqOverlay?.addEventListener('click', e => { if (e.target === faqOverlay) closeFaq(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFaq(); });
@@ -175,14 +197,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
+  //  COMPRESSOR SLIDERS
+  // ══════════════════════════════════════════════════════
+  [
+    ['img-target-kb',  'img-target-kb-val',  v => v + ' KB'],
+    ['img-max-width',  'img-max-width-val',  v => v + ' px'],
+    ['pdf-target-mb',  'pdf-target-mb-val',  v => parseFloat(v).toFixed(1) + ' MB'],
+  ].forEach(([sliderId, valId, fmt]) => {
+    const slider = document.getElementById(sliderId);
+    const valEl  = document.getElementById(valId);
+    if (!slider || !valEl) return;
+    const upd = () => { valEl.textContent = fmt(slider.value); };
+    slider.addEventListener('input', upd);
+    slider.addEventListener('change', runCompressor);
+    upd();
+  });
+
+  // ══════════════════════════════════════════════════════
   //  COMPRESSOR
   // ══════════════════════════════════════════════════════
-  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => {});
+  const compressBtn = document.getElementById('compress-btn');
+
+  function syncCompressBtn() {
+    if (compressBtn) compressBtn.disabled = compressorFiles.length === 0;
+  }
+
+  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => { syncCompressBtn(); });
   document.getElementById('compressor-drop')?.addEventListener('drop',    () => setTimeout(runCompressor, 120));
   document.getElementById('compressor-input')?.addEventListener('change', () => setTimeout(runCompressor, 120));
-  ['img-target-kb','img-max-width','pdf-target-mb'].forEach(id =>
-    document.getElementById(id)?.addEventListener('change', runCompressor)
-  );
+  compressBtn?.addEventListener('click', runCompressor);
 
   async function runCompressor() {
     const resultsEl = document.getElementById('compressor-results');
