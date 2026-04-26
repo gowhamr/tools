@@ -98,6 +98,22 @@
         <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
       </symbol>
+      <!-- Curly braces / JSON-XML -->
+      <symbol id="ic-braces" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5a2 2 0 002 2h1"/>
+        <path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/>
+      </symbol>
+      <!-- Link / Base64 -->
+      <symbol id="ic-b64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+      </symbol>
+      <!-- Regex / pattern slash -->
+      <symbol id="ic-regex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 8v4M12 16h.01"/>
+        <path d="M9 10l6 4M15 10l-6 4"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -177,7 +193,32 @@
               <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Calculators</span>
-                <span class="cat-btn-desc">16 financial tools</span>
+                <span class="cat-btn-desc">17 financial tools</span>
+              </span>
+            </button>
+          </div>
+
+          <p class="cat-label">Developer Tools</p>
+          <div class="cat-grid">
+            <button class="cat-btn" data-panel="base64">
+              <span class="cat-icon" style="--c:#FEF3C7;--f:#D97706"><svg><use href="#ic-b64"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Base64</span>
+                <span class="cat-btn-desc">Encode &amp; decode</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="regex">
+              <span class="cat-icon" style="--c:#FCE7F3;--f:#DB2777"><svg><use href="#ic-regex"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Regex Tester</span>
+                <span class="cat-btn-desc">Build &amp; test patterns</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="formatter">
+              <span class="cat-icon" style="--c:#ECFDF5;--f:#059669"><svg><use href="#ic-braces"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">JSON / XML</span>
+                <span class="cat-btn-desc">Format &amp; beautify</span>
               </span>
             </button>
           </div>
@@ -189,49 +230,75 @@
       <div class="panel tool-panel" id="panel-compressor" data-panel="compressor">
         <div class="panel-nav">
           <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <span class="nav-title">Compress</span>
+          <div class="nav-head">
+            <p class="nav-title">Compress Files</p>
+            <p class="nav-subtitle">Reduce image &amp; PDF size instantly</p>
+          </div>
         </div>
         <div class="panel-scroll">
-        <p class="hint">Compress images (target &le;100&nbsp;KB) or PDFs (target &le;1&nbsp;MB).</p>
 
-        <div class="upload-zone" id="compressor-drop">
-          <span class="upload-icon">&#128228;</span>
-          <p class="upload-main">Drag &amp; drop files here</p>
-          <p class="upload-or">or <label class="link" for="compressor-input">browse your device</label></p>
-          <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
-          <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
-        </div>
+          <!-- Upload area — primary focus -->
+          <div class="upload-zone upload-zone-hero" id="compressor-drop">
+            <div class="upload-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <p class="upload-main">Upload Files</p>
+            <p class="upload-sub"><label for="compressor-input">Tap to select</label> or drag files here</p>
+            <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
+          </div>
 
-        <div class="slider-group">
-          <div class="slider-row">
-            <div class="slider-header">
-              <span class="slider-label">Image target size</span>
-              <span class="slider-val" id="img-target-kb-val">100 KB</span>
-            </div>
-            <input type="range" id="img-target-kb" min="10" max="500" step="10" value="100" />
+          <!-- Quick presets -->
+          <div class="preset-chips">
+            <button class="preset-chip" data-preset="small">
+              <span class="preset-chip-name">Small</span>
+              <span class="preset-chip-desc">≤80 KB</span>
+            </button>
+            <button class="preset-chip active" data-preset="medium">
+              <span class="preset-chip-name">Medium</span>
+              <span class="preset-chip-desc">≤150 KB</span>
+            </button>
+            <button class="preset-chip" data-preset="high">
+              <span class="preset-chip-name">High Quality</span>
+              <span class="preset-chip-desc">≤300 KB</span>
+            </button>
           </div>
-          <div class="slider-row">
-            <div class="slider-header">
-              <span class="slider-label">Max width</span>
-              <span class="slider-val" id="img-max-width-val">1000 px</span>
-            </div>
-            <input type="range" id="img-max-width" min="200" max="4000" step="100" value="1000" />
-          </div>
-          <div class="slider-row">
-            <div class="slider-header">
-              <span class="slider-label">PDF target size</span>
-              <span class="slider-val" id="pdf-target-mb-val">1.0 MB</span>
-            </div>
-            <input type="range" id="pdf-target-mb" min="0.5" max="10" step="0.5" value="1" />
-          </div>
-        </div>
 
-        <div id="compressor-file-list" class="file-list"></div>
-        <div id="compressor-results" class="results-area"></div>
+          <!-- Compression settings -->
+          <div class="slider-group">
+            <p class="slider-group-title">Compression Settings</p>
+            <div class="slider-row">
+              <div class="slider-header">
+                <span class="slider-label">Image target size</span>
+                <span class="slider-val" id="img-target-kb-val">150 KB</span>
+              </div>
+              <input type="range" id="img-target-kb" min="10" max="500" step="10" value="150" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-header">
+                <span class="slider-label">Max width</span>
+                <span class="slider-val" id="img-max-width-val">1200 px</span>
+              </div>
+              <input type="range" id="img-max-width" min="200" max="4000" step="100" value="1200" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-header">
+                <span class="slider-label">PDF target size</span>
+                <span class="slider-val" id="pdf-target-mb-val">1.5 MB</span>
+              </div>
+              <input type="range" id="pdf-target-mb" min="0.5" max="10" step="0.5" value="1.5" />
+            </div>
+          </div>
+
+          <div id="compressor-file-list" class="file-list"></div>
+          <div id="compressor-results" class="results-area"></div>
         </div><!-- /panel-scroll -->
         <div class="panel-cta-bar">
           <button class="panel-cta-btn" id="compress-btn" disabled>
-            <svg width="18" height="18"><use href="#ic-compress"/></svg>
+            <svg width="18" height="18"><use href="#ic-bolt"/></svg>
             Compress Now
           </button>
         </div>
@@ -558,6 +625,122 @@
             </div>
           </div>
         </div><!-- /panel-scroll -->
+      </div>
+
+      <!-- ══════════ BASE64 ══════════ -->
+      <div class="panel tool-panel" id="panel-base64" data-panel="base64">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">Base64</p>
+            <p class="nav-subtitle">Encode &amp; decode in your browser</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+          <div class="tool-tabs" id="b64-tabs">
+            <button class="tool-tab active" data-tab="encode">Encode</button>
+            <button class="tool-tab" data-tab="decode">Decode</button>
+          </div>
+          <div class="tool-section">
+            <label class="tool-label">Input</label>
+            <textarea class="tool-textarea" id="b64-input" placeholder="Paste text or Base64 string here…" rows="6" spellcheck="false"></textarea>
+          </div>
+          <div class="fmt-actions">
+            <button class="fmt-btn fmt-btn-primary" id="b64-run">&#9889; Convert</button>
+            <button class="fmt-btn" id="b64-clear">Clear</button>
+          </div>
+          <div class="tool-output-wrap" id="b64-output-wrap" hidden>
+            <div class="tool-output-header">
+              <span class="tool-output-label">Output</span>
+              <button class="tool-copy-btn" id="b64-copy">Copy</button>
+            </div>
+            <textarea class="tool-textarea tool-output" id="b64-output" rows="6" readonly spellcheck="false"></textarea>
+          </div>
+          <p class="tool-error" id="b64-error" hidden></p>
+        </div>
+      </div>
+
+      <!-- ══════════ REGEX ══════════ -->
+      <div class="panel tool-panel" id="panel-regex" data-panel="regex">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">Regex Tester</p>
+            <p class="nav-subtitle">Build, test &amp; generate patterns</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+          <label class="tool-label">Common Presets</label>
+          <div class="regex-preset-grid" id="regex-presets">
+            <button class="regex-preset-chip" data-pattern="^[\w.-]+@[\w-]+\.[a-z]{2,}$" data-flags="i">Email</button>
+            <button class="regex-preset-chip" data-pattern="^[6-9]\d{9}$" data-flags="">IN Phone</button>
+            <button class="regex-preset-chip" data-pattern="^(\+91[-\s]?)?[6-9]\d{9}$" data-flags="">IN Mobile</button>
+            <button class="regex-preset-chip" data-pattern="https?://[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&amp;'()*+,;=%]+" data-flags="i">URL</button>
+            <button class="regex-preset-chip" data-pattern="\d{4}-\d{2}-\d{2}" data-flags="g">Date YYYY-MM-DD</button>
+            <button class="regex-preset-chip" data-pattern="^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$" data-flags="">IPv4</button>
+            <button class="regex-preset-chip" data-pattern="^[A-Z]{5}[0-9]{4}[A-Z]$" data-flags="i">PAN</button>
+            <button class="regex-preset-chip" data-pattern="^[1-9][0-9]{5}$" data-flags="">PIN Code</button>
+          </div>
+          <div class="tool-section">
+            <label class="tool-label">Pattern</label>
+            <div class="regex-pattern-row">
+              <span class="regex-slash">/</span>
+              <input type="text" class="regex-pattern-input" id="regex-pattern" placeholder="[\w.-]+@[\w-]+\.[a-z]+" spellcheck="false">
+              <span class="regex-slash">/</span>
+              <div class="regex-flags">
+                <label class="regex-flag-lbl"><input type="checkbox" id="rf-g" value="g"> g</label>
+                <label class="regex-flag-lbl"><input type="checkbox" id="rf-i" value="i" checked> i</label>
+                <label class="regex-flag-lbl"><input type="checkbox" id="rf-m" value="m"> m</label>
+              </div>
+            </div>
+          </div>
+          <div class="tool-section">
+            <label class="tool-label">Test String</label>
+            <textarea class="tool-textarea" id="regex-test" rows="5" placeholder="Enter text to test against the pattern…" spellcheck="false"></textarea>
+          </div>
+          <button class="fmt-btn fmt-btn-primary" id="regex-run" style="margin-bottom:12px;">&#9889; Test Pattern</button>
+          <div class="tool-output-wrap" id="regex-output-wrap" hidden>
+            <div class="tool-output-header">
+              <span class="tool-output-label" id="regex-match-count"></span>
+            </div>
+            <div class="regex-highlighted" id="regex-highlighted"></div>
+          </div>
+          <p class="tool-error" id="regex-error" hidden></p>
+        </div>
+      </div>
+
+      <!-- ══════════ JSON / XML FORMATTER ══════════ -->
+      <div class="panel tool-panel" id="panel-formatter" data-panel="formatter">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">JSON / XML Formatter</p>
+            <p class="nav-subtitle">Beautify &amp; minify instantly</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+          <div class="tool-tabs" id="fmt-tabs">
+            <button class="tool-tab active" data-tab="json">JSON</button>
+            <button class="tool-tab" data-tab="xml">XML</button>
+          </div>
+          <div class="tool-section">
+            <label class="tool-label">Input</label>
+            <textarea class="tool-textarea" id="fmt-input" placeholder="Paste JSON or XML here…" rows="8" spellcheck="false"></textarea>
+          </div>
+          <div class="fmt-actions">
+            <button class="fmt-btn fmt-btn-primary" id="fmt-beautify">&#10024; Beautify</button>
+            <button class="fmt-btn" id="fmt-minify">Minify</button>
+            <button class="fmt-btn" id="fmt-clear">Clear</button>
+          </div>
+          <div class="tool-output-wrap" id="fmt-output-wrap" hidden>
+            <div class="tool-output-header">
+              <span class="tool-output-label">Output</span>
+              <button class="tool-copy-btn" id="fmt-copy">Copy</button>
+            </div>
+            <pre class="fmt-pre" id="fmt-output"></pre>
+          </div>
+          <p class="tool-error" id="fmt-error" hidden></p>
+        </div>
       </div>
 
     </div><!-- /panel-container -->

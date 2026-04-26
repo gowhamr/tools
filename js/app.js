@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activePanel = 'home';
   const homePanel = document.getElementById('panel-home');
 
-  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators'];
+  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter'];
 
   function setDockActive(dockId) {
     document.querySelectorAll('.dock-btn[data-dock]').forEach(b => {
@@ -233,8 +233,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
-  //  COMPRESSOR SLIDERS
+  //  COMPRESSOR SLIDERS + PRESETS
   // ══════════════════════════════════════════════════════
+  const COMPRESS_PRESETS = {
+    small:  { kb: 80,  px: 800,  mb: 0.5 },
+    medium: { kb: 150, px: 1200, mb: 1.5 },
+    high:   { kb: 300, px: 2000, mb: 3.0 },
+  };
+
+  function setSliderVal(id, valId, val, fmt) {
+    const s = document.getElementById(id);
+    const v = document.getElementById(valId);
+    if (s) s.value = val;
+    if (v) v.textContent = fmt(val);
+  }
+
   [
     ['img-target-kb',  'img-target-kb-val',  v => v + ' KB'],
     ['img-max-width',  'img-max-width-val',  v => v + ' px'],
@@ -247,6 +260,19 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.addEventListener('input', upd);
     slider.addEventListener('change', runCompressor);
     upd();
+  });
+
+  document.querySelectorAll('.preset-chip[data-preset]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const p = COMPRESS_PRESETS[chip.dataset.preset];
+      if (!p) return;
+      setSliderVal('img-target-kb', 'img-target-kb-val', p.kb,  v => v + ' KB');
+      setSliderVal('img-max-width', 'img-max-width-val', p.px,  v => v + ' px');
+      setSliderVal('pdf-target-mb', 'pdf-target-mb-val', p.mb,  v => parseFloat(v).toFixed(1) + ' MB');
+      if (compressorFiles.length) runCompressor();
+    });
   });
 
   // ══════════════════════════════════════════════════════
@@ -686,5 +712,241 @@ document.addEventListener('DOMContentLoaded', () => {
   function processingMsg(msg) {
     return `<div class="processing-msg">${Utils.spinnerHTML()} ${Utils.escHtml(msg)}</div>`;
   }
+
+  // ══════════════════════════════════════════════════════
+  //  TOOL TABS (shared: b64-tabs, fmt-tabs)
+  // ══════════════════════════════════════════════════════
+  document.querySelectorAll('.tool-tabs').forEach(tabGroup => {
+    tabGroup.querySelectorAll('.tool-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabGroup.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
+
+  // ══════════════════════════════════════════════════════
+  //  BASE64 TOOL
+  // ══════════════════════════════════════════════════════
+  (function initBase64() {
+    const input   = document.getElementById('b64-input');
+    const output  = document.getElementById('b64-output');
+    const outWrap = document.getElementById('b64-output-wrap');
+    const errEl   = document.getElementById('b64-error');
+    const runBtn  = document.getElementById('b64-run');
+    const clrBtn  = document.getElementById('b64-clear');
+    const copyBtn = document.getElementById('b64-copy');
+    const tabs    = document.getElementById('b64-tabs');
+    if (!runBtn) return;
+
+    function getMode() {
+      return tabs.querySelector('.tool-tab.active')?.dataset.tab || 'encode';
+    }
+    function showErr(msg) {
+      errEl.textContent = msg;
+      errEl.hidden = false;
+      outWrap.hidden = true;
+    }
+    function showOut(val) {
+      output.value = val;
+      outWrap.hidden = false;
+      errEl.hidden = true;
+    }
+
+    runBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (!text) { showErr('Please enter some text first.'); return; }
+      try {
+        if (getMode() === 'encode') {
+          showOut(btoa(unescape(encodeURIComponent(text))));
+        } else {
+          showOut(decodeURIComponent(escape(atob(text))));
+        }
+      } catch {
+        showErr(getMode() === 'decode'
+          ? 'Invalid Base64 string. Make sure the input is valid Base64.'
+          : 'Could not encode — try removing special characters.');
+      }
+    });
+
+    clrBtn.addEventListener('click', () => {
+      input.value = '';
+      output.value = '';
+      outWrap.hidden = true;
+      errEl.hidden = true;
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(output.value).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1800);
+      });
+    });
+  })();
+
+  // ══════════════════════════════════════════════════════
+  //  REGEX TESTER
+  // ══════════════════════════════════════════════════════
+  (function initRegex() {
+    const patternInput = document.getElementById('regex-pattern');
+    const testInput    = document.getElementById('regex-test');
+    const runBtn       = document.getElementById('regex-run');
+    const outWrap      = document.getElementById('regex-output-wrap');
+    const highlighted  = document.getElementById('regex-highlighted');
+    const matchCount   = document.getElementById('regex-match-count');
+    const errEl        = document.getElementById('regex-error');
+    if (!runBtn) return;
+
+    document.querySelectorAll('.regex-preset-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.regex-preset-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        patternInput.value = chip.dataset.pattern;
+        const flags = chip.dataset.flags || '';
+        document.getElementById('rf-g').checked = flags.includes('g');
+        document.getElementById('rf-i').checked = flags.includes('i');
+        document.getElementById('rf-m').checked = flags.includes('m');
+      });
+    });
+
+    function getFlags() {
+      return ['g','i','m'].filter(f => document.getElementById('rf-'+f).checked).join('');
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    runBtn.addEventListener('click', () => {
+      const pattern = patternInput.value;
+      const testStr = testInput.value;
+      errEl.hidden = true;
+      if (!pattern) { errEl.textContent = 'Enter a regex pattern.'; errEl.hidden = false; return; }
+
+      let re;
+      try {
+        const flags = getFlags().includes('g') ? getFlags() : getFlags() + 'g';
+        re = new RegExp(pattern, flags);
+      } catch (e) {
+        errEl.textContent = 'Invalid regex: ' + e.message;
+        errEl.hidden = false;
+        outWrap.hidden = true;
+        return;
+      }
+
+      const matches = [...testStr.matchAll(re)];
+      matchCount.textContent = matches.length
+        ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
+        : 'No matches found';
+
+      let result = '';
+      let last = 0;
+      for (const m of matches) {
+        result += escapeHtml(testStr.slice(last, m.index));
+        result += `<mark>${escapeHtml(m[0])}</mark>`;
+        last = m.index + m[0].length;
+        if (m[0].length === 0) { last++; }
+      }
+      result += escapeHtml(testStr.slice(last));
+      highlighted.innerHTML = result;
+      outWrap.hidden = false;
+    });
+  })();
+
+  // ══════════════════════════════════════════════════════
+  //  JSON / XML FORMATTER
+  // ══════════════════════════════════════════════════════
+  (function initFormatter() {
+    const fmtInput   = document.getElementById('fmt-input');
+    const fmtOutput  = document.getElementById('fmt-output');
+    const fmtOutWrap = document.getElementById('fmt-output-wrap');
+    const fmtErr     = document.getElementById('fmt-error');
+    const beautifyBtn = document.getElementById('fmt-beautify');
+    const minifyBtn  = document.getElementById('fmt-minify');
+    const clearBtn   = document.getElementById('fmt-clear');
+    const copyBtn    = document.getElementById('fmt-copy');
+    const tabs       = document.getElementById('fmt-tabs');
+    if (!beautifyBtn) return;
+
+    function getMode() {
+      return tabs.querySelector('.tool-tab.active')?.dataset.tab || 'json';
+    }
+    function showErr(msg) {
+      fmtErr.textContent = msg;
+      fmtErr.hidden = false;
+      fmtOutWrap.hidden = true;
+    }
+    function showOut(val) {
+      fmtOutput.textContent = val;
+      fmtOutWrap.hidden = false;
+      fmtErr.hidden = true;
+    }
+
+    function formatJson(text, minify) {
+      const obj = JSON.parse(text);
+      return minify ? JSON.stringify(obj) : JSON.stringify(obj, null, 2);
+    }
+
+    function formatXml(text, minify) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'application/xml');
+      const parseErr = doc.querySelector('parsererror');
+      if (parseErr) throw new Error(parseErr.textContent.split('\n')[0]);
+      if (minify) {
+        const s = new XMLSerializer();
+        return s.serializeToString(doc).replace(/>\s+</g,'><').trim();
+      }
+      function indent(node, level) {
+        let out = '';
+        const pad = '  '.repeat(level);
+        if (node.nodeType === 3) {
+          const t = node.textContent.trim();
+          return t ? pad + t + '\n' : '';
+        }
+        if (node.nodeType === 8) return `${pad}<!--${node.textContent}-->\n`;
+        if (node.nodeType !== 1) return '';
+        let attrs = '';
+        for (const a of node.attributes) attrs += ` ${a.name}="${a.value}"`;
+        const children = Array.from(node.childNodes);
+        const childText = children.filter(c => c.nodeType === 3 && c.textContent.trim());
+        if (children.length === 1 && childText.length === 1) {
+          return `${pad}<${node.tagName}${attrs}>${childText[0].textContent.trim()}</${node.tagName}>\n`;
+        }
+        if (children.length === 0) return `${pad}<${node.tagName}${attrs}/>\n`;
+        out += `${pad}<${node.tagName}${attrs}>\n`;
+        children.forEach(c => { out += indent(c, level + 1); });
+        out += `${pad}</${node.tagName}>\n`;
+        return out;
+      }
+      return indent(doc.documentElement, 0).trimEnd();
+    }
+
+    function run(minify) {
+      const text = fmtInput.value.trim();
+      if (!text) { showErr('Please paste some content first.'); return; }
+      try {
+        showOut(getMode() === 'json' ? formatJson(text, minify) : formatXml(text, minify));
+      } catch (e) {
+        showErr('Parse error: ' + e.message);
+      }
+    }
+
+    beautifyBtn.addEventListener('click', () => run(false));
+    minifyBtn.addEventListener('click', () => run(true));
+    clearBtn.addEventListener('click', () => {
+      fmtInput.value = '';
+      fmtOutput.textContent = '';
+      fmtOutWrap.hidden = true;
+      fmtErr.hidden = true;
+    });
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(fmtOutput.textContent).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1800);
+      });
+    });
+  })();
 
 });
