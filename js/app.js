@@ -1,4 +1,4 @@
-/* ===== app.js – KaruviLab Glass Dashboard ===== */
+/* ===== app.js – KaruviLab ===== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -6,13 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
   //  PANEL NAVIGATION
   // ══════════════════════════════════════════════════════
   let activePanel = 'home';
+  const homePanel = document.getElementById('panel-home');
 
   function showPanel(panelId) {
     if (panelId === activePanel) return;
-    const prev = document.querySelector('.glass-panel.active');
+
+    // Deactivate current tool panel (if any)
+    const prev = document.querySelector('.panel.active');
     if (prev) prev.classList.remove('active');
-    const next = document.getElementById('panel-' + panelId);
-    if (next) next.classList.add('active');
+
+    if (panelId === 'home') {
+      // Slide home back in from left
+      homePanel?.classList.remove('pushed');
+    } else {
+      // Push home left, slide new panel in from right
+      homePanel?.classList.add('pushed');
+      const next = document.getElementById('panel-' + panelId);
+      if (next) next.classList.add('active');
+    }
+
+    // Update dock highlight
     document.querySelectorAll('.dock-btn[data-panel]').forEach(b => {
       b.classList.toggle('active', b.dataset.panel === panelId);
     });
@@ -24,12 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
-  // Hero launch button
-  document.getElementById('launch-btn')?.addEventListener('click', () => showPanel('compressor'));
-
-  // Tool grid cards on home panel
-  document.querySelectorAll('.tool-card[data-panel]').forEach(card => {
+  // Home shortcuts (.sc cards)
+  document.querySelectorAll('.sc[data-panel]').forEach(card => {
     card.addEventListener('click', () => showPanel(card.dataset.panel));
+  });
+
+  // Back buttons inside tool panels
+  document.querySelectorAll('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => showPanel('home'));
   });
 
   // ══════════════════════════════════════════════════════
@@ -52,26 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
   faqCloseBtn?.addEventListener('click', closeFaq);
   faqOverlay?.addEventListener('click', e => { if (e.target === faqOverlay) closeFaq(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFaq(); });
-
-  // ══════════════════════════════════════════════════════
-  //  COUNT-UP ANIMATION (hero stats)
-  // ══════════════════════════════════════════════════════
-  function countUp(el, target, duration) {
-    const start = performance.now();
-    const tick = now => {
-      const p = Math.min((now - start) / duration, 1);
-      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
-  setTimeout(() => {
-    document.querySelectorAll('#panel-home .stat-num[data-target]').forEach(el => {
-      const t = parseInt(el.dataset.target, 10);
-      if (t > 0) countUp(el, t, 900);
-    });
-  }, 350);
 
   // ══════════════════════════════════════════════════════
   //  PDF SUB-TABS
@@ -375,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="download-row">
             <a class="btn btn-success btn-small" href="${url}" download="${filename}">&#11015; Download</a>
-            ${blob.type === 'image/png' ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
+            ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
           </div>
         </div>`;
       attachClipboardBtns(resultEl, () => blob);
@@ -581,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="download-row">
         <a class="btn btn-success btn-small" href="${url}" download="${Utils.escHtml(newName)}">&#11015; Download</a>
-        ${blob.type === 'image/png' ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
+        ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
       </div>
     </div>`;
   }

@@ -1,5 +1,5 @@
 /* Service Worker — Image & PDF Tool */
-const CACHE = 'img-pdf-tool-v1';
+const CACHE = 'img-pdf-tool-v2';
 
 const SHELL = [
   './',
@@ -15,6 +15,7 @@ const SHELL = [
   './manifest.json',
   './icons/icon.svg',
   './pages/about.html',
+  './pages/calculators.html',
   './pages/contact.html',
   './pages/privacy.html',
   './pages/terms.html',
