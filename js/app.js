@@ -105,6 +105,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Doc type chips → sync hidden select
+  document.querySelectorAll('.doc-type-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.doc-type-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const sel = document.getElementById('validator-doc-type');
+      if (sel) { sel.value = chip.dataset.docType; sel.dispatchEvent(new Event('change')); }
+    });
+  });
+
+  // Validate button
+  const validateBtn = document.getElementById('validate-btn');
+  if (validateBtn) {
+    const enableValidateBtn = () => { validateBtn.disabled = false; };
+    document.getElementById('validator-input')?.addEventListener('change', enableValidateBtn);
+    document.getElementById('validator-drop')?.addEventListener('drop', enableValidateBtn);
+    validateBtn.addEventListener('click', () => { if (validatorFile) runValidator(validatorFile); });
+  }
+
   // ══════════════════════════════════════════════════════
   //  FAQ / MORE OVERLAY
   // ══════════════════════════════════════════════════════
@@ -813,6 +832,33 @@ document.addEventListener('DOMContentLoaded', () => {
     function getFlags() {
       return ['g','i','m'].filter(f => document.getElementById('rf-'+f).checked).join('');
     }
+
+    function applyRegexString(raw) {
+      const m = raw.match(/^\/(.+)\/([gimsuy]*)$/s);
+      if (m) {
+        patternInput.value = m[1];
+        document.getElementById('rf-g').checked = m[2].includes('g');
+        document.getElementById('rf-i').checked = m[2].includes('i');
+        document.getElementById('rf-m').checked = m[2].includes('m');
+        return true;
+      }
+      return false;
+    }
+
+    patternInput.addEventListener('paste', e => {
+      const pasted = (e.clipboardData || window.clipboardData).getData('text');
+      if (applyRegexString(pasted.trim())) {
+        e.preventDefault();
+        document.querySelectorAll('.regex-preset-chip').forEach(c => c.classList.remove('active'));
+      }
+    });
+
+    patternInput.addEventListener('change', () => {
+      const val = patternInput.value.trim();
+      if (applyRegexString(val)) {
+        document.querySelectorAll('.regex-preset-chip').forEach(c => c.classList.remove('active'));
+      }
+    });
 
     function escapeHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
