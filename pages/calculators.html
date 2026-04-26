@@ -779,7 +779,7 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
   <section class="mch-category" aria-labelledby="cat-datetime">
     <div class="mch-category-header">
       <h2 class="mch-category-title" id="cat-datetime">Date &amp; Time Calculators</h2>
-      <span class="mch-category-count">4 tools</span>
+      <span class="mch-category-count">5 tools</span>
     </div>
     <nav class="mch-grid-cards" aria-label="Date and time calculators">
       <a href="#age" class="mch-card" data-open="age" aria-label="Open Age Calculator">
@@ -801,6 +801,11 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
         <div class="mch-card-icon" aria-hidden="true">🌍</div>
         <h3 class="mch-card-title">Global Time Converter</h3>
         <p class="mch-card-desc">Convert IST to EST, PST, GMT &amp; 48+ world cities</p>
+      </a>
+      <a href="#utcist" class="mch-card" data-open="utcist" aria-label="Open UTC to IST Converter">
+        <div class="mch-card-icon" aria-hidden="true">🕐</div>
+        <h3 class="mch-card-title">UTC ↔ IST</h3>
+        <p class="mch-card-desc">Convert UTC to IST (UTC+5:30) and vice versa</p>
       </a>
     </nav>
   </section>
@@ -1191,6 +1196,43 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
       </div>
     </div>
 
+    <!-- UTC ↔ IST Converter -->
+    <div class="mch-panel-inner" data-panel="utcist">
+      <div class="mch-grid">
+        <div class="mch-field">
+          <label>Direction</label>
+          <select class="mch-input" id="utcist-dir">
+            <option value="utc2ist">UTC → IST</option>
+            <option value="ist2utc">IST → UTC</option>
+          </select>
+        </div>
+        <div class="mch-field">
+          <label for="utcist-date">Date</label>
+          <input type="date" class="mch-input" id="utcist-date">
+        </div>
+        <div class="mch-field">
+          <label for="utcist-time">Time (HH:MM)</label>
+          <input type="time" class="mch-input" id="utcist-time" value="12:00">
+        </div>
+      </div>
+      <div class="mch-btn-row">
+        <button class="mch-btn" onclick="mchCalcUtcIst()">Convert</button>
+      </div>
+      <div id="utcist-result" style="margin-top:20px;"></div>
+      <div class="mch-seo-content">
+        <h3>About UTC ↔ IST</h3>
+        <p>Indian Standard Time (IST) is UTC+5:30 — ahead of UTC by 5 hours and 30 minutes. India does not observe daylight saving time, so the offset is constant year-round.</p>
+        <h4>Quick reference</h4>
+        <ul>
+          <li>00:00 UTC = 05:30 IST</li>
+          <li>06:00 UTC = 11:30 IST</li>
+          <li>12:00 UTC = 17:30 IST</li>
+          <li>18:00 UTC = 23:30 IST</li>
+          <li>18:30 UTC = 00:00 IST (next day)</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Basic Calculator -->
     <div class="mch-panel-inner" data-panel="basic">
       <div style="max-width:380px;margin:0 auto;">
@@ -1358,6 +1400,7 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
     date: ['Date Calculator', 'Find the duration between two dates or add and subtract days.'],
     time: ['Time Calculator', 'Add or subtract hours, minutes, and seconds.'],
     worldclock: ['Global Time Converter', 'Convert IST to EST, PST, GMT and 48+ world cities instantly.'],
+    utcist: ['UTC ↔ IST Converter', 'Convert between UTC and Indian Standard Time (UTC+5:30) instantly.'],
     basic: ['Standard Calculator', 'Four-function calculator with full keyboard support.'],
     percent: ['Percentage Calculator', 'Three common percentage calculations in one place.'],
     numeral: ['Numeral System Converter', 'Convert between decimal, binary, octal, and hexadecimal.'],
@@ -1877,6 +1920,10 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
     el('wc-src-input').value = `${wcSource.name}, ${wcSource.country}`;
   })();
 
+  (function() {
+    el('utcist-date').value = new Date().toISOString().split('T')[0];
+  })();
+
   function getOffsetMinutes(date, tz) {
     const utc = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
     const local = new Date(date.toLocaleString('en-US', { timeZone: tz }));
@@ -1921,6 +1968,51 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
     mchCalcWorldClock();
   };
   setTimeout(mchCalcWorldClock, 50);
+
+  // ==================== UTC ↔ IST Converter ====================
+  window.mchCalcUtcIst = function() {
+    const dir    = el('utcist-dir').value;
+    const dateV  = el('utcist-date').value;
+    const timeV  = el('utcist-time').value;
+    const res    = el('utcist-result');
+    if (!dateV || !timeV) { res.innerHTML = '<p style="color:var(--mch-muted)">Please select a date and time.</p>'; return; }
+    const [y, mo, d] = dateV.split('-').map(Number);
+    const [hh, mm]   = timeV.split(':').map(Number);
+    const IST_OFFSET = 5 * 60 + 30; // minutes
+    let srcLabel, dstLabel, srcTime, dstMin;
+    if (dir === 'utc2ist') {
+      srcLabel = 'UTC'; dstLabel = 'IST (UTC+5:30)';
+      const utc = new Date(Date.UTC(y, mo - 1, d, hh, mm));
+      srcTime = utc;
+      dstMin  = utc.getTime() + IST_OFFSET * 60000;
+    } else {
+      srcLabel = 'IST (UTC+5:30)'; dstLabel = 'UTC';
+      const ist = new Date(Date.UTC(y, mo - 1, d, hh, mm));
+      srcTime = ist;
+      dstMin  = ist.getTime() - IST_OFFSET * 60000;
+    }
+    const dst = new Date(dstMin);
+    const fmt = dt => {
+      const hh2 = String(dt.getUTCHours()).padStart(2,'0');
+      const mm2 = String(dt.getUTCMinutes()).padStart(2,'0');
+      const dy  = dt.getUTCDate();
+      const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getUTCMonth()];
+      const yr  = dt.getUTCFullYear();
+      return `${hh2}:${mm2} &nbsp;·&nbsp; ${dy} ${mon} ${yr}`;
+    };
+    res.innerHTML = `
+      <div style="display:grid;gap:10px;">
+        <div style="background:var(--mch-surface);border:1px solid var(--mch-border);border-radius:12px;padding:14px 16px;">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--mch-muted);margin-bottom:4px;">${srcLabel}</div>
+          <div style="font-size:1.2rem;font-weight:800;font-family:monospace;">${fmt(srcTime)}</div>
+        </div>
+        <div style="text-align:center;font-size:1.2rem;color:var(--mch-muted);">&#8595;</div>
+        <div style="background:var(--mch-primary-light,#EEF2FF);border:1px solid var(--mch-primary,#4F46E5);border-radius:12px;padding:14px 16px;">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--mch-primary,#4F46E5);margin-bottom:4px;">${dstLabel}</div>
+          <div style="font-size:1.2rem;font-weight:800;font-family:monospace;color:var(--mch-primary,#4F46E5);">${fmt(dst)}</div>
+        </div>
+      </div>`;
+  };
 
   // ==================== Basic Calculator ====================
   (function() {
