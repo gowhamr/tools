@@ -89,6 +89,15 @@
         <circle cx="12" cy="12" r="10"/>
         <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/>
       </symbol>
+      <!-- Bolt / Workspace -->
+      <symbol id="ic-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </symbol>
+      <!-- Apps grid / Tools -->
+      <symbol id="ic-apps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </symbol>
     </defs>
   </svg>
 
@@ -125,31 +134,44 @@
             <span class="home-privacy-text">No uploads &middot; No server &middot; Works offline</span>
           </div>
 
-          <p class="sec-label">Tools</p>
-          <div class="shortcuts">
-            <button class="sc" data-panel="compressor">
-              <span class="sc-circle" style="--c:#EFF6FF;--f:#2563EB"><svg><use href="#ic-compress"/></svg></span>
-              <span class="sc-name">Compress</span>
+          <!-- Workspace input card -->
+          <div class="workspace-card">
+            <textarea class="workspace-input" id="workspace-input" placeholder="Paste text, URL or describe what you need…" rows="3"></textarea>
+            <button class="workspace-cta" id="workspace-start-btn">
+              <svg width="16" height="16"><use href="#ic-bolt"/></svg>
+              Start Working
             </button>
-            <button class="sc" data-panel="converter">
-              <span class="sc-circle" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
-              <span class="sc-name">Convert</span>
+          </div>
+
+          <p class="cat-label" id="file-tools-label">File Tools</p>
+          <div class="cat-grid" id="file-tools-grid">
+            <button class="cat-btn" data-panel="compressor">
+              <span class="cat-icon" style="--c:#EFF6FF;--f:#2563EB"><svg><use href="#ic-compress"/></svg></span>
+              <span class="cat-btn-name">Compress</span>
             </button>
-            <button class="sc" data-panel="creator">
-              <span class="sc-circle" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
-              <span class="sc-name">Create</span>
+            <button class="cat-btn" data-panel="converter">
+              <span class="cat-icon" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
+              <span class="cat-btn-name">Convert</span>
             </button>
-            <button class="sc" data-panel="pdf">
-              <span class="sc-circle" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
-              <span class="sc-name">PDF</span>
+            <button class="cat-btn" data-panel="creator">
+              <span class="cat-icon" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
+              <span class="cat-btn-name">Create</span>
             </button>
-            <button class="sc" data-panel="validator">
-              <span class="sc-circle" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
-              <span class="sc-name">Validate</span>
+            <button class="cat-btn" data-panel="pdf">
+              <span class="cat-icon" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
+              <span class="cat-btn-name">PDF</span>
             </button>
-            <button class="sc" data-panel="calculators">
-              <span class="sc-circle" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
-              <span class="sc-name">Calc</span>
+          </div>
+
+          <p class="cat-label">Utilities</p>
+          <div class="cat-grid cat-grid-2col">
+            <button class="cat-btn" data-panel="validator">
+              <span class="cat-icon" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
+              <span class="cat-btn-name">Validate</span>
+            </button>
+            <button class="cat-btn" data-panel="calculators">
+              <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
+              <span class="cat-btn-name">Calc</span>
             </button>
           </div>
 
@@ -536,39 +558,22 @@
   </div><!-- /viewport -->
 
   <!-- ── Bottom Dock ── -->
-  <!-- ── Bottom Dock ── -->
   <nav class="dock" id="dock" aria-label="Tool navigation">
-    <button class="dock-btn active" data-panel="home" aria-label="Home">
+    <button class="dock-btn active" data-dock="home" aria-label="Home">
       <svg class="dock-icon"><use href="#ic-home"/></svg>
       <span class="dock-lbl">Home</span>
     </button>
-    <button class="dock-btn" data-panel="compressor" aria-label="Compressor">
-      <svg class="dock-icon"><use href="#ic-compress"/></svg>
-      <span class="dock-lbl">Compress</span>
+    <button class="dock-btn" data-dock="tools" aria-label="Tools">
+      <svg class="dock-icon"><use href="#ic-apps"/></svg>
+      <span class="dock-lbl">Tools</span>
     </button>
-    <button class="dock-btn" data-panel="converter" aria-label="Converter">
-      <svg class="dock-icon"><use href="#ic-convert"/></svg>
-      <span class="dock-lbl">Convert</span>
+    <button class="dock-btn" data-dock="workspace" aria-label="Workspace">
+      <svg class="dock-icon"><use href="#ic-bolt"/></svg>
+      <span class="dock-lbl">Workspace</span>
     </button>
-    <button class="dock-btn" data-panel="creator" aria-label="Image Creator">
-      <svg class="dock-icon"><use href="#ic-create"/></svg>
-      <span class="dock-lbl">Create</span>
-    </button>
-    <button class="dock-btn" data-panel="pdf" aria-label="PDF Tools">
-      <svg class="dock-icon"><use href="#ic-pdf"/></svg>
-      <span class="dock-lbl">PDF</span>
-    </button>
-    <button class="dock-btn" data-panel="validator" aria-label="Validator">
-      <svg class="dock-icon"><use href="#ic-validate"/></svg>
-      <span class="dock-lbl">Validate</span>
-    </button>
-    <button class="dock-btn" data-panel="calculators" aria-label="Calculators">
-      <svg class="dock-icon"><use href="#ic-calc"/></svg>
-      <span class="dock-lbl">Calc</span>
-    </button>
-    <button class="dock-btn dock-faq" id="faq-open-btn" aria-label="FAQ and Info">
+    <button class="dock-btn" id="more-open-btn" data-dock="more" aria-label="More">
       <svg class="dock-icon"><use href="#ic-faq"/></svg>
-      <span class="dock-lbl">FAQ</span>
+      <span class="dock-lbl">More</span>
     </button>
   </nav>
 
