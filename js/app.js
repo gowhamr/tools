@@ -814,6 +814,33 @@ document.addEventListener('DOMContentLoaded', () => {
       return ['g','i','m'].filter(f => document.getElementById('rf-'+f).checked).join('');
     }
 
+    function applyRegexString(raw) {
+      const m = raw.match(/^\/(.+)\/([gimsuy]*)$/s);
+      if (m) {
+        patternInput.value = m[1];
+        document.getElementById('rf-g').checked = m[2].includes('g');
+        document.getElementById('rf-i').checked = m[2].includes('i');
+        document.getElementById('rf-m').checked = m[2].includes('m');
+        return true;
+      }
+      return false;
+    }
+
+    patternInput.addEventListener('paste', e => {
+      const pasted = (e.clipboardData || window.clipboardData).getData('text');
+      if (applyRegexString(pasted.trim())) {
+        e.preventDefault();
+        document.querySelectorAll('.regex-preset-chip').forEach(c => c.classList.remove('active'));
+      }
+    });
+
+    patternInput.addEventListener('change', () => {
+      const val = patternInput.value.trim();
+      if (applyRegexString(val)) {
+        document.querySelectorAll('.regex-preset-chip').forEach(c => c.classList.remove('active'));
+      }
+    });
+
     function escapeHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
