@@ -68,27 +68,19 @@ document.addEventListener('DOMContentLoaded', () => {
     activePanel = panelId;
   }
 
-  // 4-tab dock
+  // 3-tab dock
   document.querySelectorAll('.dock-btn[data-dock]').forEach(btn => {
     btn.addEventListener('click', () => {
       const dockId = btn.dataset.dock;
       if (dockId === 'home') {
         showPanel('home');
-        homePanel?.querySelector('.panel-scroll, .home-wrap')?.scrollTo({ top: 0, behavior: 'smooth' });
+        homePanel?.querySelector('.home-wrap')?.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (dockId === 'tools') {
         showPanel('home');
         setTimeout(() => {
           document.getElementById('file-tools-label')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
         setDockActive('tools');
-      } else if (dockId === 'workspace') {
-        showPanel('home');
-        setTimeout(() => {
-          const wc = document.querySelector('.workspace-card');
-          wc?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          document.getElementById('workspace-input')?.focus();
-        }, 60);
-        setDockActive('workspace');
       } else if (dockId === 'more') {
         openFaq();
       }
