@@ -94,7 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Back buttons inside tool panels
   document.querySelectorAll('[data-back]').forEach(btn => {
-    btn.addEventListener('click', () => showPanel('home'));
+    btn.addEventListener('click', () => {
+      // If inside a calculator detail view, go back to calc list first
+      const activeCalcDetail = document.querySelector('#calc-embed-container .mch-detail.active');
+      if (activeCalcDetail) {
+        document.querySelector('#calc-embed-container .mch-back-btn')?.click();
+        return;
+      }
+      showPanel('home');
+    });
   });
 
   // ══════════════════════════════════════════════════════
