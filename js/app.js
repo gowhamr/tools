@@ -105,6 +105,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Doc type chips → sync hidden select
+  document.querySelectorAll('.doc-type-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.doc-type-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const sel = document.getElementById('validator-doc-type');
+      if (sel) { sel.value = chip.dataset.docType; sel.dispatchEvent(new Event('change')); }
+    });
+  });
+
+  // Validate button
+  const validateBtn = document.getElementById('validate-btn');
+  if (validateBtn) {
+    const enableValidateBtn = () => { validateBtn.disabled = false; };
+    document.getElementById('validator-input')?.addEventListener('change', enableValidateBtn);
+    document.getElementById('validator-drop')?.addEventListener('drop', enableValidateBtn);
+    validateBtn.addEventListener('click', () => { if (validatorFile) runValidator(validatorFile); });
+  }
+
   // ══════════════════════════════════════════════════════
   //  FAQ / MORE OVERLAY
   // ══════════════════════════════════════════════════════
