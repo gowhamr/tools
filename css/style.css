@@ -590,6 +590,24 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   padding: 11px 24px; font-size: .9rem; font-weight: 700; margin-top: 4px;
 }
 
+/* ── Inline calculator loading state ── */
+.calc-loading-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 14px;
+  padding: 60px 20px; text-align: center;
+}
+.calc-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.calc-loading-text { font-size: .84rem; color: var(--text-4); }
+/* calc embed styles reset: give #mch-root room */
+#calc-embed-container { padding: 0; }
+#calc-embed-container #mch-root { padding: 16px 14px 32px; }
+
 /* ── Slider group (compressor) ── */
 .slider-group {
   background: var(--surface); border-radius: 16px;
