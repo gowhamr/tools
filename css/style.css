@@ -1051,6 +1051,199 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   padding: 1px 2px;
 }
 
+/* ════ SETTINGS CARD ════ */
+.settings-card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+}
+.settings-card-title {
+  font-size: .62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-3);
+  padding: 14px 0 2px;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-2);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-label {
+  font-size: .83rem;
+  font-weight: 500;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+.settings-row select {
+  border: none;
+  background: transparent;
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+  padding: 0;
+  text-align: right;
+  max-width: 180px;
+  outline: none;
+}
+/* inside settings-card, slider-row needs no top border */
+.settings-card .slider-row { border-bottom: none; }
+.settings-card .slider-row:not(:first-child) { border-top: 1px solid var(--border-2); }
+
+/* ════ COMPACT UPLOAD ZONE ════ */
+.upload-zone-sm {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  min-height: 0;
+  margin-bottom: 14px;
+  background: var(--surface);
+  border-color: var(--border);
+  border-style: dashed;
+}
+.upload-icon-wrap-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--blue);
+}
+.upload-sm-text { flex: 1; min-width: 0; }
+.upload-sm-title { font-size: .82rem; font-weight: 600; color: var(--text-2); margin: 0 0 2px; }
+.upload-sm-optional { font-weight: 400; color: var(--text-3); }
+.upload-zone-sm .upload-or { font-size: .75rem; color: var(--text-3); margin: 0; }
+
+/* ════ CREATOR ════ */
+.creator-preview-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.preview-hint { font-size: .78rem; color: var(--text-3); margin: 0; }
+.dim-fields-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-2);
+}
+.dim-field { flex: 1; }
+.dim-field-label { display: block; font-size: .65rem; font-weight: 700; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.dim-field .input-with-unit { display: flex; align-items: center; gap: 4px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 8px; }
+.dim-field input[type=number] { border: none; background: transparent; width: 56px; padding: 0; font-size: .85rem; font-weight: 600; outline: none; }
+.dim-field .unit { font-size: .72rem; color: var(--text-3); }
+.dim-lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition: border-color .15s, color .15s;
+}
+.dim-lock-btn:has(input:checked) { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.dim-lock-btn input { display: none; }
+.dim-apply-btn {
+  padding: 7px 14px;
+  border: 1.5px solid var(--blue);
+  border-radius: 10px;
+  background: var(--blue-light);
+  color: var(--blue);
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dim-quick-wrap.settings-row { gap: 8px; }
+.dim-quick-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: .82rem;
+  color: var(--text-1);
+  outline: none;
+  min-width: 0;
+}
+/* creator preset-btn.selected = same as preset-chip.active */
+.preset-btn.selected {
+  border-color: var(--blue) !important;
+  color: var(--blue) !important;
+  background: var(--blue-light) !important;
+}
+
+/* ════ PDF TABS (pill style override) ════ */
+.pdf-tool-tabs {
+  display: flex;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  gap: 4px;
+  border-bottom: none;
+}
+.pdf-tab {
+  flex: 1;
+  padding: 8px 6px;
+  border: none !important;
+  background: transparent;
+  border-radius: 9px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  white-space: nowrap;
+}
+.pdf-tab.active {
+  background: #fff;
+  color: var(--blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  border-bottom-color: transparent !important;
+}
+.pdf-tab:hover:not(.active) { color: var(--text-2); background: rgba(0,0,0,.04); }
+
+/* PDF CTA inside pdf-panels */
+.pdf-cta-wrap { padding: 16px 0 4px; }
+.pdf-cta-wrap .panel-cta-btn { width: 100%; justify-content: center; }
+
+/* ════ DOC TYPE CHIPS ════ */
+.doc-type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+.doc-type-chip { /* inherits preset-chip styles */ }
+
 /* ════════════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════════════ */
