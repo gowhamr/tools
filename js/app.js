@@ -233,8 +233,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
-  //  COMPRESSOR SLIDERS
+  //  COMPRESSOR SLIDERS + PRESETS
   // ══════════════════════════════════════════════════════
+  const COMPRESS_PRESETS = {
+    small:  { kb: 80,  px: 800,  mb: 0.5 },
+    medium: { kb: 150, px: 1200, mb: 1.5 },
+    high:   { kb: 300, px: 2000, mb: 3.0 },
+  };
+
+  function setSliderVal(id, valId, val, fmt) {
+    const s = document.getElementById(id);
+    const v = document.getElementById(valId);
+    if (s) s.value = val;
+    if (v) v.textContent = fmt(val);
+  }
+
   [
     ['img-target-kb',  'img-target-kb-val',  v => v + ' KB'],
     ['img-max-width',  'img-max-width-val',  v => v + ' px'],
@@ -247,6 +260,19 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.addEventListener('input', upd);
     slider.addEventListener('change', runCompressor);
     upd();
+  });
+
+  document.querySelectorAll('.preset-chip[data-preset]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const p = COMPRESS_PRESETS[chip.dataset.preset];
+      if (!p) return;
+      setSliderVal('img-target-kb', 'img-target-kb-val', p.kb,  v => v + ' KB');
+      setSliderVal('img-max-width', 'img-max-width-val', p.px,  v => v + ' px');
+      setSliderVal('pdf-target-mb', 'pdf-target-mb-val', p.mb,  v => parseFloat(v).toFixed(1) + ' MB');
+      if (compressorFiles.length) runCompressor();
+    });
   });
 
   // ══════════════════════════════════════════════════════
