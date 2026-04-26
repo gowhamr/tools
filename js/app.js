@@ -16,6 +16,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ── Inline calculator loader ──
+  let calcLoaded = false;
+  function maybeLoadCalculators() {
+    if (calcLoaded) return;
+    calcLoaded = true;
+    const container = document.getElementById('calc-embed-container');
+    if (!container) return;
+
+    fetch('pages/calculators.html')
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const mchRoot = doc.getElementById('mch-root');
+        if (!mchRoot) return;
+
+        // Inject HTML (includes the <style> block)
+        container.innerHTML = mchRoot.outerHTML;
+
+        // Re-execute the main calculator script (DOMParser doesn't run scripts)
+        Array.from(doc.scripts).forEach(s => {
+          if (!s.src && s.textContent.length > 500 && !s.type.includes('json')) {
+            const live = document.createElement('script');
+            live.textContent = s.textContent;
+            document.body.appendChild(live);
+          }
+        });
+      })
+      .catch(() => {
+        if (container) container.innerHTML =
+          '<p style="padding:24px;text-align:center;font-size:.84rem;color:#6B7280">' +
+          'Could not load calculators. ' +
+          '<a href="pages/calculators.html" target="_blank" style="color:#4F46E5">Open in new tab ↗</a></p>';
+      });
+  }
+
   function showPanel(panelId) {
     if (panelId === activePanel) return;
     const prev = document.querySelector('.panel.active');
@@ -28,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const next = document.getElementById('panel-' + panelId);
       if (next) next.classList.add('active');
       setDockActive('tools');
+      if (panelId === 'calculators') maybeLoadCalculators();
     }
     activePanel = panelId;
   }
