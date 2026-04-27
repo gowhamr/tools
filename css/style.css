@@ -138,13 +138,12 @@ body.app-shell {
    HOME PANEL LAYOUT
    ════════════════════════════════════════════════════ */
 
-/* Give the home panel a gradient that fills the empty area below content */
+/* Give the home panel a gradient that fills the entire scroll area */
 #panel-home {
   background: linear-gradient(180deg,
     #eef2ff  0px,
-    #f5f3ff  120px,
-    var(--bg) 420px,
-    var(--bg) 100%
+    #f0eeff  140px,
+    #eeeeff  100%
   );
 }
 
@@ -152,6 +151,9 @@ body.app-shell {
   padding: 0 16px 56px;
   max-width: 540px;
   margin: 0 auto;
+  min-height: calc(100% - 160px); /* push footer down when content is short */
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Hero banner — full-bleed gradient ── */
@@ -1369,10 +1371,10 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .home-hero-title { font-size: 1.65rem; }
   .cat-grid     { gap: 8px; }
   .cat-btn      { padding: 12px 10px; gap: 10px; }
-  .cat-icon     { width: 36px; height: 36px; border-radius: 10px; }
-  .cat-icon svg { width: 17px; height: 17px; }
-  .cat-btn-name { font-size: .74rem; }
-  .cat-btn-desc { display: none; }
+  .cat-icon     { width: 40px; height: 40px; border-radius: 11px; }
+  .cat-icon svg { width: 18px; height: 18px; }
+  .cat-btn-name { font-size: .76rem; }
+  .cat-btn-desc { display: block; font-size: .62rem; }
   .two-col      { grid-template-columns: 1fr; }
   .options-row  { flex-direction: column; }
   .panel-scroll { padding: 14px 12px 4px; }
@@ -1577,7 +1579,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   }
 
   /* ── Home panel: desktop overrides ── */
-  #panel-home { background: linear-gradient(180deg, #eef2ff 0px, #f5f3ff 160px, var(--bg) 480px, var(--bg) 100%); }
+  #panel-home { background: linear-gradient(180deg, #eef2ff 0px, #f0eeff 160px, #eeeeff 100%); }
   .home-hero-banner { padding: 48px 40px 44px; }
   .home-hero-title { font-size: 2.6rem; }
   .home-hero-sub { font-size: .9rem; max-width: 400px; }
