@@ -1276,3 +1276,325 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .cat-btn-name { font-size: .78rem; }
   .panel-scroll { padding: 24px 24px 48px; }
 }
+
+/* ════════════════════════════════════════════════════
+   TABLET  ≥ 768px
+   ════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .cat-btn-desc { display: block; }
+  .home-hero-title { font-size: 1.4rem; }
+  .home-wrap { padding: 20px 20px 40px; }
+  .upload-zone-hero { padding: 36px 24px; }
+  .preset-chips { gap: 10px; }
+  .panel-scroll { padding: 20px 24px 40px; }
+  .doc-type-chips { gap: 8px; }
+}
+
+/* ════════════════════════════════════════════════════
+   DESKTOP  ≥ 1024px — full responsive layout
+   ════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+
+  /* ── Shell: allow page to scroll instead of overflow:hidden ── */
+  html:has(body.app-shell) { height: auto; }
+  body.app-shell {
+    height: auto;
+    overflow: auto;
+    overscroll-behavior: auto;
+  }
+
+  /* ── Header: sticky (not fixed), acts as navbar ── */
+  .app-shell .top-stripe {
+    position: sticky;
+    top: 0;
+    height: 64px;
+    padding: 0 28px;
+    z-index: 300;
+  }
+  .ts-logo { width: 36px; height: 36px; border-radius: 11px; }
+  .ts-name { font-size: 1rem; }
+  .ts-tagline { font-size: .62rem; }
+  .ts-badge { font-size: .65rem; padding: 4px 12px; }
+
+  /* Desktop nav links in header */
+  .ts-desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 32px;
+  }
+  .ts-nav-link {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--text-3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background .14s, color .14s;
+  }
+  .ts-nav-link:hover { background: var(--bg); color: var(--text-2); }
+  .ts-nav-link.active { color: var(--blue); background: var(--blue-light); }
+
+  /* ── Viewport: flex row — sidebar + content ── */
+  .app-shell .viewport {
+    position: static;
+    top: auto; bottom: auto;
+    height: auto;
+    min-height: calc(100vh - 64px);
+    overflow: visible;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  /* ── Sidebar: visible on desktop ── */
+  .app-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 224px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border-2);
+    padding: 16px 10px 24px;
+    gap: 2px;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  .sb-section-lbl {
+    font-size: .6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-4);
+    padding: 14px 8px 4px;
+  }
+  .sb-section-lbl:first-child { padding-top: 4px; }
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--text-2);
+    cursor: pointer;
+    text-align: left;
+    transition: background .13s, color .13s;
+    width: 100%;
+  }
+  .sb-link:hover { background: var(--bg); color: var(--text); }
+  .sb-link.active { background: var(--blue-light); color: var(--blue); font-weight: 700; }
+  .sb-link svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .75; }
+  .sb-link.active svg { opacity: 1; }
+
+  /* ── Dock: hidden on desktop ── */
+  .dock { display: none !important; }
+
+  /* ── Panel container: fills remaining width ── */
+  .panel-container { flex: 1; min-width: 0; position: static; }
+
+  /* ── Panels: reset mobile translate behavior ── */
+  .panel {
+    position: static;
+    transform: none !important;
+    transition: none !important;
+    overflow: visible;
+    pointer-events: all;
+    background: var(--bg);
+    height: auto;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* Home: always shown unless tool is active */
+  #panel-home { transform: none !important; }
+  #panel-home.pushed { display: none; }
+
+  /* Tool panels: show only active */
+  .panel.tool-panel { display: none; }
+  .panel.tool-panel.active { display: flex; flex-direction: column; }
+
+  /* ── Panel nav: becomes page-level heading ── */
+  .panel-nav {
+    position: static;
+    height: auto;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-2);
+    box-shadow: none;
+    padding: 20px 36px 18px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .panel-nav .nav-back { display: none; }
+  .panel-nav .nav-head { padding: 0; }
+  .panel-nav .nav-title { font-size: 1.45rem; font-weight: 800; color: var(--text); }
+  .panel-nav .nav-subtitle { font-size: .84rem; color: var(--text-3); margin-top: 2px; }
+
+  /* ── Panel scroll: desktop padding ── */
+  .panel-scroll {
+    padding: 28px 36px 40px;
+    overflow: visible;
+    flex: 1;
+  }
+
+  /* ── Panel CTA bar: static below content ── */
+  .panel-cta-bar {
+    position: static;
+    background: transparent;
+    border-top: none;
+    box-shadow: none;
+    padding: 0 36px 36px;
+  }
+  .panel-cta-btn {
+    max-width: 420px;
+    font-size: .95rem;
+  }
+
+  /* ── Home grid: 3 columns ── */
+  .home-wrap { padding: 32px 36px 48px; max-width: none; }
+  .home-hero { padding-bottom: 24px; }
+  .home-hero-title { font-size: 1.7rem; }
+  .home-hero-sub { font-size: .88rem; }
+  .cat-label { font-size: .62rem; margin-bottom: 10px; }
+  .cat-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 10px; }
+  .cat-btn { padding: 18px 14px; border-radius: 18px; }
+  .cat-icon { width: 48px; height: 48px; border-radius: 14px; }
+  .cat-icon svg { width: 22px; height: 22px; }
+  .cat-btn-name { font-size: .82rem; }
+  .cat-btn-desc { font-size: .7rem; }
+
+  /* ── DESKTOP TOOL SPLIT LAYOUT ── */
+
+  /* Wrapper divs are invisible on mobile (display:contents) but
+     become actual layout boxes on desktop */
+  .panel-upload-group   { display: contents; }
+  .panel-settings-group { display: contents; }
+  .panel-files-group    { display: contents; }
+
+  /* Apply 2-col split to tools that have the wrappers */
+  .tool-panel.has-split .panel-scroll {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: auto auto auto;
+    column-gap: 28px;
+    row-gap: 0;
+  }
+
+  .tool-panel.has-split .panel-upload-group {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .tool-panel.has-split .panel-settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    grid-column: 2;
+    grid-row: 1 / 4;
+    position: sticky;
+    top: calc(64px + 28px);
+    align-self: start;
+    padding-top: 0;
+  }
+  .tool-panel.has-split .panel-files-group {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* CTA bar inside settings group on desktop split tools */
+  .tool-panel.has-split .panel-cta-bar {
+    position: static;
+    padding: 4px 0 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .tool-panel.has-split .panel-cta-btn { max-width: 100%; }
+
+  /* Upload zone: larger on desktop */
+  .upload-zone-hero {
+    padding: 44px 32px;
+    border-radius: 22px;
+  }
+  .upload-icon-wrap { width: 68px; height: 68px; border-radius: 18px; }
+  .upload-icon-wrap svg { width: 32px; height: 32px; }
+  .upload-main { font-size: 1.05rem; }
+  .upload-sub  { font-size: .82rem; }
+
+  /* Settings card: bigger on desktop */
+  .settings-card { border-radius: 20px; }
+  .slider-group  { border-radius: 20px; }
+
+  /* Tool textarea: larger on desktop */
+  .tool-textarea { font-size: .84rem; }
+
+  /* Regex preset grid: more columns on desktop */
+  .regex-preset-grid { gap: 8px; }
+  .regex-preset-chip { font-size: .76rem; padding: 6px 14px; }
+
+  /* Developer tools: max-width centered */
+  #panel-base64 .panel-scroll,
+  #panel-regex  .panel-scroll,
+  #panel-formatter .panel-scroll {
+    max-width: 860px;
+  }
+
+  /* Calculators panel */
+  #panel-calculators .panel-scroll { padding: 0; }
+
+  /* PDF tools: wider tab chips */
+  .pdf-tool-tabs { gap: 6px; }
+  .pdf-tab { font-size: .8rem; padding: 10px 10px; }
+
+  /* PDF sub-panel desktop layout (tabs with split) */
+  .pdf-panel.active .upload-zone-hero { margin-bottom: 0; }
+  .pdf-panel { padding: 0; }
+
+  /* FAQ overlay full-screen on desktop */
+  .faq-overlay {
+    align-items: center;
+    justify-content: center;
+  }
+  .faq-sheet {
+    width: 560px;
+    max-height: 80vh;
+    border-radius: 20px;
+    margin: auto;
+  }
+
+  /* Results cards: slightly larger */
+  .result-card { border-radius: 16px; padding: 16px 20px; }
+}
+
+/* ════════════════════════════════════════════════════
+   WIDE DESKTOP  ≥ 1280px
+   ════════════════════════════════════════════════════ */
+@media (min-width: 1280px) {
+  .app-sidebar { width: 240px; }
+  .home-wrap { padding: 40px 48px 56px; }
+  .cat-grid { gap: 16px; }
+  .panel-scroll { padding: 32px 48px 48px; }
+  .panel-nav { padding: 24px 48px 20px; }
+  .panel-cta-bar { padding: 0 48px 40px; }
+  .tool-panel.has-split .panel-scroll { grid-template-columns: 1fr 400px; column-gap: 36px; }
+  .upload-zone-hero { padding: 52px 40px; }
+}
+
+/* ════════════════════════════════════════════════════
+   ULTRA-WIDE  ≥ 1536px — max content width
+   ════════════════════════════════════════════════════ */
+@media (min-width: 1536px) {
+  .panel-container { max-width: calc(100vw - 240px); }
+  .home-wrap { max-width: 1200px; }
+  .panel-scroll { max-width: 1200px; margin-left: 0; }
+  .panel-nav { max-width: 1200px; }
+}
