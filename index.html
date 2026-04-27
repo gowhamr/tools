@@ -195,12 +195,29 @@
 
       <!-- ══════════ HOME PANEL ══════════ -->
       <div class="panel" id="panel-home" data-panel="home">
-        <div class="home-wrap">
 
-          <div class="home-hero">
-            <h1 class="home-hero-title">What will you create today?</h1>
-            <p class="home-hero-sub">Compress, convert &amp; validate — all in your browser.</p>
+        <!-- Full-bleed gradient hero banner -->
+        <div class="home-hero-banner">
+          <div class="home-hero-kicker">
+            <span class="home-hero-dot"></span>Free &middot; Private &middot; No uploads
           </div>
+          <h1 class="home-hero-title">Tools that run<br>in your browser</h1>
+          <p class="home-hero-sub">Compress, convert &amp; validate images and PDFs — nothing leaves your device.</p>
+          <div class="home-hero-ctas">
+            <button class="home-hero-cta-primary" data-panel="compressor">🗜️ Compress Image</button>
+            <button class="home-hero-cta-ghost"   data-panel="pdf">📄 PDF Tools</button>
+          </div>
+        </div>
+
+        <!-- Privacy strip -->
+        <div class="home-privacy-strip">
+          <span>🔒 100% Local</span>
+          <span>⚡ Instant results</span>
+          <span>🚫 No file uploads</span>
+          <span>💸 Always free</span>
+        </div>
+
+        <div class="home-wrap">
 
           <p class="cat-label" id="file-tools-label">File Tools</p>
           <div class="cat-grid" id="file-tools-grid">
@@ -277,7 +294,27 @@
             </button>
           </div>
 
-        </div>
+          <!-- ── Site footer ── -->
+          <footer class="home-footer">
+            <div class="home-footer-brand">
+              <div class="home-footer-mark">K</div>
+              <div>
+                <p class="home-footer-name">KaruviLab</p>
+                <p class="home-footer-tagline">Fast &middot; Private &middot; No uploads</p>
+              </div>
+            </div>
+            <nav class="home-footer-nav" aria-label="Legal and info links">
+              <a href="pages/about.html">About</a>
+              <a href="pages/guides.html">Guides</a>
+              <a href="pages/privacy.html">Privacy Policy</a>
+              <a href="pages/terms.html">Terms</a>
+              <a href="pages/disclaimer.html">Disclaimer</a>
+              <a href="pages/contact.html">Contact</a>
+            </nav>
+            <p class="home-footer-copy">&copy; 2026 KaruviLab. All processing runs in your browser &mdash; your files never leave your device.</p>
+          </footer>
+
+        </div><!-- /home-wrap -->
       </div>
 
       <!-- ══════════ COMPRESSOR ══════════ -->
