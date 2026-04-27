@@ -66,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (panelId === 'calculators') maybeLoadCalculators();
     }
     activePanel = panelId;
+
+    // Update sidebar + desktop nav active states
+    document.querySelectorAll('.sb-link, .ts-nav-link').forEach(el => {
+      el.classList.toggle('active', el.dataset.panel === panelId);
+    });
   }
 
   // 3-tab dock
@@ -87,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Cat-grid tool buttons
-  document.querySelectorAll('.cat-btn[data-panel]').forEach(btn => {
+  // Cat-grid tool buttons + hero CTA buttons
+  document.querySelectorAll('[data-panel]:not([id])').forEach(btn => {
     btn.addEventListener('click', () => showPanel(btn.dataset.panel));
   });
 
