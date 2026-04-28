@@ -106,6 +106,9 @@ body.app-shell {
 }
 .panel-container { position: relative; width: 100%; height: 100%; }
 
+/* Sidebar hidden on mobile — shown only at desktop breakpoint */
+.app-sidebar { display: none; }
+
 /* ════════════════════════════════════════════════════
    PANELS
    ════════════════════════════════════════════════════ */
