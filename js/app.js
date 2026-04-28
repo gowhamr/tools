@@ -953,34 +953,42 @@ function formatXml(text, minify) {
 
   if (minify) {
     const s = new XMLSerializer();
-    return (prolog + s.serializeToString(doc).replace(/>\s+</g,'><')).trim();
+    return (prolog + s.serializeToString(doc).replace(/>\s+</g, '><')).trim();
   }
+
   function indent(node, level) {
-...
-  return (prolog + indent(doc.documentElement, 0)).trimEnd();
-}
-        if (node.nodeType === 3) {
-          const t = node.textContent.trim();
-          return t ? pad + t + '\n' : '';
-        }
-        if (node.nodeType === 8) return `${pad}<!--${node.textContent}-->\n`;
-        if (node.nodeType !== 1) return '';
-        let attrs = '';
-        for (const a of node.attributes) attrs += ` ${a.name}="${a.value}"`;
-        const children = Array.from(node.childNodes);
-        const childText = children.filter(c => c.nodeType === 3 && c.textContent.trim());
-        if (children.length === 1 && childText.length === 1) {
-          return `${pad}<${node.tagName}${attrs}>${childText[0].textContent.trim()}</${node.tagName}>\n`;
-        }
-        if (children.length === 0) return `${pad}<${node.tagName}${attrs}/>\n`;
-        out += `${pad}<${node.tagName}${attrs}>\n`;
-        children.forEach(c => { out += indent(c, level + 1); });
-        out += `${pad}</${node.tagName}>\n`;
-        return out;
-      }
-      return indent(doc.documentElement, 0).trimEnd();
+    const pad = '  '.repeat(level);
+    let out = '';
+    if (node.nodeType === 3) {
+      const t = node.textContent.trim();
+      return t ? pad + t + '\n' : '';
+    }
+    if (node.nodeType === 8) return `${pad}<!--${node.textContent}-->\n`;
+    if (node.nodeType !== 1) return '';
+
+    let attrs = '';
+    if (node.attributes) {
+      for (const a of node.attributes) attrs += ` ${a.name}="${a.value}"`;
     }
 
+    const children = Array.from(node.childNodes);
+    const childText = children.filter(c => c.nodeType === 3 && c.textContent.trim());
+
+    if (children.length === 1 && childText.length === 1) {
+      return `${pad}<${node.tagName}${attrs}>${childText[0].textContent.trim()}</${node.tagName}>\n`;
+    }
+    if (children.length === 0) return `${pad}<${node.tagName}${attrs}/>\n`;
+
+    out += `${pad}<${node.tagName}${attrs}>\n`;
+    children.forEach(c => {
+      out += indent(c, level + 1);
+    });
+    out += `${pad}</${node.tagName}>\n`;
+    return out;
+  }
+
+  return (prolog + indent(doc.documentElement, 0)).trimEnd();
+}
     function run(minify) {
       const text = fmtInput.value.trim();
       if (!text) { showErr('Please paste some content first.'); return; }

@@ -46,9 +46,9 @@ const ImageTools = (() => {
     let quality = 0.85;
     let blob = await Utils.canvasToBlob(canvas, mime, quality);
     
+    let iterations = 0;
     // PNG is lossless, quality loop is useless
     if (!lossless) {
-      let iterations = 0;
       while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < 12) {
         quality = Math.max(0.1, quality - 0.08);
         blob = await Utils.canvasToBlob(canvas, mime, quality);
@@ -62,7 +62,7 @@ const ImageTools = (() => {
       blob = await Utils.canvasToBlob(canvas, mime, quality);
     }
 
-    return { blob, width: canvas.width, height: canvas.height, quality, iterations: lossless ? 0 : 1, mime, fmtKey };
+    return { blob, width: canvas.width, height: canvas.height, quality, iterations: lossless ? 0 : Math.max(1, iterations), mime, fmtKey };
   }
 
   /**
