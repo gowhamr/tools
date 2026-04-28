@@ -782,14 +782,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!text) { showErr('Please enter some text first.'); return; }
       try {
         if (getMode() === 'encode') {
-          showOut(btoa(unescape(encodeURIComponent(text))));
+          const bytes = new TextEncoder().encode(text);
+          const bin   = String.fromCharCode(...bytes);
+          showOut(btoa(bin));
         } else {
-          showOut(decodeURIComponent(escape(atob(text))));
+          const bin   = atob(text);
+          const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+          showOut(new TextDecoder().decode(bytes));
         }
       } catch {
         showErr(getMode() === 'decode'
           ? 'Invalid Base64 string. Make sure the input is valid Base64.'
-          : 'Could not encode — try removing special characters.');
+          : 'Could not encode — check for unsupported characters.');
       }
     });
 
@@ -938,19 +942,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const obj = JSON.parse(text);
       return minify ? JSON.stringify(obj) : JSON.stringify(obj, null, 2);
     }
+function formatXml(text, minify) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(text, 'application/xml');
+  const parseErr = doc.querySelector('parsererror');
+  if (parseErr) throw new Error(parseErr.textContent.split('\n')[0]);
 
-    function formatXml(text, minify) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'application/xml');
-      const parseErr = doc.querySelector('parsererror');
-      if (parseErr) throw new Error(parseErr.textContent.split('\n')[0]);
-      if (minify) {
-        const s = new XMLSerializer();
-        return s.serializeToString(doc).replace(/>\s+</g,'><').trim();
-      }
-      function indent(node, level) {
-        let out = '';
-        const pad = '  '.repeat(level);
+  const prologMatch = text.match(/^<\?xml.*?\?>/i);
+  const prolog = prologMatch ? prologMatch[0] + '\n' : '';
+
+  if (minify) {
+    const s = new XMLSerializer();
+    return (prolog + s.serializeToString(doc).replace(/>\s+</g,'><')).trim();
+  }
+  function indent(node, level) {
+...
+  return (prolog + indent(doc.documentElement, 0)).trimEnd();
+}
         if (node.nodeType === 3) {
           const t = node.textContent.trim();
           return t ? pad + t + '\n' : '';

@@ -10,16 +10,17 @@ const Utils = (() => {
 
   /** Safe file name: strip special characters, keep extension */
   function safeName(name) {
-    const dot = name.lastIndexOf('.');
-    const base = dot > 0 ? name.slice(0, dot) : name;
-    const ext  = dot > 0 ? name.slice(dot)   : '';
+    const lastDot = name.lastIndexOf('.');
+    if (lastDot <= 0) return name.replace(/[^a-zA-Z0-9_\-]/g, '_');
+    const base = name.slice(0, lastDot);
+    const ext  = name.slice(lastDot);
     return base.replace(/[^a-zA-Z0-9_\-]/g, '_') + ext.toLowerCase();
   }
 
-  /** Check if file name has special characters */
+  /** Check if file name has special characters (excluding dots used as separators) */
   function hasSpecialChars(name) {
-    const dot = name.lastIndexOf('.');
-    const base = dot > 0 ? name.slice(0, dot) : name;
+    const lastDot = name.lastIndexOf('.');
+    const base = lastDot <= 0 ? name : name.slice(0, lastDot);
     return /[^a-zA-Z0-9_\-]/.test(base);
   }
 

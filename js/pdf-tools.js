@@ -63,7 +63,11 @@ const PdfTools = (() => {
       const dw = iw * scale, dh = ih * scale;
       const dx = pad + (availW - dw) / 2, dy = pad + (availH - dh) / 2;
 
-      const fmt = /\.png$/i.test(file.name) ? 'PNG' : 'JPEG';
+      const ext = Utils.getExt(file.name);
+      let fmt = 'JPEG';
+      if (ext === 'png') fmt = 'PNG';
+      else if (ext === 'webp') fmt = 'WEBP';
+      
       doc.addImage(dataUrl, fmt, dx, dy, dw, dh);
     }
 
@@ -113,26 +117,30 @@ const PdfTools = (() => {
 
     let jsdoc = null;
 
-    for (let i = 1; i <= total; i++) {
-      if (onProgress) onProgress(i, total);
-      const page = await pdfDoc.getPage(i);
-      const viewport = page.getViewport({ scale: 1.5 }); // moderate resolution
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(viewport.width);
-      canvas.height = Math.round(viewport.height);
-      const ctx = canvas.getContext('2d');
-      await page.render({ canvasContext: ctx, viewport }).promise;
+    try {
+      for (let i = 1; i <= total; i++) {
+        if (onProgress) onProgress(i, total);
+        const page = await pdfDoc.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 }); // moderate resolution
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(viewport.width);
+        canvas.height = Math.round(viewport.height);
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
 
-      const dataUrl = canvas.toDataURL('image/jpeg', imageQuality);
-      const pgW = viewport.width * 0.75; // px → pt
-      const pgH = viewport.height * 0.75;
+        const dataUrl = canvas.toDataURL('image/jpeg', imageQuality);
+        const pgW = viewport.width * 0.75; // px → pt
+        const pgH = viewport.height * 0.75;
 
-      if (i === 1) {
-        jsdoc = new JsPDF({ unit: 'pt', format: [pgW, pgH], orientation: 'p' });
-      } else {
-        jsdoc.addPage([pgW, pgH], 'p');
+        if (i === 1) {
+          jsdoc = new JsPDF({ unit: 'pt', format: [pgW, pgH], orientation: 'p' });
+        } else {
+          jsdoc.addPage([pgW, pgH], 'p');
+        }
+        jsdoc.addImage(dataUrl, 'JPEG', 0, 0, pgW, pgH);
       }
-      jsdoc.addImage(dataUrl, 'JPEG', 0, 0, pgW, pgH);
+    } finally {
+      await pdfDoc.destroy();
     }
 
     if (!jsdoc) throw new Error('PDF has no pages');
@@ -153,16 +161,20 @@ const PdfTools = (() => {
 
     const ab = await Utils.readAsArrayBuffer(file);
     const pdfDoc = await pdfjsLib.getDocument({ data: ab }).promise;
-    const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(viewport.width);
-    canvas.height = Math.round(viewport.height);
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    try {
+      const page = await pdfDoc.getPage(pageNum);
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
 
-    const mime = format === 'png' ? 'image/png' : 'image/jpeg';
-    const blob = await Utils.canvasToBlob(canvas, mime, 0.9);
-    return { blob, width: canvas.width, height: canvas.height };
+      const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+      const blob = await Utils.canvasToBlob(canvas, mime, 0.9);
+      return { blob, width: canvas.width, height: canvas.height };
+    } finally {
+      await pdfDoc.destroy();
+    }
   }
 
   return { imagesToPdf, mergePdfs, compressPdf, pdfPageToImage };

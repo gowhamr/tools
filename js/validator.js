@@ -7,14 +7,14 @@ const Validator = (() => {
   const DOC_RULES = {
     passport_photo: {
       label: 'Passport Photo',
-      formats: ['jpg', 'jpeg'],
+      formats: ['jpg', 'jpeg', 'png'],
       minKB: 10, maxKB: 200,
       exactW: 200, exactH: 230,
       background: 'white/light'
     },
     signature: {
       label: 'Signature',
-      formats: ['jpg', 'jpeg'],
+      formats: ['jpg', 'jpeg', 'png'],
       minKB: 4, maxKB: 50,
       exactW: 140, exactH: 60,
       background: 'white'
@@ -26,13 +26,13 @@ const Validator = (() => {
     },
     thumb_impression: {
       label: 'Thumb Impression',
-      formats: ['jpg'],
+      formats: ['jpg', 'jpeg'],
       minKB: 10, maxKB: 50
     },
     general: {
       label: 'General',
       formats: ALLOWED_FORMATS,
-      maxWidthPx: 1000
+      maxWidthPx: 2560
     }
   };
 

@@ -45,20 +45,24 @@ const ImageTools = (() => {
 
     let quality = 0.85;
     let blob = await Utils.canvasToBlob(canvas, mime, quality);
-    let iterations = 0;
-
-    while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < 12) {
-      quality = Math.max(0.1, quality - 0.08);
-      blob = await Utils.canvasToBlob(canvas, mime, quality);
-      iterations++;
+    
+    // PNG is lossless, quality loop is useless
+    if (!lossless) {
+      let iterations = 0;
+      while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < 12) {
+        quality = Math.max(0.1, quality - 0.08);
+        blob = await Utils.canvasToBlob(canvas, mime, quality);
+        iterations++;
+      }
     }
+
     if (blob.size > targetKB * 1024) {
       const scale = Math.sqrt((targetKB * 1024) / blob.size);
       canvas = FormatUtils.drawElement(src, Math.max(50, Math.round(canvas.width * scale)), null);
       blob = await Utils.canvasToBlob(canvas, mime, quality);
     }
 
-    return { blob, width: canvas.width, height: canvas.height, quality, iterations, mime, fmtKey };
+    return { blob, width: canvas.width, height: canvas.height, quality, iterations: lossless ? 0 : 1, mime, fmtKey };
   }
 
   /**
