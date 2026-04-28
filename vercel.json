@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "public": true,
+  "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
-  "buildCommand": "echo 'Static site'",
+  "buildCommand": null,
   "outputDirectory": ".",
   "headers": [
     {
