@@ -69,7 +69,8 @@ body {
 html:has(body.app-shell) { height: 100%; height: 100dvh; }
 body.app-shell {
   height: 100%; height: 100dvh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overscroll-behavior: auto;
   background: var(--bg);
 }
 
@@ -107,7 +108,6 @@ body.app-shell {
   position: fixed;
   top: var(--stripe-h); bottom: var(--dock-h);
   left: 0; right: 0; z-index: 1;
-  overflow: hidden;
 }
 .panel-container { position: relative; width: 100%; height: 100%; }
 
@@ -121,7 +121,7 @@ body.app-shell {
   position: absolute; inset: 0;
   overflow-y: auto; overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-y: auto;
   background: var(--bg);
   transform: translateX(100%);
   transition: transform .28s cubic-bezier(.4, 0, .2, 1);
