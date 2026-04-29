@@ -1033,4 +1033,37 @@ function formatXml(text, minify) {
     localStorage.setItem('theme', next);
   });
 
+  // ══════════════════════════════════════════════════════
+  //  RIPPLE EFFECT  (panel-cta-btn + hero CTA)
+  // ══════════════════════════════════════════════════════
+  function spawnRipple(btn, e) {
+    if (btn.disabled) return;
+    const r    = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const el   = document.createElement('span');
+    el.className = 'ripple';
+    el.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+    btn.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+  }
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.panel-cta-btn, .home-hero-cta-primary');
+    if (btn) spawnRipple(btn, e);
+  });
+
+  // ══════════════════════════════════════════════════════
+  //  HEADER SCROLL SHADOW
+  // ══════════════════════════════════════════════════════
+  const stripe = document.querySelector('.top-stripe');
+  if (stripe) {
+    document.querySelectorAll('.panel').forEach(p => {
+      p.addEventListener('scroll', () => {
+        stripe.classList.toggle('scrolled', p.scrollTop > 4);
+      }, { passive: true });
+    });
+    window.addEventListener('scroll', () => {
+      stripe.classList.toggle('scrolled', window.scrollY > 4);
+    }, { passive: true });
+  }
+
 });

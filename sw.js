@@ -1,5 +1,5 @@
 /* Service Worker — KaruviLab */
-const CACHE = 'karuvilab-v4';
+const CACHE = 'karuvilab-v5';
 
 const SHELL = [
   './',
