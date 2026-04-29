@@ -94,6 +94,8 @@ body.app-shell {
 .ts-brand-text { display: flex; flex-direction: column; gap: 1px; }
 .ts-name { font-size: .9rem; font-weight: 800; color: var(--text); line-height: 1.1; }
 .ts-tagline { font-size: .58rem; color: var(--text-4); font-weight: 500; letter-spacing: .1px; }
+/* Hidden on mobile; shown at desktop via media query */
+.ts-desktop-nav { display: none; }
 .ts-badge {
   font-size: .58rem; font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
   color: #059669; background: #ECFDF5; border: 1px solid #A7F3D0;
@@ -1378,6 +1380,9 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 /* ════════════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════════════ */
+@media (max-width: 374px) {
+  .ts-tagline { display: none; }
+}
 @media (max-width: 640px) {
   :root { --stripe-h: 48px; --dock-h: 58px; }
   .home-wrap    { padding: 0 12px 32px; }
@@ -1392,22 +1397,13 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .cat-btn-desc { display: block; font-size: .62rem; }
   .two-col      { grid-template-columns: 1fr; }
   .options-row  { flex-direction: column; }
-  .panel-scroll { padding: 14px 12px 4px; }
+  .panel-scroll { padding: 14px 12px 36px; }
   .dock-lbl     { font-size: .48rem; }
   .dock-icon    { width: 19px; height: 19px; }
   .faq-sheet    { padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (min-width: 641px) {
   .panel-scroll { padding: 20px 20px 40px; }
-}
-@media (min-width: 900px) {
-  .home-wrap    { padding: 0 20px 40px; }
-  .cat-grid     { gap: 12px; }
-  .cat-btn      { padding: 18px 10px 16px; }
-  .cat-icon     { width: 52px; height: 52px; }
-  .cat-icon svg { width: 24px; height: 24px; }
-  .cat-btn-name { font-size: .78rem; }
-  .panel-scroll { padding: 24px 24px 48px; }
 }
 
 /* ════════════════════════════════════════════════════
@@ -1424,6 +1420,15 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .preset-chips { gap: 10px; }
   .panel-scroll { padding: 20px 24px 40px; }
   .doc-type-chips { gap: 8px; }
+}
+@media (min-width: 900px) {
+  .home-wrap    { padding: 0 20px 40px; }
+  .cat-grid     { gap: 12px; }
+  .cat-btn      { padding: 18px 10px 16px; }
+  .cat-icon     { width: 52px; height: 52px; }
+  .cat-icon svg { width: 24px; height: 24px; }
+  .cat-btn-name { font-size: .78rem; }
+  .panel-scroll { padding: 24px 24px 48px; }
 }
 
 /* ════════════════════════════════════════════════════
@@ -1594,12 +1599,16 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   }
 
   /* ── Home panel: desktop overrides ── */
-  #panel-home { background: linear-gradient(180deg, #eef2ff 0px, #f0eeff 160px, #eeeeff 100%); }
+  #panel-home {
+    background: linear-gradient(180deg, #eef2ff 0px, #f0eeff 160px, #eeeeff 100%);
+    display: flex;
+    flex-direction: column;
+  }
   .home-hero-banner { padding: 48px 40px 44px; }
   .home-hero-title { font-size: 2.6rem; }
   .home-hero-sub { font-size: .9rem; max-width: 400px; }
   .home-privacy-strip { padding: 12px 40px; }
-  .home-wrap { padding: 24px 36px 48px; max-width: none; }
+  .home-wrap { padding: 24px 36px 48px; max-width: none; flex: 1; }
   .home-footer { padding: 32px 40px 36px; }
   .home-footer-nav { gap: 5px 20px; }
   .cat-label { font-size: .62rem; margin-bottom: 10px; }
