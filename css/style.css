@@ -155,7 +155,6 @@ body.app-shell {
   padding: 0 16px 56px;
   max-width: 540px;
   margin: 0 auto;
-  min-height: calc(100% - 160px); /* push footer down when content is short */
   display: flex;
   flex-direction: column;
 }
