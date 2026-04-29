@@ -81,10 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
         showPanel('home');
         homePanel?.querySelector('.home-wrap')?.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (dockId === 'tools') {
+        const needsTransition = activePanel !== 'home';
         showPanel('home');
         setTimeout(() => {
           document.getElementById('file-tools-label')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 60);
+        }, needsTransition ? 320 : 60);
         setDockActive('tools');
       } else if (dockId === 'more') {
         openFaq();
