@@ -4,19 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculator Hub — KaruviLab</title>
-  <meta name="description" content="16 free online calculators: SIP, EMI, GST, compound interest, age, date, currency converter, unit conversions. No signup required." />
+  <meta name="description" content="17 free online calculators: SIP, EMI, GST, compound interest, age, date, currency converter, unit conversions. No signup required." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://wanderseven.com/pages/calculators.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Calculator Hub — 16 Free Online Calculators" />
+  <meta property="og:title" content="Calculator Hub — 17 Free Online Calculators" />
   <meta property="og:description" content="SIP, EMI, GST, compound interest, age, date, currency and unit calculators — all free, no signup." />
   <meta property="og:url" content="https://wanderseven.com/pages/calculators.html" />
   <meta property="og:image" content="https://wanderseven.com/icons/og-image.png" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Calculator Hub — 16 Free Online Calculators" />
+  <meta name="twitter:title" content="Calculator Hub — 17 Free Online Calculators" />
   <meta name="twitter:description" content="SIP, EMI, GST, compound interest, age, date, currency and unit calculators — all free, no signup." />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#2563EB" />
+  <!-- Theme: applied before paint to prevent flash of unstyled content -->
+  <script>(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet" />
@@ -25,9 +27,13 @@
 <body>
   <header class="hero hero-sm">
     <div class="hero-inner">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
       <a href="../index.html" class="hero-back">&#8592; Back to Tool</a>
       <h1 class="hero-title">&#129518; Calculator Hub</h1>
-      <p class="hero-sub">16 free calculators — finance, date &amp; time, math &amp; unit conversions</p>
+      <p class="hero-sub">17 free calculators — finance, date &amp; time, math &amp; unit conversions</p>
     </div>
   </header>
 
@@ -44,7 +50,7 @@
       "name": "Multi-Calculator Hub",
       "alternateName": "Free Online Calculator Hub",
       "url": "https://wanderseven.com/pages/calculators.html",
-      "description": "Free online collection of 16 calculators including SIP, EMI, GST, compound interest, age calculator, world clock, percentage, and unit converters. Built for Indian users with rupee formatting and live currency rates.",
+      "description": "Free online collection of 17 calculators including SIP, EMI, GST, compound interest, age calculator, world clock, percentage, and unit converters. Built for Indian users with rupee formatting and live currency rates.",
       "applicationCategory": "FinanceApplication",
       "applicationSubCategory": "Calculator",
       "operatingSystem": "Any",
@@ -213,6 +219,20 @@
   font-family: var(--mch-font-base);
   color: var(--mch-text);
   line-height: 1.6;
+}
+
+/* ---------- Dark Mode Overrides ---------- */
+[data-theme="dark"] #mch-root {
+  --mch-bg: #0F172A;
+  --mch-surface: #1E293B;
+  --mch-surface-raised: #0F172A;
+  --mch-text: #F1F5F9;
+  --mch-muted: #CBD5E1;
+  --mch-subtle: #94A3B8;
+  --mch-border: #334155;
+  --mch-border-subtle: #1E293B;
+  --mch-shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+  --mch-primary-soft: rgba(79,70,229,.15);
 }
 
 /* ---------- Intro hero ---------- */
@@ -2189,6 +2209,7 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
     </div>
   </footer>
 
+  <script src="../js/theme.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

@@ -1,5 +1,5 @@
 /* Service Worker — KaruviLab */
-const CACHE = 'karuvilab-v5';
+const CACHE = 'karuvilab-v8';
 
 const SHELL = [
   './',
@@ -11,15 +11,18 @@ const SHELL = [
   './js/validator.js',
   './js/image-tools.js',
   './js/pdf-tools.js',
+  './js/theme.js',
   './js/app.js',
   './manifest.json',
   './icons/icon.svg',
+  './icons/icon-180.png',
   './pages/about.html',
   './pages/calculators.html',
   './pages/contact.html',
   './pages/privacy.html',
   './pages/terms.html',
   './pages/disclaimer.html',
+  './pages/guides.html',
 ];
 
 self.addEventListener('install', e => {
