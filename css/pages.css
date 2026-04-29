@@ -351,3 +351,60 @@ a { color: var(--primary); }
   font-weight: 500;
 }
 .footer-nav a:hover { color: #fff; text-decoration: underline; }
+
+/* ── Dark mode tokens ── */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --text:        #F1F5F9;
+  --text-2:      #CBD5E1;
+  --text-3:      #94A3B8;
+  --border:      #334155;
+  --bg-card:     #1E293B;
+  --bg-input:    #0F172A;
+  --primary-light: rgba(79,70,229,.15);
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.5);
+  --shadow:      0 4px 16px rgba(0,0,0,.5);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,.6);
+}
+
+/* ── Dark mode overrides ── */
+[data-theme="dark"] body { background: #0F172A; }
+[data-theme="dark"] .hero { background: linear-gradient(135deg, #3730a3 0%, #4c1d95 55%, #5b21b6 100%); }
+[data-theme="dark"] .page-card { border-color: var(--border); }
+[data-theme="dark"] .page-section { border-bottom-color: var(--border); }
+[data-theme="dark"] .policy-highlight { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.2); }
+[data-theme="dark"] .policy-highlight p { color: #34d399; }
+[data-theme="dark"] .policy-highlight-warn { background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); }
+[data-theme="dark"] .policy-highlight-warn p { color: #fbbf24; }
+[data-theme="dark"] .owner-card { border-color: rgba(99,102,241,.3); }
+[data-theme="dark"] .contact-card { border-color: var(--border); }
+[data-theme="dark"] .guide-card { border-color: var(--border); }
+[data-theme="dark"] .stat-box { border-color: var(--border); }
+[data-theme="dark"] .tag-image { background: rgba(79,70,229,.2); color: #a5b4fc; }
+[data-theme="dark"] .tag-pdf   { background: rgba(239,68,68,.15); color: #fca5af; }
+[data-theme="dark"] .tag-dev   { background: rgba(16,185,129,.15); color: #34d399; }
+[data-theme="dark"] .tag-calc  { background: rgba(245,158,11,.15); color: #fcd34d; }
+
+/* ── Theme toggle button (floating or header) ── */
+.theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  z-index: 10;
+}
+.theme-toggle:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.4); }
+.theme-icon-sun { display: none; }
+[data-theme="dark"] .theme-icon-moon { display: none; }
+[data-theme="dark"] .theme-icon-sun  { display: block; }
+
