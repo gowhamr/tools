@@ -1590,12 +1590,16 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   }
 
   /* ── Home panel: desktop overrides ── */
-  #panel-home { background: linear-gradient(180deg, #eef2ff 0px, #f0eeff 160px, #eeeeff 100%); }
+  #panel-home {
+    background: linear-gradient(180deg, #eef2ff 0px, #f0eeff 160px, #eeeeff 100%);
+    display: flex;
+    flex-direction: column;
+  }
   .home-hero-banner { padding: 48px 40px 44px; }
   .home-hero-title { font-size: 2.6rem; }
   .home-hero-sub { font-size: .9rem; max-width: 400px; }
   .home-privacy-strip { padding: 12px 40px; }
-  .home-wrap { padding: 24px 36px 48px; max-width: none; }
+  .home-wrap { padding: 24px 36px 48px; max-width: none; flex: 1; }
   .home-footer { padding: 32px 40px 36px; }
   .home-footer-nav { gap: 5px 20px; }
   .cat-label { font-size: .62rem; margin-bottom: 10px; }
