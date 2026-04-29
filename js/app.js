@@ -55,6 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panelId === activePanel) return;
     const prev = document.querySelector('.panel.active');
     if (prev) prev.classList.remove('active');
+
+    // Promote only the panels being animated to a GPU layer; demote after
+    const TRANSITION_MS = 300;
+    const animating = [homePanel, prev, document.getElementById('panel-' + panelId)].filter(Boolean);
+    animating.forEach(p => { p.style.willChange = 'transform'; });
+    setTimeout(() => animating.forEach(p => { p.style.willChange = ''; }), TRANSITION_MS);
+
     if (panelId === 'home') {
       homePanel?.classList.remove('pushed');
       setDockActive('home');
