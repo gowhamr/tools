@@ -3,6 +3,43 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ══════════════════════════════════════════════════════
+  //  THEME MANAGEMENT
+  // ══════════════════════════════════════════════════════
+  (function() {
+    const themeBtn = document.getElementById('theme-toggle');
+    const modes = ['auto', 'light', 'dark'];
+    let currentMode = localStorage.getItem('theme-mode') || 'auto';
+
+    function applyThemeMode(mode) {
+      document.documentElement.setAttribute('data-theme-mode', mode);
+      localStorage.setItem('theme-mode', mode);
+
+      if (mode === 'auto') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', mode);
+      }
+    }
+
+    // Initial apply (matches head script but ensures UI sync)
+    applyThemeMode(currentMode);
+
+    themeBtn?.addEventListener('click', () => {
+      let nextIndex = (modes.indexOf(currentMode) + 1) % modes.length;
+      currentMode = modes[nextIndex];
+      applyThemeMode(currentMode);
+    });
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (currentMode === 'auto') {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      }
+    });
+  })();
+
+  // ══════════════════════════════════════════════════════
   //  PANEL NAVIGATION
   // ══════════════════════════════════════════════════════
   let activePanel = 'home';
