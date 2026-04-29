@@ -2,48 +2,30 @@
   "name": "KaruviLab",
   "short_name": "KaruviLab",
   "description": "Simple tools, fast results. Compress, convert, create and validate images and PDFs — 100% private, runs locally in your browser.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#020818",
+  "background_color": "#ffffff",
   "theme_color": "#2563EB",
-  "orientation": "any",
-  "lang": "en",
-  "dir": "ltr",
-  "categories": ["utilities", "productivity"],
   "icons": [
     {
-      "src": "./icons/icon.svg",
+      "src": "icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Compress Image",
       "short_name": "Compress",
       "description": "Compress an image file",
-      "url": "./#compressor"
+      "url": "/#compressor"
     },
     {
       "name": "Convert Format",
       "short_name": "Convert",
       "description": "Convert an image to another format",
-      "url": "./#converter"
+      "url": "/#converter"
     }
   ]
 }
