@@ -1872,8 +1872,25 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 [data-theme="dark"] .select-styled {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748B'/%3E%3C/svg%3E");
 }
+[data-theme="dark"] select option,
+[data-theme="dark"] select optgroup {
+  background-color: #1E293B;
+  color: #F1F5F9;
+}
 
 /* ── Dark: calculator embed ── */
+[data-theme="dark"] #mch-root {
+  --mch-bg: #0F172A;
+  --mch-surface: #1E293B;
+  --mch-surface-raised: #0F172A;
+  --mch-text: #F1F5F9;
+  --mch-muted: #CBD5E1;
+  --mch-subtle: #94A3B8;
+  --mch-border: #334155;
+  --mch-border-subtle: #1E293B;
+  --mch-shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+  --mch-primary-soft: rgba(79,70,229,.15);
+}
 [data-theme="dark"] #calc-embed-container .mch-card { background: var(--surface) !important; box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.05) !important; }
 [data-theme="dark"] #calc-embed-container .mch-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,.4) !important; }
 [data-theme="dark"] #calc-embed-container .mch-card-icon { background: rgba(79,70,229,.2) !important; }
