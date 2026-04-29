@@ -39,7 +39,7 @@ a { color: var(--primary); }
 
 /* ── Hero header ── */
 .hero {
-  background: linear-gradient(135deg, #3730a3 0%, #5b21b6 55%, #7c3aed 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 55%, #7c3aed 100%);
   color: #fff;
   position: relative; overflow: hidden;
 }
@@ -75,14 +75,18 @@ a { color: var(--primary); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: rgba(255,255,255,.75);
+  color: rgba(255,255,255,.9);
   font-size: .85rem;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   margin-bottom: 16px;
   transition: color .15s;
+  border: 1px solid rgba(255,255,255,.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
 }
-.hero-back:hover { color: #fff; }
+.hero-back:hover { color: #fff; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,.5); }
 
 /* ── Page main ── */
 .page-main {
@@ -158,7 +162,7 @@ a { color: var(--primary); }
   gap: 6px;
 }
 .feature-icon { font-size: 1.5rem; }
-.feature-item strong { font-size: .9rem; font-weight: 700; color: var(--text); }
+.feature-item strong { font-size: .95rem; font-weight: 700; color: var(--text); }
 .feature-item p { font-size: .82rem; color: var(--text-2); margin: 0; line-height: 1.4; }
 
 /* ── Owner card (About) ── */
@@ -185,7 +189,7 @@ a { color: var(--primary); }
   flex-shrink: 0;
 }
 .owner-info h3 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; color: var(--text); }
-.owner-title { font-size: .82rem; color: var(--primary); font-weight: 600; margin-bottom: 8px; }
+.owner-title { font-size: .95rem; color: var(--primary); font-weight: 600; margin-bottom: 8px; }
 .owner-info p { font-size: .85rem; color: var(--text-2); line-height: 1.55; margin-bottom: 10px; }
 .owner-links { display: flex; flex-wrap: wrap; gap: 12px; }
 .owner-links a { font-size: .83rem; color: var(--primary); font-weight: 600; text-decoration: none; }
