@@ -1,5 +1,5 @@
 /* Service Worker — KaruviLab */
-const CACHE = 'karuvilab-v6';
+const CACHE = 'karuvilab-v7';
 
 const SHELL = [
   './',
@@ -15,6 +15,7 @@ const SHELL = [
   './js/app.js',
   './manifest.json',
   './icons/icon.svg',
+  './icons/icon-180.png',
   './pages/about.html',
   './pages/calculators.html',
   './pages/contact.html',
