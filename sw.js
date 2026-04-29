@@ -1,5 +1,5 @@
-/* Service Worker — Image & PDF Tool */
-const CACHE = 'img-pdf-tool-v2';
+/* Service Worker — KaruviLab */
+const CACHE = 'karuvilab-v3';
 
 const SHELL = [
   './',
@@ -38,41 +38,15 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const { request } = e;
-
-  // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // For navigation requests (HTML pages), use network-first with cache fallback
-  if (request.mode === 'navigate') {
-    e.respondWith(
-      fetch(request)
-        .then(res => { caches.open(CACHE).then(c => c.put(request, res.clone())); return res; })
-        .catch(() => caches.match(request).then(r => r || caches.match('./index.html')))
-    );
-    return;
-  }
-
-  // For same-origin assets (CSS, JS, images), use cache-first with background update
-  if (request.url.startsWith(self.location.origin)) {
-    e.respondWith(
-      caches.match(request).then(cached => {
-        const network = fetch(request).then(res => {
-          caches.open(CACHE).then(c => c.put(request, res.clone()));
-          return res;
-        });
-        return cached || network;
-      })
-    );
-    return;
-  }
-
-  // For CDN resources (fonts, libraries), use cache-first — network fallback only
+  // CDN libraries are version-pinned — safe to serve from cache forever
   if (
-    request.url.includes('fonts.googleapis.com') ||
-    request.url.includes('fonts.gstatic.com') ||
     request.url.includes('cdnjs.cloudflare.com') ||
     request.url.includes('unpkg.com') ||
-    request.url.includes('cdn.jsdelivr.net')
+    request.url.includes('cdn.jsdelivr.net') ||
+    request.url.includes('fonts.googleapis.com') ||
+    request.url.includes('fonts.gstatic.com')
   ) {
     e.respondWith(
       caches.match(request).then(cached => {
@@ -82,6 +56,21 @@ self.addEventListener('fetch', e => {
           return res;
         });
       })
+    );
+    return;
+  }
+
+  // All same-origin requests (HTML, CSS, JS, images): network-first so
+  // page refresh always gets the latest deployed version. Falls back to
+  // cache when offline.
+  if (request.url.startsWith(self.location.origin)) {
+    e.respondWith(
+      fetch(request)
+        .then(res => {
+          if (res.ok) caches.open(CACHE).then(c => c.put(request, res.clone()));
+          return res;
+        })
+        .catch(() => caches.match(request).then(r => r || caches.match('./index.html')))
     );
   }
 });
