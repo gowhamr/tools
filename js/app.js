@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Inject HTML (includes the <style> block)
         container.innerHTML = mchRoot.outerHTML;
 
-        // Re-execute the main calculator script (DOMParser doesn't run scripts)
-        Array.from(doc.scripts).forEach(s => {
-          if (!s.src && s.textContent.length > 500 && !s.type.includes('json')) {
+        // Re-execute scripts (DOMParser doesn't run them)
+        doc.querySelectorAll('script').forEach(s => {
+          if (!s.src && !s.type.includes('json') && !s.textContent.includes('data-theme')) {
             const live = document.createElement('script');
             live.textContent = s.textContent;
             document.body.appendChild(live);

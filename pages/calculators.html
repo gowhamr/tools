@@ -1455,10 +1455,13 @@ details[open] .mch-faq-q::after { transform: rotate(45deg); }
   document.getElementById('mch-back').addEventListener('click', goHome);
 
   // Deep-link: open a specific calculator if URL has hash
-  window.addEventListener('load', () => {
+  const checkHash = () => {
     const hash = window.location.hash.slice(1);
     if (hash && titles[hash]) openCalc(hash);
-  });
+  };
+  if (document.readyState === 'complete') checkHash();
+  else window.addEventListener('load', checkHash);
+
   window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1);
     if (hash && titles[hash]) openCalc(hash);
