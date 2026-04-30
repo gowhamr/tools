@@ -33,7 +33,7 @@
       </button>
       <a href="../index.html" class="hero-back">&#8592; Back to Tool</a>
       <h1 class="hero-title">Privacy Policy</h1>
-      <p class="hero-sub">Last updated: April 2026</p>
+      <p class="hero-sub">Last updated: April 30, 2026</p>
     </div>
   </header>
 
@@ -42,75 +42,65 @@
 
       <div class="policy-highlight">
         <span class="policy-hl-icon">&#128274;</span>
-        <p><strong>Short version:</strong> We do not collect, store, or transmit any of your files or personal data. All image and PDF processing happens entirely within your browser. Nothing is uploaded to any server.</p>
+        <p><strong>Privacy Promise:</strong> We believe your data is your own. KaruviLab is designed as a "Serverless Utility," meaning every single operation happens 100% on your device. We do not collect, store, or see your files.</p>
       </div>
 
       <section class="page-section">
-        <h2>1. Who We Are</h2>
-        <p>KaruviLab ("the Tool", "we", "us") is operated by <strong>R Gowtham</strong> under the <strong>Wanderseven</strong> brand.</p>
+        <h2>1. 100% Local Processing</h2>
+        <p>KaruviLab is built on the principle of <strong>client-side processing</strong>. When you use our tools to compress images, merge PDFs, generate QR codes, or format code, the work is done by your own computer or phone's processor using your web browser.</p>
         <ul>
-          <li><strong>Owner:</strong> R Gowtham</li>
-          <li><strong>Email:</strong> <a href="mailto:wanderseven@proton.me">wanderseven@proton.me</a></li>
-          <li><strong>Website:</strong> <a href="https://wanderseven.com" target="_blank" rel="noopener">wanderseven.com</a></li>
+          <li><strong>No File Uploads:</strong> Your files are never sent to a server. They stay in your device's memory until the process is complete.</li>
+          <li><strong>Work Offline:</strong> Because the logic is local, most of our tools continue to work even if you disconnect from the internet after loading the page.</li>
+          <li><strong>Private by Design:</strong> Since we never receive your data, we cannot leak it, sell it, or lose it.</li>
         </ul>
       </section>
 
       <section class="page-section">
         <h2>2. Data We Do NOT Collect</h2>
-        <p>We do not collect, process, or store:</p>
+        <p>To provide maximum privacy, we have eliminated data collection entirely:</p>
         <ul>
-          <li>Any image, PDF, or file you open or process in the Tool</li>
-          <li>Your name, email address, or any other personal information</li>
-          <li>Your IP address or geolocation data</li>
-          <li>Device fingerprints or browser identifiers</li>
-          <li>Usage logs or analytics</li>
-        </ul>
-        <p>The Tool requires no account registration and no login.</p>
-      </section>
-
-      <section class="page-section">
-        <h2>3. How the Tool Works (Client-Side Processing)</h2>
-        <p>All file operations — compression, conversion, creation, validation, and PDF processing — are performed entirely within your web browser using JavaScript (the Web APIs provided by your browser). Your files are:</p>
-        <ul>
-          <li>Read from your local device via the browser File API</li>
-          <li>Processed in memory using Canvas API, PDF.js, jsPDF, pdf-lib, UTIF.js, and heic2any</li>
-          <li>Saved back to your local device via browser download</li>
-        </ul>
-        <p>No data is transmitted to our servers at any point.</p>
-      </section>
-
-      <section class="page-section">
-        <h2>4. Third-Party CDN Libraries</h2>
-        <p>The Tool loads JavaScript libraries from third-party CDN providers (jsDelivr, cdnjs.cloudflare.com, unpkg.com). When your browser requests these scripts, the CDN provider may log your IP address and request metadata as part of standard CDN operation. These logs are subject to each CDN provider's own privacy policy. We do not have access to CDN logs.</p>
-        <p>Libraries used:</p>
-        <ul>
-          <li>jsPDF (cdnjs.cloudflare.com)</li>
-          <li>PDF.js (cdnjs.cloudflare.com)</li>
-          <li>pdf-lib (cdnjs.cloudflare.com)</li>
-          <li>UTIF.js (unpkg.com)</li>
-          <li>heic2any (cdn.jsdelivr.net)</li>
-          <li>Inter font (fonts.googleapis.com / fonts.gstatic.com)</li>
+          <li><strong>No Content Logging:</strong> We do not log the contents of your text, images, or documents.</li>
+          <li><strong>No Personal Information:</strong> We do not ask for your name, email, phone number, or address.</li>
+          <li><strong>No Accounts:</strong> There are no user accounts, passwords, or profiles to manage.</li>
+          <li><strong>No Tracking:</strong> We do not use Google Analytics, Meta Pixels, or any other third-party tracking scripts.</li>
         </ul>
       </section>
 
       <section class="page-section">
-        <h2>5. Cookies &amp; Local Storage</h2>
-        <p>The Tool does not set any cookies or store any data in your browser's localStorage or sessionStorage. There are no tracking pixels, analytics scripts, or advertising systems on this site.</p>
+        <h2>3. How We Use Browser Technology</h2>
+        <p>We use modern browser APIs to make this privacy possible:</p>
+        <ul>
+          <li><strong>File API:</strong> To read files from your device locally.</li>
+          <li><strong>Canvas API:</strong> To process and compress images in your browser's memory.</li>
+          <li><strong>Web Workers:</strong> To handle heavy processing without slowing down your interface.</li>
+          <li><strong>Service Workers (PWA):</strong> To allow the application to load and work without an internet connection.</li>
+        </ul>
       </section>
 
       <section class="page-section">
-        <h2>6. Children's Privacy</h2>
-        <p>The Tool is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided personal information through contact with us, please email us and we will promptly delete it.</p>
+        <h2>4. Third-Party Libraries & CDNs</h2>
+        <p>While the processing is local, the Tool loads some open-source libraries to function. These are served via global Content Delivery Networks (CDNs) to ensure fast loading speeds. When your browser fetches these libraries, the CDN providers (like Cloudflare or jsDelivr) may see your IP address as part of the standard web request process. We choose reputable, privacy-conscious providers.</p>
+        <p><strong>Note:</strong> We have bundled the QR Code library locally to ensure it works 100% offline without any external requests.</p>
       </section>
 
       <section class="page-section">
-        <h2>7. Changes to This Policy</h2>
-        <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "last updated" date. Continued use of the Tool after changes constitutes acceptance of the revised policy.</p>
+        <h2>5. Cookies & Local Storage</h2>
+        <p>KaruviLab does not use cookies for tracking or advertising. We use the browser's <code>localStorage</code> only to remember your preferred visual theme (Light or Dark mode). This data never leaves your device.</p>
       </section>
 
       <section class="page-section">
-        <h2>8. Contact</h2>
-        <p>For any privacy-related questions, please contact us at: <a href="mailto:wanderseven@proton.me">wanderseven@proton.me</a></p>
+        <h2>6. Security</h2>
+        <p>Since no data is transmitted to our servers, the primary security of your files depends on the security of your own device and browser. We recommend using an up-to-date browser for the best security and performance.</p>
+      </section>
+
+      <section class="page-section">
+        <h2>7. Contact Us</h2>
+        <p>If you have any questions about our "Privacy First" approach, feel free to reach out:</p>
+        <ul>
+          <li><strong>Owner:</strong> R Gowtham</li>
+          <li><strong>Email:</strong> <a href="mailto:wanderseven@proton.me">wanderseven@proton.me</a></li>
+          <li><strong>Brand:</strong> Wanderseven</li>
+        </ul>
       </section>
 
     </article>
@@ -118,7 +108,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="footer-logo">&#9879; KaruviLab</p>
+      <p class="footer-logo">&#129514; KaruviLab</p>
       <p class="footer-note">&copy; 2026 KaruviLab by R Gowtham. All rights reserved.</p>
       <nav class="footer-nav">
         <a href="about.html">About</a>
