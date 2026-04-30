@@ -51,22 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
-  let markdownLoaded = false;
   function maybeLoadMarkdown() {
-    if (markdownLoaded) return;
-    markdownLoaded = true;
-    const s = document.createElement('script');
-    s.src = 'js/markdown-tool.js';
-    document.body.appendChild(s);
+    if (typeof window.mdInit === 'function') window.mdInit();
   }
 
-  let qrcodeLoaded = false;
   function maybeLoadQRCode() {
-    if (qrcodeLoaded) return;
-    qrcodeLoaded = true;
-    const s = document.createElement('script');
-    s.src = 'js/qrcode-tool.js';
-    document.body.appendChild(s);
+    if (typeof window.qrInit === 'function') window.qrInit();
   }
 
   function showPanel(panelId) {

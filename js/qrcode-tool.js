@@ -18,21 +18,23 @@ function qrInit() {
   if (qrInitialized) return;
   qrInitialized = true;
 
-  qrLoadCDN().then(() => {
-    document.querySelectorAll('.qr-preset-chip').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const prefix = btn.dataset.qrPrefix || btn.textContent.trim();
-        const textarea = document.getElementById('qr-input');
-        if (textarea) {
-          textarea.value = (textarea.value ? '\n' : '') + prefix;
-          textarea.focus();
-          qrOnInput();
-        }
-      });
+  document.querySelectorAll('.qr-preset-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.dataset.qrPrefix || btn.textContent.trim();
+      const textarea = document.getElementById('qr-input');
+      if (textarea) {
+        textarea.value = (textarea.value ? '\n' : '') + prefix;
+        textarea.focus();
+        qrOnInput();
+      }
     });
+  });
 
-    document.getElementById('qr-size').addEventListener('change', qrGenerate);
-    document.getElementById('qr-ecl').addEventListener('change', qrGenerate);
+  document.getElementById('qr-size').addEventListener('change', qrGenerate);
+  document.getElementById('qr-ecl').addEventListener('change', qrGenerate);
+
+  qrLoadCDN().then(() => {
+    if (document.getElementById('qr-input').value.trim()) qrGenerate();
   });
 }
 
@@ -42,6 +44,7 @@ function qrOnInput() {
 }
 
 function qrGenerate() {
+  if (typeof QRCode === 'undefined') return;
   const input = document.getElementById('qr-input').value.trim();
   const canvas = document.getElementById('qr-canvas');
   const size = parseInt(document.getElementById('qr-size').value) || 256;
@@ -162,8 +165,4 @@ function qrShowSnackbar(msg, type = 'info') {
   qrSnackTimer = setTimeout(() => { bar.remove(); }, 3200);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('panel-qrcode')) {
-    qrInit();
-  }
-});
+// qrInit() is called by app.js showPanel() when user opens the qrcode panel

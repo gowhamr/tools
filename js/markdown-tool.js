@@ -78,7 +78,10 @@ function mdLoadCDN() {
 
 function mdLoadScript(src) {
   return new Promise((resolve, reject) => {
-    if (window[src.match(/\/(\w+)\.min\.js/)?.[1] || 'marked']) return resolve();
+    const globalMap = { marked: 'marked', highlight: 'hljs', mermaid: 'mermaid' };
+    const key = src.match(/\/(\w+)[.@]/)?.[1];
+    if (key && window[globalMap[key] || key]) return resolve();
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
     const s = document.createElement('script');
     s.src = src; s.onload = resolve; s.onerror = reject;
     document.head.appendChild(s);
@@ -94,9 +97,21 @@ function mdLoadLink(href) {
   });
 }
 
+const MD_MERMAID_LANGS = new Set([
+  'mermaid','flowchart','flowcharttd','flowchartlr',
+  'sequencediagram','sequence','classdiagram','class',
+  'erdiagram','er','gantt','pie','gitgraph','git',
+  'mindmap','timeline','xychart','sankey'
+]);
+
 function mdInit() {
   if (mdInitialized) return;
   mdInitialized = true;
+
+  document.getElementById('md-tab-editor').addEventListener('click', () => mdSwitchTab('editor'));
+  document.getElementById('md-tab-upload').addEventListener('click', () => mdSwitchTab('upload'));
+  document.getElementById('md-find-toggle').addEventListener('click', mdToggleFindBar);
+  document.getElementById('md-sync-toggle').addEventListener('click', mdToggleScrollSync);
 
   mdLoadCDN().then(() => {
     const renderer = new marked.Renderer();
@@ -105,32 +120,24 @@ function mdInit() {
       const rawLang = String(lang || '').trim();
       const safeLang = rawLang.toLowerCase().replace(/\s+/g,'');
 
-      if (hljs.getLanguage(safeLang)) {
+      if (MD_MERMAID_LANGS.has(safeLang) || safeLang.startsWith('mermaid')) {
+        return `<div class="mermaid" data-src="${encodeURIComponent(safeCode)}"></div>`;
+      }
+      if (typeof hljs !== 'undefined' && hljs.getLanguage(safeLang)) {
         try {
           return `<pre data-lang="${safeLang}"><code class="hljs language-${safeLang}">${hljs.highlight(safeCode, {language:safeLang}).value}</code></pre>`;
         } catch(e) {}
       }
-      return `<pre data-lang="${safeLang}"><code class="hljs">${hljs.highlightAuto(safeCode).value}</code></pre>`;
+      const auto = (typeof hljs !== 'undefined') ? hljs.highlightAuto(safeCode).value : safeCode;
+      return `<pre data-lang="${safeLang}"><code class="hljs">${auto}</code></pre>`;
     };
     marked.setOptions({ renderer, gfm: true, breaks: true });
-    mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+    if (typeof mermaid !== 'undefined') {
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+    }
+    mdSetupScrollSync();
+    if (document.getElementById('md-editor').value) mdUpdatePreview();
   });
-
-  document.getElementById('md-tab-editor').addEventListener('click', () => mdSwitchTab('editor'));
-  document.getElementById('md-tab-upload').addEventListener('click', () => mdSwitchTab('upload'));
-  document.getElementById('md-find-toggle').addEventListener('click', mdToggleFindBar);
-  document.getElementById('md-sync-toggle').addEventListener('click', mdToggleScrollSync);
-
-  const presets = document.querySelectorAll('.qr-preset-chip');
-  presets.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const prefix = btn.dataset.qrPrefix || btn.textContent.trim().toLowerCase() + ':';
-      const textarea = document.getElementById('qr-input');
-      if (textarea) textarea.value = (textarea.value ? '\n' : '') + prefix;
-    });
-  });
-
-  setupScrollSync();
 }
 
 function mdOnEditorInput() {
@@ -146,6 +153,10 @@ function mdUpdatePreview() {
     const empty = document.getElementById('md-empty-state');
     if (empty) preview.appendChild(empty.cloneNode(true));
     mdUpdateStats('');
+    return;
+  }
+  if (typeof marked === 'undefined') {
+    mdUpdateStats(md);
     return;
   }
   try {
@@ -191,10 +202,12 @@ function mdInjectCopyButtons(container) {
 }
 
 async function mdRenderMermaid(container) {
+  if (typeof mermaid === 'undefined') return;
   const phs = container.querySelectorAll('.mermaid');
   for (const el of phs) {
     try {
-      const src = el.textContent;
+      const src = decodeURIComponent(el.getAttribute('data-src') || '');
+      if (!src.trim()) continue;
       const { svg } = await mermaid.render(`mmd-${++mdMermaidId}`, src);
       el.innerHTML = svg;
     } catch(e) {
@@ -318,7 +331,7 @@ function mdToggleScrollSync() {
   mdShowSnackbar(mdScrollSyncOn ? 'Scroll sync ON' : 'Scroll sync OFF', 'info');
 }
 
-function setupScrollSync() {
+function mdSetupScrollSync() {
   const editor = document.getElementById('md-editor');
   const preview = document.getElementById('md-preview-body');
   if (!editor || !preview) return;
@@ -327,7 +340,7 @@ function setupScrollSync() {
     if (!mdScrollSyncOn || syncing) return;
     syncing = true;
     const pct = editor.scrollTop / (editor.scrollHeight - editor.clientHeight || 1);
-    preview.parentElement.scrollTop = pct * (preview.parentElement.scrollHeight - preview.parentElement.clientHeight);
+    preview.scrollTop = pct * (preview.scrollHeight - preview.clientHeight);
     setTimeout(() => { syncing = false; }, 50);
   });
 }
@@ -358,6 +371,8 @@ function mdInitTablePickerGrid() {
     for (let c = 1; c <= PICKER_COLS; c++) {
       const cell = document.createElement('div');
       cell.className = 'md-table-cell';
+      cell.dataset.row = r;
+      cell.dataset.col = c;
       cell.addEventListener('mouseenter', () => mdHighlightCells(r, c));
       cell.addEventListener('click', () => { mdInsertTableGrid(r, c); mdToggleTablePicker({stopPropagation:()=>{}}); });
       grid.appendChild(cell);
@@ -367,11 +382,9 @@ function mdInitTablePickerGrid() {
 
 function mdHighlightCells(row, col) {
   document.querySelectorAll('.md-table-cell').forEach(cell => {
-    const r = parseInt(cell.dataset.row || 0);
-    const c = parseInt(cell.dataset.col || 0);
+    const r = parseInt(cell.dataset.row, 10);
+    const c = parseInt(cell.dataset.col, 10);
     cell.classList.toggle('hovered', r <= row && c <= col);
-    cell.dataset.row = r;
-    cell.dataset.col = c;
   });
   document.getElementById('md-table-size').textContent = `${col} × ${row} table`;
 }
@@ -424,14 +437,18 @@ function mdProcessFile(file) {
 }
 
 function mdRenderUploadPreview(markdown) {
-  try {
-    const html = marked.parse(markdown);
-    const preview = document.getElementById('md-upload-preview-body');
-    preview.innerHTML = html;
-    mdInjectCopyButtons(preview);
-    mdRenderMermaid(preview);
-  } catch(e) {
-    document.getElementById('md-upload-preview-body').innerHTML = `<p style="color:#dc2626">Parse error: ${e.message}</p>`;
+  const preview = document.getElementById('md-upload-preview-body');
+  if (typeof marked === 'undefined') {
+    preview.innerHTML = '<p>Loading parser…</p>';
+    mdLoadCDN().then(() => mdRenderUploadPreview(markdown));
+  } else {
+    try {
+      preview.innerHTML = marked.parse(markdown);
+      mdInjectCopyButtons(preview);
+      mdRenderMermaid(preview);
+    } catch(e) {
+      preview.innerHTML = `<p style="color:#dc2626">Parse error: ${e.message}</p>`;
+    }
   }
   document.getElementById('md-upload-preview-card').classList.remove('hidden');
   const wc = markdown.trim().split(/\s+/).filter(Boolean).length;
@@ -526,8 +543,4 @@ function mdShowSnackbar(msg, type='info') {
   mdSnackTimer = setTimeout(() => { bar.remove(); }, 3200);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('panel-markdown')) {
-    mdInit();
-  }
-});
+// mdInit() is called by app.js showPanel() when user opens the markdown panel
