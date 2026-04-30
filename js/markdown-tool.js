@@ -108,12 +108,13 @@ function mdInit() {
   if (mdInitialized) return;
   mdInitialized = true;
 
-  document.getElementById('md-tab-editor').addEventListener('click', () => mdSwitchTab('editor'));
-  document.getElementById('md-tab-upload').addEventListener('click', () => mdSwitchTab('upload'));
-  document.getElementById('md-find-toggle').addEventListener('click', mdToggleFindBar);
-  document.getElementById('md-sync-toggle').addEventListener('click', mdToggleScrollSync);
+  document.getElementById('md-tab-editor')?.addEventListener('click', () => mdSwitchTab('editor'));
+  document.getElementById('md-tab-upload')?.addEventListener('click', () => mdSwitchTab('upload'));
+  document.getElementById('md-find-toggle')?.addEventListener('click', mdToggleFindBar);
+  document.getElementById('md-sync-toggle')?.addEventListener('click', mdToggleScrollSync);
 
   mdLoadCDN().then(() => {
+    if (typeof marked === 'undefined') return;
     const renderer = new marked.Renderer();
     renderer.code = function(code, lang) {
       const safeCode = String(code || '');
@@ -136,18 +137,18 @@ function mdInit() {
       mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
     }
     mdSetupScrollSync();
-    if (document.getElementById('md-editor').value) mdUpdatePreview();
+    const ed = document.getElementById('md-editor');
+    if (ed && ed.value) mdUpdatePreview();
   });
 }
 
-function mdOnEditorInput() {
-  clearTimeout(mdDebounceTimer);
-  mdDebounceTimer = setTimeout(mdUpdatePreview, 80);
-}
-
 function mdUpdatePreview() {
-  const md = document.getElementById('md-editor').value;
+  const ed = document.getElementById('md-editor');
+  if (!ed) return;
+  const md = ed.value;
   const preview = document.getElementById('md-preview-body');
+  if (!preview) return;
+
   if (!md.trim()) {
     preview.innerHTML = '';
     const empty = document.getElementById('md-empty-state');
@@ -175,10 +176,10 @@ function mdUpdateStats(md) {
   const words = md.trim() ? md.trim().split(/\s+/).filter(Boolean).length : 0;
   const chars = md.length;
   const readMin = Math.max(1, Math.ceil(words / 200));
-  document.getElementById('md-stat-lines').textContent = lines;
-  document.getElementById('md-stat-words').textContent = words;
-  document.getElementById('md-stat-chars').textContent = chars;
-  document.getElementById('md-stat-read').textContent = `${readMin} min`;
+  const lEl = document.getElementById('md-stat-lines'); if (lEl) lEl.textContent = lines;
+  const wEl = document.getElementById('md-stat-words'); if (wEl) wEl.textContent = words;
+  const cEl = document.getElementById('md-stat-chars'); if (cEl) cEl.textContent = chars;
+  const rEl = document.getElementById('md-stat-read'); if (rEl) rEl.textContent = `${readMin} min`;
 }
 
 function mdInjectCopyButtons(container) {

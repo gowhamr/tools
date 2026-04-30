@@ -3,6 +3,29 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Redirect legacy hash-based URLs to standalone pages
+  const hash = window.location.hash;
+  if (hash) {
+    const panelId = hash.replace('#panel-', '').replace('#', '');
+    const panelMap = {
+      'compressor': 'compress',
+      'converter': 'convert',
+      'creator': 'create',
+      'pdf': 'pdf',
+      'validator': 'validate',
+      'calculators': 'calculators',
+      'base64': 'base64',
+      'regex': 'regex',
+      'formatter': 'format',
+      'markdown': 'markdown',
+      'qrcode': 'qrcode',
+      'split-copy': 'split-copy'
+    };
+    if (panelMap[panelId]) {
+      window.location.href = `/tools/${panelMap[panelId]}/`;
+    }
+  }
+
   // FAQ / MORE OVERLAY
   const faqOverlay = document.getElementById('faq-overlay');
   const moreBtn    = document.querySelector('.dock-btn[href="/pages/about.html"]'); // Adjusting for shell links

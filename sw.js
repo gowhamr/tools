@@ -23,6 +23,7 @@ const ASSETS = [
   '/pages/contact.html',
   '/pages/privacy.html',
   '/pages/terms.html',
+  '/tools/',
   '/tools/compress/',
   '/tools/convert/',
   '/tools/create/',

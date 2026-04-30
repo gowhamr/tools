@@ -27,14 +27,13 @@ function qrInit() {
   const qrFgEl = document.getElementById('qr-fg-color');
   const qrBgEl = document.getElementById('qr-bg-color');
 
-  if (qrInput) qrInput.addEventListener('input', qrOnInput);
-  if (qrSizeEl) qrSizeEl.addEventListener('change', qrGenerate);
-  if (qrEclEl) qrEclEl.addEventListener('change', qrGenerate);
-  if (qrFgEl) qrFgEl.addEventListener('input', qrGenerate);
-  if (qrBgEl) qrBgEl.addEventListener('input', qrGenerate);
+  qrInput?.addEventListener('input', qrOnInput);
+  qrSizeEl?.addEventListener('change', qrGenerate);
+  qrEclEl?.addEventListener('change', qrGenerate);
+  qrFgEl?.addEventListener('input', qrGenerate);
+  qrBgEl?.addEventListener('input', qrGenerate);
 
-  const qrGenBtn = document.getElementById('qr-gen-btn');
-  if (qrGenBtn) qrGenBtn.addEventListener('click', qrGenerate);
+  document.getElementById('qr-gen-btn')?.addEventListener('click', qrGenerate);
 
   // Initial generate if there's content
   if (qrInput?.value.trim()) qrGenerate();
@@ -46,21 +45,16 @@ function qrOnInput() {
 }
 
 function qrGenerate() {
-  if (typeof QRCode === 'undefined') {
-    console.error('QR library not loaded');
-    return;
-  }
+  if (typeof QRCode === 'undefined') return;
   const inputEl = document.getElementById('qr-input');
-  if (!inputEl) return;
+  const canvas = document.getElementById('qr-canvas');
+  if (!inputEl || !canvas) return;
   
   const input = inputEl.value.trim();
-  const canvas = document.getElementById('qr-canvas');
-  if (!canvas) return;
-
-  const size = parseInt(document.getElementById('qr-size').value) || 256;
-  const ecl = document.getElementById('qr-ecl').value || 'M';
-  const fgColor = document.getElementById('qr-fg-color').value || '#000000';
-  const bgColor = document.getElementById('qr-bg-color').value || '#ffffff';
+  const size = parseInt(document.getElementById('qr-size')?.value) || 256;
+  const ecl = document.getElementById('qr-ecl')?.value || 'M';
+  const fgColor = document.getElementById('qr-fg-color')?.value || '#000000';
+  const bgColor = document.getElementById('qr-bg-color')?.value || '#ffffff';
 
   const emptyHint = document.getElementById('qr-empty-hint');
   const caption = document.getElementById('qr-caption');

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Tools — KaruviLab</title>
+  <meta name="description" content="Browse all 12+ free browser-based tools in KaruviLab. 100% private and secure." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body>
+  <div class="tool-page panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">All Tools</p>
+        <p class="nav-subtitle">Browse our complete collection</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div id="tools-index-container">
+        <!-- Home page tool grid will be injected or mirrored here -->
+      </div>
+    </div>
+  </div>
+  <script src="../js/shell.js"></script>
+  <script src="../js/theme.js"></script>
+  <script>
+    // Mirror the tool grid from home page or just list them
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('tools-index-container');
+      fetch('/').then(r => r.text()).then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const grid = doc.querySelector('.home-wrap');
+        if (grid && container) {
+          // Adjust link paths for subdirectory
+          grid.querySelectorAll('a').forEach(a => {
+            const href = a.getAttribute('href');
+            if (href && !href.startsWith('http') && !href.startsWith('/')) {
+              a.setAttribute('href', '../' + href);
+            }
+          });
+          container.innerHTML = grid.innerHTML;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

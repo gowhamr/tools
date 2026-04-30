@@ -788,27 +788,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════
   (function initBase64() {
     const input   = document.getElementById('b64-input');
+    const runBtn  = document.getElementById('b64-run');
+    if (!input || !runBtn) return;
+
     const output  = document.getElementById('b64-output');
     const outWrap = document.getElementById('b64-output-wrap');
     const errEl   = document.getElementById('b64-error');
-    const runBtn  = document.getElementById('b64-run');
     const clrBtn  = document.getElementById('b64-clear');
     const copyBtn = document.getElementById('b64-copy');
     const tabs    = document.getElementById('b64-tabs');
-    if (!runBtn) return;
 
     function getMode() {
-      return tabs.querySelector('.tool-tab.active')?.dataset.tab || 'encode';
+      return tabs?.querySelector('.tool-tab.active')?.dataset.tab || 'encode';
     }
     function showErr(msg) {
-      errEl.textContent = msg;
-      errEl.hidden = false;
-      outWrap.hidden = true;
+      if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+      if (outWrap) outWrap.hidden = true;
     }
     function showOut(val) {
-      output.value = val;
-      outWrap.hidden = false;
-      errEl.hidden = true;
+      if (output) output.value = val;
+      if (outWrap) outWrap.hidden = false;
+      if (errEl) errEl.hidden = true;
     }
 
     runBtn.addEventListener('click', () => {
@@ -831,14 +831,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    clrBtn.addEventListener('click', () => {
+    clrBtn?.addEventListener('click', () => {
       input.value = '';
-      output.value = '';
-      outWrap.hidden = true;
-      errEl.hidden = true;
+      if (output) output.value = '';
+      if (outWrap) outWrap.hidden = true;
+      if (errEl) errEl.hidden = true;
     });
 
-    copyBtn.addEventListener('click', () => {
+    copyBtn?.addEventListener('click', () => {
+      if (!output) return;
       navigator.clipboard.writeText(output.value).then(() => {
         copyBtn.textContent = 'Copied!';
         copyBtn.classList.add('copied');
@@ -852,13 +853,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════
   (function initRegex() {
     const patternInput = document.getElementById('regex-pattern');
-    const testInput    = document.getElementById('regex-test');
     const runBtn       = document.getElementById('regex-run');
+    if (!patternInput || !runBtn) return;
+
+    const testInput    = document.getElementById('regex-test');
     const outWrap      = document.getElementById('regex-output-wrap');
     const highlighted  = document.getElementById('regex-highlighted');
     const matchCount   = document.getElementById('regex-match-count');
     const errEl        = document.getElementById('regex-error');
-    if (!runBtn) return;
 
     document.querySelectorAll('.regex-preset-chip').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -866,23 +868,26 @@ document.addEventListener('DOMContentLoaded', () => {
         chip.classList.add('active');
         patternInput.value = chip.dataset.pattern;
         const flags = chip.dataset.flags || '';
-        document.getElementById('rf-g').checked = flags.includes('g');
-        document.getElementById('rf-i').checked = flags.includes('i');
-        document.getElementById('rf-m').checked = flags.includes('m');
+        const gf = document.getElementById('rf-g'); if (gf) gf.checked = flags.includes('g');
+        const ifl = document.getElementById('rf-i'); if (ifl) ifl.checked = flags.includes('i');
+        const mf = document.getElementById('rf-m'); if (mf) mf.checked = flags.includes('m');
       });
     });
 
     function getFlags() {
-      return ['g','i','m'].filter(f => document.getElementById('rf-'+f).checked).join('');
+      return ['g','i','m'].filter(f => {
+        const el = document.getElementById('rf-'+f);
+        return el ? el.checked : false;
+      }).join('');
     }
 
     function applyRegexString(raw) {
       const m = raw.match(/^\/(.+)\/([gimsuy]*)$/s);
       if (m) {
         patternInput.value = m[1];
-        document.getElementById('rf-g').checked = m[2].includes('g');
-        document.getElementById('rf-i').checked = m[2].includes('i');
-        document.getElementById('rf-m').checked = m[2].includes('m');
+        const gf = document.getElementById('rf-g'); if (gf) gf.checked = m[2].includes('g');
+        const ifl = document.getElementById('rf-i'); if (ifl) ifl.checked = m[2].includes('i');
+        const mf = document.getElementById('rf-m'); if (mf) mf.checked = m[2].includes('m');
         return true;
       }
       return false;
@@ -909,23 +914,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     runBtn.addEventListener('click', () => {
       const pattern = patternInput.value;
-      const testStr = testInput.value;
-      errEl.hidden = true;
-      if (!pattern) { errEl.textContent = 'Enter a regex pattern.'; errEl.hidden = false; return; }
+      const testStr = testInput?.value || '';
+      if (errEl) errEl.hidden = true;
+      if (!pattern) { if (errEl) { errEl.textContent = 'Enter a regex pattern.'; errEl.hidden = false; } return; }
 
       let re;
       try {
         const flags = getFlags().includes('g') ? getFlags() : getFlags() + 'g';
         re = new RegExp(pattern, flags);
       } catch (e) {
-        errEl.textContent = 'Invalid regex: ' + e.message;
-        errEl.hidden = false;
-        outWrap.hidden = true;
+        if (errEl) { errEl.textContent = 'Invalid regex: ' + e.message; errEl.hidden = false; }
+        if (outWrap) outWrap.hidden = true;
         return;
       }
 
       const matches = [...testStr.matchAll(re)];
-      matchCount.textContent = matches.length
+      if (matchCount) matchCount.textContent = matches.length
         ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
         : 'No matches found';
 
@@ -938,8 +942,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (m[0].length === 0) { last++; }
       }
       result += escapeHtml(testStr.slice(last));
-      highlighted.innerHTML = result;
-      outWrap.hidden = false;
+      if (highlighted) highlighted.innerHTML = result;
+      if (outWrap) outWrap.hidden = false;
     });
   })();
 
@@ -948,81 +952,81 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════
   (function initFormatter() {
     const fmtInput   = document.getElementById('fmt-input');
+    const beautifyBtn = document.getElementById('fmt-beautify');
+    if (!fmtInput || !beautifyBtn) return;
+
     const fmtOutput  = document.getElementById('fmt-output');
     const fmtOutWrap = document.getElementById('fmt-output-wrap');
     const fmtErr     = document.getElementById('fmt-error');
-    const beautifyBtn = document.getElementById('fmt-beautify');
     const minifyBtn  = document.getElementById('fmt-minify');
     const clearBtn   = document.getElementById('fmt-clear');
     const copyBtn    = document.getElementById('fmt-copy');
     const tabs       = document.getElementById('fmt-tabs');
-    if (!beautifyBtn) return;
 
     function getMode() {
-      return tabs.querySelector('.tool-tab.active')?.dataset.tab || 'json';
+      return tabs?.querySelector('.tool-tab.active')?.dataset.tab || 'json';
     }
     function showErr(msg) {
-      fmtErr.textContent = msg;
-      fmtErr.hidden = false;
-      fmtOutWrap.hidden = true;
+      if (fmtErr) { fmtErr.textContent = msg; fmtErr.hidden = false; }
+      if (fmtOutWrap) fmtOutWrap.hidden = true;
     }
     function showOut(val) {
-      fmtOutput.textContent = val;
-      fmtOutWrap.hidden = false;
-      fmtErr.hidden = true;
+      if (fmtOutput) fmtOutput.textContent = val;
+      if (fmtOutWrap) fmtOutWrap.hidden = false;
+      if (fmtErr) fmtErr.hidden = true;
     }
 
     function formatJson(text, minify) {
       const obj = JSON.parse(text);
       return minify ? JSON.stringify(obj) : JSON.stringify(obj, null, 2);
     }
-function formatXml(text, minify) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(text, 'application/xml');
-  const parseErr = doc.querySelector('parsererror');
-  if (parseErr) throw new Error(parseErr.textContent.split('\n')[0]);
+    function formatXml(text, minify) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'application/xml');
+      const parseErr = doc.querySelector('parsererror');
+      if (parseErr) throw new Error(parseErr.textContent.split('\n')[0]);
 
-  const prologMatch = text.match(/^<\?xml.*?\?>/i);
-  const prolog = prologMatch ? prologMatch[0] + '\n' : '';
+      const prologMatch = text.match(/^<\?xml.*?\?>/i);
+      const prolog = prologMatch ? prologMatch[0] + '\n' : '';
 
-  if (minify) {
-    const s = new XMLSerializer();
-    return (prolog + s.serializeToString(doc).replace(/>\s+</g, '><')).trim();
-  }
+      if (minify) {
+        const s = new XMLSerializer();
+        return (prolog + s.serializeToString(doc).replace(/>\s+</g, '><')).trim();
+      }
 
-  function indent(node, level) {
-    const pad = '  '.repeat(level);
-    let out = '';
-    if (node.nodeType === 3) {
-      const t = node.textContent.trim();
-      return t ? pad + t + '\n' : '';
+      function indent(node, level) {
+        const pad = '  '.repeat(level);
+        let out = '';
+        if (node.nodeType === 3) {
+          const t = node.textContent.trim();
+          return t ? pad + t + '\n' : '';
+        }
+        if (node.nodeType === 8) return `${pad}<!--${node.textContent}-->\n`;
+        if (node.nodeType !== 1) return '';
+
+        let attrs = '';
+        if (node.attributes) {
+          for (const a of node.attributes) attrs += ` ${a.name}="${a.value}"`;
+        }
+
+        const children = Array.from(node.childNodes);
+        const childText = children.filter(c => c.nodeType === 3 && c.textContent.trim());
+
+        if (children.length === 1 && childText.length === 1) {
+          return `${pad}<${node.tagName}${attrs}>${childText[0].textContent.trim()}</${node.tagName}>\n`;
+        }
+        if (children.length === 0) return `${pad}<${node.tagName}${attrs}/>\n`;
+
+        out += `${pad}<${node.tagName}${attrs}>\n`;
+        children.forEach(c => {
+          out += indent(c, level + 1);
+        });
+        out += `${pad}</${node.tagName}>\n`;
+        return out;
+      }
+
+      return (prolog + indent(doc.documentElement, 0)).trimEnd();
     }
-    if (node.nodeType === 8) return `${pad}<!--${node.textContent}-->\n`;
-    if (node.nodeType !== 1) return '';
-
-    let attrs = '';
-    if (node.attributes) {
-      for (const a of node.attributes) attrs += ` ${a.name}="${a.value}"`;
-    }
-
-    const children = Array.from(node.childNodes);
-    const childText = children.filter(c => c.nodeType === 3 && c.textContent.trim());
-
-    if (children.length === 1 && childText.length === 1) {
-      return `${pad}<${node.tagName}${attrs}>${childText[0].textContent.trim()}</${node.tagName}>\n`;
-    }
-    if (children.length === 0) return `${pad}<${node.tagName}${attrs}/>\n`;
-
-    out += `${pad}<${node.tagName}${attrs}>\n`;
-    children.forEach(c => {
-      out += indent(c, level + 1);
-    });
-    out += `${pad}</${node.tagName}>\n`;
-    return out;
-  }
-
-  return (prolog + indent(doc.documentElement, 0)).trimEnd();
-}
     function run(minify) {
       const text = fmtInput.value.trim();
       if (!text) { showErr('Please paste some content first.'); return; }
@@ -1034,14 +1038,15 @@ function formatXml(text, minify) {
     }
 
     beautifyBtn.addEventListener('click', () => run(false));
-    minifyBtn.addEventListener('click', () => run(true));
-    clearBtn.addEventListener('click', () => {
+    minifyBtn?.addEventListener('click', () => run(true));
+    clearBtn?.addEventListener('click', () => {
       fmtInput.value = '';
-      fmtOutput.textContent = '';
-      fmtOutWrap.hidden = true;
-      fmtErr.hidden = true;
+      if (fmtOutput) fmtOutput.textContent = '';
+      if (fmtOutWrap) fmtOutWrap.hidden = true;
+      if (fmtErr) fmtErr.hidden = true;
     });
-    copyBtn.addEventListener('click', () => {
+    copyBtn?.addEventListener('click', () => {
+      if (!fmtOutput) return;
       navigator.clipboard.writeText(fmtOutput.textContent).then(() => {
         copyBtn.textContent = 'Copied!';
         copyBtn.classList.add('copied');
