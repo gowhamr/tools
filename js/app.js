@@ -36,8 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchUrl = base + 'pages/calculators.html';
     console.log('[Karuvi] Loading calculators from:', fetchUrl);
     
-    fetch(fetchUrl)
+    // Timeout fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    fetch(fetchUrl, { signal: controller.signal })
       .then(r => {
+        clearTimeout(timeoutId);
         if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
         return r.text();
       })
@@ -45,25 +50,32 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Karuvi] Calculators HTML fetched, length:', html.length);
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const mchRoot = doc.getElementById('mch-root');
-        if (!mchRoot) return;
+        if (!mchRoot) {
+          console.error('[Karuvi] #mch-root not found in fetched HTML');
+          throw new Error('Component structure missing');
+        }
 
-        // Inject HTML (includes the <style> block)
+        // Inject HTML
         container.innerHTML = mchRoot.outerHTML;
 
-        // Re-execute scripts (DOMParser doesn't run them)
-        doc.querySelectorAll('script').forEach(s => {
+        // Re-execute scripts
+        const scripts = doc.querySelectorAll('script');
+        scripts.forEach(s => {
           if (!s.src && !s.type.includes('json') && !s.textContent.includes('data-theme')) {
             const live = document.createElement('script');
             live.textContent = s.textContent;
             document.body.appendChild(live);
           }
         });
+        console.log('[Karuvi] Calculators initialized');
       })
-      .catch(() => {
+      .catch(err => {
+        console.error('[Karuvi] Failed to load calculators:', err);
         if (container) container.innerHTML =
-          '<p style="padding:24px;text-align:center;font-size:.84rem;color:#6B7280">' +
-          'Could not load calculators. ' +
-          '<a href="pages/calculators.html" target="_blank" style="color:#4F46E5">Open in new tab ↗</a></p>';
+          '<div style="padding:40px 20px;text-align:center;">' +
+          '<p style="font-size:1.1rem;color:var(--text);margin-bottom:12px;">Oops! Calculators could not be loaded.</p>' +
+          '<p style="font-size:.84rem;color:var(--text-3);margin-bottom:20px;">Error: ' + err.message + '</p>' +
+          '<a href="' + base + 'pages/calculators.html" class="btn btn-primary">Open Standalone Page</a></div>';
       });
   }
 
