@@ -7,6 +7,7 @@ function qrInit() {
   if (qrInitialized) return;
   qrInitialized = true;
 
+  // Preset chips
   document.querySelectorAll('.qr-preset-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       const prefix = btn.dataset.qrPrefix || btn.textContent.trim();
@@ -19,15 +20,24 @@ function qrInit() {
     });
   });
 
+  // Inputs
+  const qrInput = document.getElementById('qr-input');
   const qrSizeEl = document.getElementById('qr-size');
   const qrEclEl = document.getElementById('qr-ecl');
   const qrFgEl = document.getElementById('qr-fg-color');
+  const qrBgEl = document.getElementById('qr-bg-color');
 
+  if (qrInput) qrInput.addEventListener('input', qrOnInput);
   if (qrSizeEl) qrSizeEl.addEventListener('change', qrGenerate);
   if (qrEclEl) qrEclEl.addEventListener('change', qrGenerate);
-  if (qrFgEl) qrFgEl.addEventListener('change', qrGenerate);
+  if (qrFgEl) qrFgEl.addEventListener('input', qrGenerate);
+  if (qrBgEl) qrBgEl.addEventListener('input', qrGenerate);
 
-  if (document.getElementById('qr-input')?.value.trim()) qrGenerate();
+  const qrGenBtn = document.getElementById('qr-gen-btn');
+  if (qrGenBtn) qrGenBtn.addEventListener('click', qrGenerate);
+
+  // Initial generate if there's content
+  if (qrInput?.value.trim()) qrGenerate();
 }
 
 function qrOnInput() {
@@ -40,8 +50,13 @@ function qrGenerate() {
     console.error('QR library not loaded');
     return;
   }
-  const input = document.getElementById('qr-input').value.trim();
+  const inputEl = document.getElementById('qr-input');
+  if (!inputEl) return;
+  
+  const input = inputEl.value.trim();
   const canvas = document.getElementById('qr-canvas');
+  if (!canvas) return;
+
   const size = parseInt(document.getElementById('qr-size').value) || 256;
   const ecl = document.getElementById('qr-ecl').value || 'M';
   const fgColor = document.getElementById('qr-fg-color').value || '#000000';
@@ -54,8 +69,8 @@ function qrGenerate() {
   const svgBtn = document.getElementById('qr-svg-btn');
 
   if (!input) {
-    if (canvas) canvas.style.display = 'none';
-    if (emptyHint) emptyHint.style.display = 'block';
+    canvas.style.display = 'none';
+    if (emptyHint) emptyHint.style.display = 'flex';
     if (caption) caption.textContent = '';
     if (downloadBtn) downloadBtn.disabled = true;
     if (copyBtn) copyBtn.disabled = true;
@@ -63,8 +78,12 @@ function qrGenerate() {
     return;
   }
 
+  // Force reset canvas dimensions to prevent compounding or weird scaling
   canvas.width = size;
   canvas.height = size;
+  // Ensure CSS matches if needed, but max-width: 100% is usually enough
+  canvas.style.maxWidth = '100%';
+  canvas.style.height = 'auto'; // Let it scale proportionally
 
   try {
     QRCode.toCanvas(canvas, input, {
@@ -79,10 +98,10 @@ function qrGenerate() {
       }
       canvas.style.display = 'block';
       if (emptyHint) emptyHint.style.display = 'none';
-      caption.textContent = `${size}×${size} · ${input.length} chars · Level ${ecl}`;
-      downloadBtn.disabled = false;
-      copyBtn.disabled = false;
-      svgBtn.disabled = false;
+      if (caption) caption.textContent = `${size}×${size} · ${input.length} chars · Level ${ecl}`;
+      if (downloadBtn) downloadBtn.disabled = false;
+      if (copyBtn) copyBtn.disabled = false;
+      if (svgBtn) svgBtn.disabled = false;
     });
   } catch(e) {
     qrShowSnackbar('Error: ' + e.message, 'error');
@@ -95,6 +114,7 @@ function qrDownload(format) {
 
   if (format === 'png') {
     const canvas = document.getElementById('qr-canvas');
+    if (!canvas) return;
     const url = canvas.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = url;
@@ -139,20 +159,30 @@ function qrCopyImage() {
 
   canvas.toBlob((blob) => {
     if (!blob) return;
-    const item = new ClipboardItem({['image/png']: blob});
-    navigator.clipboard.write([item]).then(() => {
-      qrShowSnackbar('QR code copied to clipboard!', 'success');
-      const btn = document.getElementById('qr-copy-btn');
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => { btn.textContent = 'Copy Image'; }, 2000);
-    }).catch(err => {
-      qrShowSnackbar('Copy failed: ' + err.message, 'error');
-    });
+    try {
+      const item = new ClipboardItem({['image/png']: blob});
+      navigator.clipboard.write([item]).then(() => {
+        qrShowSnackbar('QR code copied to clipboard!', 'success');
+        const btn = document.getElementById('qr-copy-btn');
+        if (btn) {
+          const oldText = btn.textContent;
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => { btn.textContent = oldText; }, 2000);
+        }
+      }).catch(err => {
+        qrShowSnackbar('Copy failed: ' + err.message, 'error');
+      });
+    } catch (e) {
+      qrShowSnackbar('Clipboard API not supported or error: ' + e.message, 'error');
+    }
   });
 }
 
 let qrSnackTimer;
 function qrShowSnackbar(msg, type = 'info') {
+  const old = document.querySelector('.qr-snackbar');
+  if (old) old.remove();
+
   const bar = document.createElement('div');
   bar.className = 'qr-snackbar show';
   bar.textContent = msg;
