@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activePanel = 'home';
   const homePanel = document.getElementById('panel-home');
 
-  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter'];
+  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter','markdown','qrcode'];
 
   function setDockActive(dockId) {
     document.querySelectorAll('.dock-btn[data-dock]').forEach(b => {
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Inline calculator loader ──
+  // ── Lazy loaders ──
   let calcLoaded = false;
   function maybeLoadCalculators() {
     if (calcLoaded) return;
@@ -51,6 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  let markdownLoaded = false;
+  function maybeLoadMarkdown() {
+    if (markdownLoaded) return;
+    markdownLoaded = true;
+    const s = document.createElement('script');
+    s.src = 'js/markdown-tool.js';
+    document.body.appendChild(s);
+  }
+
+  let qrcodeLoaded = false;
+  function maybeLoadQRCode() {
+    if (qrcodeLoaded) return;
+    qrcodeLoaded = true;
+    const s = document.createElement('script');
+    s.src = 'js/qrcode-tool.js';
+    document.body.appendChild(s);
+  }
+
   function showPanel(panelId) {
     if (panelId === activePanel) return;
     const prev = document.querySelector('.panel.active');
@@ -71,6 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (next) next.classList.add('active');
       setDockActive('tools');
       if (panelId === 'calculators') maybeLoadCalculators();
+      if (panelId === 'markdown') maybeLoadMarkdown();
+      if (panelId === 'qrcode') maybeLoadQRCode();
     }
     activePanel = panelId;
 
