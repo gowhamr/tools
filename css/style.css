@@ -778,12 +778,14 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 /* PDF sub-tabs */
 .pdf-tool-tabs { display: flex; gap: 3px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
 .pdf-tab {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
   padding: 8px 12px; border: none; background: none;
   font-size: .8rem; font-weight: 600; color: var(--text-3); cursor: pointer;
   border-bottom: 2px solid transparent; margin-bottom: -2px;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   transition: all var(--transition); font-family: var(--font);
 }
+.pdf-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pdf-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
 .pdf-tab:hover  { color: var(--text); background: var(--bg-input); }
 .pdf-panel      { display: none; }
@@ -1411,6 +1413,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 }
 .pdf-tab {
   flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
   padding: 8px 6px;
   border: none !important;
   background: transparent;
@@ -1424,6 +1427,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   margin-bottom: 0 !important;
   white-space: nowrap;
 }
+.pdf-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pdf-tab.active {
   background: #fff;
   color: var(--blue);
