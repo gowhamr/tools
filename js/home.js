@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // FAQ / MORE OVERLAY
   const faqOverlay = document.getElementById('faq-overlay');
-  const moreBtn    = document.querySelector('.dock-btn[href="/pages/about.html"]'); // Adjusting for shell links
+  const moreBtn    = document.querySelector('.dock-btn[href*="pages/about.html"]'); // Flexible selector for shell links
   const faqCloseBtn = document.getElementById('faq-close-btn');
 
   function openFaq() {

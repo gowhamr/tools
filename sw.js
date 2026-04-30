@@ -1,41 +1,41 @@
 const CACHE_NAME = 'karuvilab-v10';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/theme.js',
-  '/js/utils.js',
-  '/js/format-utils.js',
-  '/js/image-tools.js',
-  '/js/pdf-tools.js',
-  '/js/validator.js',
-  '/js/markdown-tool.js',
-  '/js/qrcode-tool.js',
-  '/js/shell.js',
-  '/js/home.js',
-  '/js/split-tool.js',
-  '/js/lib/qrcode.min.js',
-  '/manifest.json',
-  '/icons/icon.svg',
-  '/pages/about.html',
-  '/pages/calculators.html',
-  '/pages/contact.html',
-  '/pages/privacy.html',
-  '/pages/terms.html',
-  '/tools/',
-  '/tools/compress/',
-  '/tools/convert/',
-  '/tools/create/',
-  '/tools/pdf/',
-  '/tools/validate/',
-  '/tools/calculators/',
-  '/tools/base64/',
-  '/tools/regex/',
-  '/tools/format/',
-  '/tools/markdown/',
-  '/tools/qrcode/',
-  '/tools/split-copy/'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/theme.js',
+  './js/utils.js',
+  './js/format-utils.js',
+  './js/image-tools.js',
+  './js/pdf-tools.js',
+  './js/validator.js',
+  './js/markdown-tool.js',
+  './js/qrcode-tool.js',
+  './js/shell.js',
+  './js/home.js',
+  './js/split-tool.js',
+  './js/lib/qrcode.min.js',
+  './manifest.json',
+  './icons/icon.svg',
+  './pages/about.html',
+  './pages/calculators.html',
+  './pages/contact.html',
+  './pages/privacy.html',
+  './pages/terms.html',
+  './tools/',
+  './tools/compress/',
+  './tools/convert/',
+  './tools/create/',
+  './tools/pdf/',
+  './tools/validate/',
+  './tools/calculators/',
+  './tools/base64/',
+  './tools/regex/',
+  './tools/format/',
+  './tools/markdown/',
+  './tools/qrcode/',
+  './tools/split-copy/'
 ];
 
 self.addEventListener('install', (event) => {
@@ -81,7 +81,7 @@ self.addEventListener('fetch', (event) => {
           if (response) return response;
           // Return offline page for navigation requests if nothing matches
           if (event.request.mode === 'navigate') {
-            return caches.match('/');
+            return caches.match('./');
           }
           return null;
         });

@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('calc-embed-container');
     if (!container) return;
 
-    fetch('/pages/calculators.html')
+    const base = window.KARUVI_BASE || '/';
+    fetch(base + 'pages/calculators.html')
       .then(r => r.text())
       .then(html => {
         const doc = new DOMParser().parseFromString(html, 'text/html');

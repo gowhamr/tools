@@ -28,7 +28,8 @@
     // Mirror the tool grid from home page or just list them
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('tools-index-container');
-      fetch('/').then(r => r.text()).then(html => {
+      const base = window.KARUVI_BASE || '../';
+      fetch(base).then(r => r.text()).then(html => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const grid = doc.querySelector('.home-wrap');
         if (grid && container) {
