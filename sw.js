@@ -1,5 +1,5 @@
 /* Service Worker — KaruviLab */
-const CACHE = 'karuvilab-v8';
+const CACHE = 'karuvilab-v9';
 
 const SHELL = [
   './',
@@ -13,6 +13,8 @@ const SHELL = [
   './js/pdf-tools.js',
   './js/theme.js',
   './js/app.js',
+  './js/markdown-tool.js',
+  './js/qrcode-tool.js',
   './manifest.json',
   './icons/icon.svg',
   './icons/icon-180.png',
