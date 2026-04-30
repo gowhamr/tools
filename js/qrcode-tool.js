@@ -23,7 +23,7 @@ function qrInit() {
       const prefix = btn.dataset.qrPrefix || btn.textContent.trim();
       const textarea = document.getElementById('qr-input');
       if (textarea) {
-        textarea.value = (textarea.value ? '\n' : '') + prefix;
+        textarea.value = prefix;
         textarea.focus();
         qrOnInput();
       }
@@ -35,7 +35,7 @@ function qrInit() {
 
   qrLoadCDN().then(() => {
     if (document.getElementById('qr-input').value.trim()) qrGenerate();
-  });
+  }).catch(() => qrShowSnackbar('Failed to load QR library. Check your connection.', 'error'));
 }
 
 function qrOnInput() {
@@ -44,7 +44,10 @@ function qrOnInput() {
 }
 
 function qrGenerate() {
-  if (typeof QRCode === 'undefined') return;
+  if (typeof QRCode === 'undefined') {
+    qrLoadCDN().then(qrGenerate).catch(() => qrShowSnackbar('Failed to load QR library.', 'error'));
+    return;
+  }
   const input = document.getElementById('qr-input').value.trim();
   const canvas = document.getElementById('qr-canvas');
   const size = parseInt(document.getElementById('qr-size').value) || 256;
