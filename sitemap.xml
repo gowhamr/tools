@@ -50,4 +50,11 @@
     <priority>0.4</priority>
   </url>
 
+  <url>
+    <loc>https://wanderseven.com/tools/split-copy-text/index.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
