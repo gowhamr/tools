@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Re-execute scripts
         const scripts = doc.querySelectorAll('script');
         scripts.forEach(s => {
-          if (!s.src && !s.type.includes('json') && !s.textContent.includes('data-theme')) {
+          if (!s.src && !s.type.includes('json')) {
             const live = document.createElement('script');
             live.textContent = s.textContent;
             document.body.appendChild(live);
