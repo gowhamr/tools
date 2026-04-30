@@ -134,7 +134,7 @@
 
   <header class="top-stripe" role="banner">
     <div class="ts-brand">
-      <div class="ts-logo">
+      <div class="ts-logo" style="background: #6366F1; border-radius: 10px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <path d="M9 3h6M10 3v6l-4 9a1 1 0 00.92 1.4h10.16A1 1 0 0018 18l-4-9V3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -144,7 +144,7 @@
         <span class="ts-tagline">Fast &middot; Private &middot; No uploads</span>
       </div>
       <!-- Desktop nav links (hidden on mobile via CSS) -->
-      <nav class="ts-desktop-nav" aria-label="Main navigation">
+      <nav class="ts-desktop-nav" aria-label="Main navigation" style="display:none">
         <button class="ts-nav-link active" data-panel="home">Home</button>
         <button class="ts-nav-link" data-panel="compressor">Compress</button>
         <button class="ts-nav-link" data-panel="converter">Convert</button>
@@ -232,18 +232,34 @@
         <!-- Full-bleed gradient hero banner -->
         <div class="home-hero-banner">
           <div class="home-hero-inner">
-            <div class="home-hero-kicker">
-              <span class="home-hero-dot"></span>Free &middot; Private &middot; No uploads
+            <div class="home-hero-text">
+              <div class="home-hero-kicker">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                100% LOCAL PROCESSING
+              </div>
+              <h1 class="home-hero-title">Powerful tools that<br><span style="color:var(--blue)">run in your browser</span></h1>
+              <p class="home-hero-sub">Compress, convert &amp; validate files and PDFs &mdash; nothing leaves your device.</p>
+              <div class="home-hero-ctas">
+                <button class="home-hero-cta-primary" data-panel="tools"><svg width="18" height="18" style="margin-right:8px"><use href="#ic-apps"/></svg> Explore Tools</button>
+                <button class="home-hero-cta-ghost" data-panel="history"><svg width="18" height="18" style="margin-right:8px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Recent Files</button>
+              </div>
             </div>
-            <h1 class="home-hero-title">Tools that run<br>in your browser</h1>
-            <p class="home-hero-sub">Compress, convert &amp; validate images and PDFs — nothing leaves your device.</p>
-            <div class="home-hero-ctas">
-              <button class="home-hero-cta-primary" data-panel="compressor"><svg width="18" height="18" style="margin-right:8px"><use href="#ic-compress"/></svg> Compress Image</button>
-              <button class="home-hero-cta-ghost"   data-panel="pdf"><svg width="18" height="18" style="margin-right:8px"><use href="#ic-pdf"/></svg> PDF Tools</button>
+            <div class="home-hero-graphic">
+              <div class="mock-3d-window">
+                 <div class="mock-3d-dots"><span></span><span></span><span></span></div>
+                 <div class="mock-3d-icons">
+                    <div class="mock-icon" style="color:#0ea5e9"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                    <div class="mock-icon" style="color:#ef4444"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                    <div class="mock-icon mock-icon-center" style="color:#10B981"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></div>
+                    <div class="mock-icon" style="color:#6366F1"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                 </div>
+                 <div class="mock-shield">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#6366F1" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="3"/></svg>
+                 </div>
+              </div>
             </div>
           </div>
         </div>
-
         <div class="home-wrap">
 
           <p class="cat-label" id="file-tools-label">File Tools</p>
@@ -251,29 +267,29 @@
             <button class="cat-btn" data-panel="compressor">
               <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg><use href="#ic-compress"/></svg></span>
               <span class="cat-btn-text">
-                <span class="cat-btn-name">Compress</span>
-                <span class="cat-btn-desc">JPG, PNG, PDF</span>
+                <span class="cat-btn-name">Compress Image</span>
+                <span class="cat-btn-desc">Reduce image size<br>without losing quality</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="converter">
               <span class="cat-icon" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Convert</span>
-                <span class="cat-btn-desc">8 formats + PDF</span>
+                <span class="cat-btn-desc">Convert images to<br>PDF and more</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="creator">
               <span class="cat-icon" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Create</span>
-                <span class="cat-btn-desc">Passport, banner</span>
+                <span class="cat-btn-desc">Create passport photos,<br>banners &amp; more</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="pdf">
               <span class="cat-icon" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">PDF Tools</span>
-                <span class="cat-btn-desc">Merge, split, watermark</span>
+                <span class="cat-btn-desc">Merge, split, watermark<br>and more</span>
               </span>
             </button>
           </div>
@@ -284,14 +300,28 @@
               <span class="cat-icon" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Validate</span>
-                <span class="cat-btn-desc">Portal requirements</span>
+                <span class="cat-btn-desc">Check portal<br>requirements</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="calculators">
               <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Calculators</span>
-                <span class="cat-btn-desc">17 calculators</span>
+                <span class="cat-btn-desc">17+ calculators for<br>daily use</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="qrcode">
+              <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg><use href="#ic-qrcode"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">QR Code</span>
+                <span class="cat-btn-desc">Generate QR codes<br>instantly</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="history">
+              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">History</span>
+                <span class="cat-btn-desc">View your recent<br>files &amp; actions</span>
               </span>
             </button>
           </div>
@@ -302,39 +332,71 @@
               <span class="cat-icon" style="--c:#FEF3C7;--f:#D97706"><svg><use href="#ic-b64"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Base64</span>
-                <span class="cat-btn-desc">Encode &amp; decode</span>
+                <span class="cat-btn-desc">Encode &amp; decode<br>strings</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="regex">
               <span class="cat-icon" style="--c:#FCE7F3;--f:#DB2777"><svg><use href="#ic-regex"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Regex Tester</span>
-                <span class="cat-btn-desc">Build &amp; test patterns</span>
+                <span class="cat-btn-desc">Build &amp; test<br>patterns</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="formatter">
               <span class="cat-icon" style="--c:#ECFDF5;--f:#059669"><svg><use href="#ic-braces"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">JSON / XML</span>
-                <span class="cat-btn-desc">Format &amp; beautify</span>
+                <span class="cat-btn-desc">Format &amp; validate<br>JSON or XML</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="markdown">
-              <span class="cat-icon" style="--c:#EDE9FE;--f:#7C3AED"><svg><use href="#ic-markdown"/></svg></span>
+              <span class="cat-icon" style="--c:#F3E8FF;--f:#9333EA"><svg><use href="#ic-markdown"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Markdown</span>
-                <span class="cat-btn-desc">Edit &amp; preview</span>
+                <span class="cat-btn-desc">Edit &amp; preview<br>Markdown</span>
               </span>
             </button>
-            <button class="cat-btn" data-panel="qrcode">
-              <span class="cat-icon" style="--c:#FEF3C7;--f:#B45309"><svg><use href="#ic-qrcode"/></svg></span>
+            <button class="cat-btn" data-panel="texttools">
+              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>
               <span class="cat-btn-text">
-                <span class="cat-btn-name">QR Code</span>
-                <span class="cat-btn-desc">Generate &amp; download</span>
+                <span class="cat-btn-name">Text Tools</span>
+                <span class="cat-btn-desc">Transform &amp; analyze<br>text</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="hash">
+              <span class="cat-icon" style="--c:#F5F3FF;--f:#A855F7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">Hash Generator</span>
+                <span class="cat-btn-desc">Generate MD5, SHA<br>&amp; other hashes</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="urlencode">
+              <span class="cat-icon" style="--c:#FFF1F2;--f:#EF4444"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">URL Encoder</span>
+                <span class="cat-btn-desc">Encode / decode<br>URLs</span>
+              </span>
+            </button>
+            <button class="cat-btn" data-panel="moretools">
+              <span class="cat-icon" style="--c:#F1F5F9;--f:#64748B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+              <span class="cat-btn-text">
+                <span class="cat-btn-name">More Tools</span>
+                <span class="cat-btn-desc">Explore all developer<br>utilities</span>
               </span>
             </button>
           </div>
-        </div><!-- /home-wrap -->
+          
+          <div class="bottom-banner">
+             <div class="bottom-banner-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+             </div>
+             <div class="bottom-banner-text">
+                <p class="bottom-banner-title">All tools work offline in your browser.</p>
+                <p class="bottom-banner-sub">Your privacy is our priority.</p>
+             </div>
+             <button class="bottom-banner-btn">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+          </div>
+</div><!-- /home-wrap -->
 
         <!-- ── Site footer ── -->
         <footer class="home-footer">
@@ -1195,8 +1257,12 @@
       <svg class="dock-icon"><use href="#ic-apps"/></svg>
       <span class="dock-lbl">Tools</span>
     </button>
+    <button class="dock-btn" data-dock="history" aria-label="History">
+      <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="dock-lbl">History</span>
+    </button>
     <button class="dock-btn" id="more-open-btn" data-dock="more" aria-label="More">
-      <svg class="dock-icon"><use href="#ic-faq"/></svg>
+      <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span class="dock-lbl">More</span>
     </button>
   </nav>
