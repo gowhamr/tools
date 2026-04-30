@@ -26,6 +26,7 @@ const SHELL = [
   './pages/terms.html',
   './pages/disclaimer.html',
   './pages/guides.html',
+  './tools/split-copy-text/index.html',
 ];
 
 self.addEventListener('install', e => {

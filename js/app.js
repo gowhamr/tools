@@ -1056,7 +1056,7 @@ function formatXml(text, minify) {
     el.addEventListener('animationend', () => el.remove(), { once: true });
   }
   document.addEventListener('click', e => {
-    const btn = e.target.closest('.panel-cta-btn, .home-hero-cta-primary');
+    const btn = e.target.closest('.panel-cta-btn, .home-hero-cta-primary, .fmt-btn, .cat-btn, .dock-btn, .home-hero-cta-ghost');
     if (btn) spawnRipple(btn, e);
   });
 

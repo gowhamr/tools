@@ -223,6 +223,7 @@ body.app-shell {
   cursor: pointer; transition: all var(--transition);
   box-shadow: 0 4px 14px rgba(79,70,229,.3);
   display: inline-flex; align-items: center; gap: 8px;
+  position: relative; overflow: hidden;
 }
 .home-hero-cta-primary:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,.4); }
 .home-hero-cta-primary:active { transform: scale(.97); }
@@ -233,6 +234,7 @@ body.app-shell {
   font-family: var(--font); font-size: .95rem; font-weight: 600;
   cursor: pointer; transition: all var(--transition);
   display: inline-flex; align-items: center; gap: 8px;
+  position: relative; overflow: hidden;
 }
 .home-hero-cta-ghost:hover { background: #f8fafc; color: var(--text-2); border-color: #cbd5e1; }
 
@@ -429,6 +431,7 @@ body.app-shell {
   box-shadow: var(--shadow-sm);
   transition: all var(--transition);
   -webkit-user-select: none; user-select: none;
+  position: relative; overflow: hidden;
 }
 .cat-btn:hover  { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--blue); }
 .cat-btn:hover .cat-icon { transform: scale(1.05); }
@@ -471,6 +474,7 @@ body.app-shell {
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--text-2);
   transition: all var(--transition);
+  position: relative; overflow: hidden;
 }
 .nav-back:hover  { background: var(--blue-light); border-color: var(--blue); color: var(--blue); transform: scale(1.05); }
 .nav-back:active { transform: scale(.9); }
@@ -507,6 +511,7 @@ body.app-shell {
   transition: color .16s, background .16s;
   min-height: 44px;
   -webkit-user-select: none; user-select: none;
+  position: relative; overflow: hidden;
 }
 .dock-btn:hover          { color: var(--text-2); background: var(--bg-input); }
 .dock-btn.active { color: var(--blue); }
@@ -637,6 +642,7 @@ body.app-shell {
   font-size: .72rem; font-weight: 700; color: var(--text-3);
   cursor: pointer; text-align: center; font-family: var(--font);
   transition: all .16s ease, transform .18s var(--ease-spring); line-height: 1.2;
+  position: relative; overflow: hidden;
 }
 .preset-chip:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); transform: translateY(-1px); }
 .preset-chip:active { transform: scale(.96); }
@@ -813,6 +819,12 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 @keyframes ripple-out {
   to { transform: scale(4); opacity: 0; }
 }
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transform: scale(0); pointer-events: none;
+  animation: ripple-out 0.6s linear;
+}
 
 /* Validator */
 .check-list { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
@@ -848,6 +860,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   border-bottom: 2px solid transparent; margin-bottom: -2px;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   transition: all var(--transition); font-family: var(--font);
+  position: relative; overflow: hidden;
 }
 .pdf-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pdf-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
@@ -1123,6 +1136,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   color: var(--text-3);
   cursor: pointer;
   transition: background .15s, color .15s;
+  position: relative; overflow: hidden;
 }
 .tool-tab.active {
   background: #fff;
@@ -1171,6 +1185,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   color: var(--text-3);
   cursor: pointer;
   transition: all .16s;
+  position: relative; overflow: hidden;
 }
 .fmt-btn:hover { border-color: var(--text-4); color: var(--text-2); background: rgba(0,0,0,0.02); }
 .fmt-btn-primary {
@@ -1490,6 +1505,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   border-bottom: none !important;
   margin-bottom: 0 !important;
   white-space: nowrap;
+  position: relative; overflow: hidden;
 }
 .pdf-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pdf-tab.active {
@@ -2070,10 +2086,10 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 
 /* Nav actions */
 .md-nav-actions { display:flex; align-items:center; gap:6px; margin-left:auto; }
-.md-icon-btn {
+.theme-toggle {
   width:32px; height:32px; border-radius:50%; border:none; background:none;
   cursor:pointer; display:flex; align-items:center; justify-content:center;
-  color:var(--text-2); position:relative;
+  color:var(--text-2); position:relative; overflow:hidden;
   transition:background .15s, color .15s;
 }
 .md-icon-btn:hover { background:var(--border); color:var(--text); }
