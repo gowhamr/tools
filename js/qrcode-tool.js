@@ -2,16 +2,35 @@
 
 let qrInitialized = false;
 let qrDebounceTimer = null;
+let qrLoadingPromise = null;
 
 function qrLoadCDN() {
-  return new Promise((resolve, reject) => {
-    if (window.QRCode) return resolve();
+  if (window.QRCode) return Promise.resolve();
+  if (qrLoadingPromise) return qrLoadingPromise;
+
+  qrLoadingPromise = new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-    s.onload = resolve;
-    s.onerror = reject;
+    // Try cdnjs first
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js';
+    s.onload = () => {
+      if (window.QRCode) resolve();
+      else reject(new Error('QRCode global not found'));
+    };
+    s.onerror = () => {
+      // Fallback to jsdelivr
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+      s2.onload = resolve;
+      s2.onerror = () => {
+        qrLoadingPromise = null; // Allow retry on next call
+        reject(new Error('Failed to load QR library from both CDNs'));
+      };
+      document.head.appendChild(s2);
+    };
     document.head.appendChild(s);
   });
+
+  return qrLoadingPromise;
 }
 
 function qrInit() {
