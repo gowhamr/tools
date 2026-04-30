@@ -33,9 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container) return;
 
     const base = window.KARUVI_BASE || '/';
-    fetch(base + 'pages/calculators.html')
-      .then(r => r.text())
+    const fetchUrl = base + 'pages/calculators.html';
+    console.log('[Karuvi] Loading calculators from:', fetchUrl);
+    
+    fetch(fetchUrl)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
+        return r.text();
+      })
       .then(html => {
+        console.log('[Karuvi] Calculators HTML fetched, length:', html.length);
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const mchRoot = doc.getElementById('mch-root');
         if (!mchRoot) return;

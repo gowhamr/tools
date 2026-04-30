@@ -4,6 +4,11 @@
  */
 
 (function() {
+  // Determine the base path immediately from the script source
+  const script = document.currentScript || document.querySelector('script[src*="js/shell.js"]');
+  const base = script ? script.src.replace(/js\/shell\.js.*$/, '') : '/';
+  window.KARUVI_BASE = base;
+
   const shell = {
     init() {
       this.render();
@@ -15,11 +20,7 @@
     render() {
       const active = window.SHELL_ACTIVE || 'home';
       document.body.classList.add('app-shell');
-
-      // Determine the base path from the script source
-      const script = document.currentScript || document.querySelector('script[src*="js/shell.js"]');
-      const base = script ? script.src.replace(/js\/shell\.js.*$/, '') : '/';
-      window.KARUVI_BASE = base;
+      const base = window.KARUVI_BASE;
 
       // SVG Sprite
       const sprite = document.createElement('div');
