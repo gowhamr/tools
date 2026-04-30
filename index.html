@@ -134,9 +134,9 @@
 
   <header class="top-stripe" role="banner">
     <div class="ts-brand">
-      <div class="ts-logo" style="background: #6366F1; border-radius: 10px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M9 3h6M10 3v6l-4 9a1 1 0 00.92 1.4h10.16A1 1 0 0018 18l-4-9V3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <div class="ts-logo" style="background: #6366F1; border-radius: 9px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 2v7.31"/><path d="M14 9.31V2"/><path d="M8.5 2h7"/><path d="M14 9.31L20.39 21H3.61L10 9.31"/>
         </svg>
       </div>
       <div class="ts-brand-text">
@@ -163,9 +163,9 @@
         <!-- Sun: shown in dark mode → click to go light -->
         <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
-      <span class="ts-badge">
-        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        Private
+      <span class="ts-badge" style="font-size: .65rem; font-weight: 800; padding: 4px 10px; border-radius: 8px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        PRIVATE
       </span>
     </div>
   </header>
@@ -311,14 +311,14 @@
               </span>
             </button>
             <button class="cat-btn" data-panel="qrcode">
-              <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg><use href="#ic-qrcode"/></svg></span>
+              <span class="cat-icon" style="--c:#F5F3FF;--f:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">QR Code</span>
                 <span class="cat-btn-desc">Generate QR codes<br>instantly</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="history">
-              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <span class="cat-icon" style="--c:#EEF2FF;--f:#3B82F6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">History</span>
                 <span class="cat-btn-desc">View your recent<br>files &amp; actions</span>
@@ -336,7 +336,7 @@
               </span>
             </button>
             <button class="cat-btn" data-panel="regex">
-              <span class="cat-icon" style="--c:#FCE7F3;--f:#DB2777"><svg><use href="#ic-regex"/></svg></span>
+              <span class="cat-icon" style="--c:#FCE7F3;--f:#DB2777"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M9 10l6 4M15 10l-6 4"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Regex Tester</span>
                 <span class="cat-btn-desc">Build &amp; test<br>patterns</span>
@@ -350,14 +350,14 @@
               </span>
             </button>
             <button class="cat-btn" data-panel="markdown">
-              <span class="cat-icon" style="--c:#F3E8FF;--f:#9333EA"><svg><use href="#ic-markdown"/></svg></span>
+              <span class="cat-icon" style="--c:#F3E8FF;--f:#9333EA"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15V9l3 3 3-3v6M17 13l-2 2 2 2"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Markdown</span>
                 <span class="cat-btn-desc">Edit &amp; preview<br>Markdown</span>
               </span>
             </button>
             <button class="cat-btn" data-panel="texttools">
-              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>
+              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></span>
               <span class="cat-btn-text">
                 <span class="cat-btn-name">Text Tools</span>
                 <span class="cat-btn-desc">Transform &amp; analyze<br>text</span>
@@ -1242,6 +1242,94 @@
           </div>
 
         </div><!-- /panel-scroll -->
+      </div>
+
+    
+      <!-- ══════════ HISTORY ══════════ -->
+      <div class="panel tool-panel" id="panel-history" data-panel="history">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">History</p>
+            <p class="nav-subtitle">View your recent files and actions</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+          <div class="md-empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <p>Your history will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ TEXT TOOLS ══════════ -->
+      <div class="panel tool-panel" id="panel-texttools" data-panel="texttools">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">Text Tools</p>
+            <p class="nav-subtitle">Transform & analyze text</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+           <textarea class="tool-textarea" rows="10" placeholder="Paste your text here..."></textarea>
+           <div class="fmt-actions" style="margin-top:16px">
+             <button class="fmt-btn fmt-btn-primary">Uppercase</button>
+             <button class="fmt-btn">Lowercase</button>
+             <button class="fmt-btn">Count Words</button>
+           </div>
+        </div>
+      </div>
+
+      <!-- ══════════ HASH GENERATOR ══════════ -->
+      <div class="panel tool-panel" id="panel-hash" data-panel="hash">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">Hash Generator</p>
+            <p class="nav-subtitle">Generate secure hashes</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+           <input type="text" class="workspace-input" style="margin-bottom:16px" placeholder="Enter text to hash...">
+           <div class="settings-card">
+              <div class="settings-row"><span>MD5</span><span class="link">Copy</span></div>
+              <div class="settings-row"><span>SHA-256</span><span class="link">Copy</span></div>
+              <div class="settings-row" style="border:none"><span>SHA-512</span><span class="link">Copy</span></div>
+           </div>
+        </div>
+      </div>
+
+      <!-- ══════════ URL ENCODER ══════════ -->
+      <div class="panel tool-panel" id="panel-urlencode" data-panel="urlencode">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">URL Encoder</p>
+            <p class="nav-subtitle">Safe URL encoding & decoding</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+           <textarea class="tool-textarea" rows="6" placeholder="Paste URL here..."></textarea>
+           <div class="fmt-actions" style="margin-top:16px">
+             <button class="fmt-btn fmt-btn-primary">Encode</button>
+             <button class="fmt-btn">Decode</button>
+           </div>
+        </div>
+      </div>
+
+      <!-- ══════════ MORE TOOLS ══════════ -->
+      <div class="panel tool-panel" id="panel-moretools" data-panel="moretools">
+        <div class="panel-nav">
+          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="nav-head">
+            <p class="nav-title">More Tools</p>
+            <p class="nav-subtitle">Experimental & extra utilities</p>
+          </div>
+        </div>
+        <div class="panel-scroll">
+          <p class="hint">More tools coming soon!</p>
+        </div>
       </div>
 
     </div><!-- /panel-container -->

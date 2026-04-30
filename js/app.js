@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activePanel = 'home';
   const homePanel = document.getElementById('panel-home');
 
-  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter','markdown','qrcode'];
+  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter','markdown','qrcode','history','texttools','hash','urlencode','moretools'];
 
   function setDockActive(dockId) {
     document.querySelectorAll('.dock-btn[data-dock]').forEach(b => {
@@ -77,7 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
       homePanel?.classList.add('pushed');
       const next = document.getElementById('panel-' + panelId);
       if (next) next.classList.add('active');
-      setDockActive('tools');
+      
+      if (panelId === 'history') {
+        setDockActive('history');
+      } else {
+        setDockActive('tools');
+      }
+
       if (panelId === 'calculators') maybeLoadCalculators();
       if (panelId === 'markdown') maybeLoadMarkdown();
       if (panelId === 'qrcode') maybeLoadQRCode();
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3-tab dock
+  // 4-tab dock
   document.querySelectorAll('.dock-btn[data-dock]').forEach(btn => {
     btn.addEventListener('click', () => {
       const dockId = btn.dataset.dock;
@@ -104,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('file-tools-label')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, needsTransition ? 320 : 60);
         setDockActive('tools');
+      } else if (dockId === 'history') {
+        showPanel('history');
       } else if (dockId === 'more') {
         openFaq();
       }
@@ -160,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function closeFaq() {
     faqOverlay?.classList.add('hidden');
-    setDockActive(TOOL_PANELS.includes(activePanel) ? 'tools' : 'home');
+    setDockActive(activePanel === 'history' ? 'history' : (TOOL_PANELS.includes(activePanel) ? 'tools' : 'home'));
   }
 
   moreBtn?.addEventListener('click', openFaq);
