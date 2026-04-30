@@ -7,6 +7,7 @@ const SHELL = [
   './css/style.css',
   './css/pages.css',
   './js/utils.js',
+  './js/lib/qrcode.min.js',
   './js/format-utils.js',
   './js/validator.js',
   './js/image-tools.js',

@@ -248,13 +248,25 @@
               <div class="mock-3d-window">
                  <div class="mock-3d-dots"><span></span><span></span><span></span></div>
                  <div class="mock-3d-icons">
-                    <div class="mock-icon" style="color:#0ea5e9"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-                    <div class="mock-icon" style="color:#ef4444"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
-                    <div class="mock-icon mock-icon-center" style="color:#10B981"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></div>
-                    <div class="mock-icon" style="color:#6366F1"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                    <!-- Image Tools -->
+                    <div class="mock-icon" style="color:#3B82F6; top: 40px; left: 40px;">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <!-- PDF Tools -->
+                    <div class="mock-icon" style="color:#EF4444; top: 40px; right: 40px;">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <!-- Developer Tools -->
+                    <div class="mock-icon" style="color:#10B981; bottom: 40px; left: 40px;">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <!-- More Tools -->
+                    <div class="mock-icon" style="color:#8B5CF6; bottom: 40px; right: 40px;">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    </div>
                  </div>
                  <div class="mock-shield">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#6366F1" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="3"/></svg>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#6366F1" stroke="#4F46E5" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="3"/></svg>
                  </div>
               </div>
             </div>
@@ -883,7 +895,7 @@
       </div>
 
       <!-- ══════════ BASE64 ══════════ -->
-      <div class="panel tool-panel" id="panel-base64" data-panel="base64">
+      <div class="panel tool-panel has-split" id="panel-base64" data-panel="base64">
         <div class="panel-nav">
           <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
           <div class="nav-head">
@@ -892,26 +904,31 @@
           </div>
         </div>
         <div class="panel-scroll">
-          <div class="tool-tabs" id="b64-tabs">
-            <button class="tool-tab active" data-tab="encode">Encode</button>
-            <button class="tool-tab" data-tab="decode">Decode</button>
-          </div>
-          <div class="tool-section">
-            <label class="tool-label">Input</label>
-            <textarea class="tool-textarea" id="b64-input" placeholder="Paste text or Base64 string here…" rows="6" spellcheck="false"></textarea>
-          </div>
-          <div class="fmt-actions">
-            <button class="fmt-btn fmt-btn-primary" id="b64-run">&#9889; Convert</button>
-            <button class="fmt-btn" id="b64-clear">Clear</button>
-          </div>
-          <div class="tool-output-wrap" id="b64-output-wrap" hidden>
-            <div class="tool-output-header">
-              <span class="tool-output-label">Output</span>
-              <button class="tool-copy-btn" id="b64-copy">Copy</button>
+          <div class="panel-upload-group">
+            <div class="tool-tabs" id="b64-tabs">
+              <button class="tool-tab active" data-tab="encode">Encode</button>
+              <button class="tool-tab" data-tab="decode">Decode</button>
             </div>
-            <textarea class="tool-textarea tool-output" id="b64-output" rows="6" readonly spellcheck="false"></textarea>
+            <div class="tool-section">
+              <label class="tool-label">Input</label>
+              <textarea class="tool-textarea" id="b64-input" placeholder="Paste text or Base64 string here…" rows="12" spellcheck="false"></textarea>
+            </div>
+            <div class="tool-output-wrap" id="b64-output-wrap" hidden>
+              <div class="tool-output-header">
+                <span class="tool-output-label">Output</span>
+                <button class="tool-copy-btn" id="b64-copy">Copy</button>
+              </div>
+              <textarea class="tool-textarea tool-output" id="b64-output" rows="12" readonly spellcheck="false"></textarea>
+            </div>
           </div>
-          <p class="tool-error" id="b64-error" hidden></p>
+          <div class="panel-settings-group">
+            <div class="settings-card">
+              <p class="settings-card-title">Actions</p>
+              <button class="panel-cta-btn" id="b64-run" style="width:100%; margin-bottom:12px">✓ Convert</button>
+              <button class="fmt-btn" id="b64-clear" style="width:100%">Clear Input</button>
+            </div>
+            <p class="tool-error" id="b64-error" hidden style="margin-top:12px"></p>
+          </div>
         </div>
       </div>
 
@@ -1424,6 +1441,7 @@
   <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
   <!-- ── App Scripts ── -->
+  <script src="js/lib/qrcode.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/format-utils.js"></script>
   <script src="js/validator.js"></script>

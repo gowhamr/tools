@@ -269,6 +269,7 @@ body.app-shell {
   box-shadow: 0 10px 20px rgba(0,0,0,.08);
   border: 1px solid rgba(255,255,255,.8);
   transform: translateZ(20px);
+  position: absolute;
 }
 .mock-icon svg { width: 32px; height: 32px; }
 .mock-shield {

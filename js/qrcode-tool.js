@@ -2,36 +2,6 @@
 
 let qrInitialized = false;
 let qrDebounceTimer = null;
-let qrLoadingPromise = null;
-
-function qrLoadCDN() {
-  if (window.QRCode) return Promise.resolve();
-  if (qrLoadingPromise) return qrLoadingPromise;
-
-  qrLoadingPromise = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    // Try cdnjs first
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js';
-    s.onload = () => {
-      if (window.QRCode) resolve();
-      else reject(new Error('QRCode global not found'));
-    };
-    s.onerror = () => {
-      // Fallback to jsdelivr
-      const s2 = document.createElement('script');
-      s2.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-      s2.onload = resolve;
-      s2.onerror = () => {
-        qrLoadingPromise = null; // Allow retry on next call
-        reject(new Error('Failed to load QR library from both CDNs'));
-      };
-      document.head.appendChild(s2);
-    };
-    document.head.appendChild(s);
-  });
-
-  return qrLoadingPromise;
-}
 
 function qrInit() {
   if (qrInitialized) return;
@@ -49,12 +19,15 @@ function qrInit() {
     });
   });
 
-  document.getElementById('qr-size').addEventListener('change', qrGenerate);
-  document.getElementById('qr-ecl').addEventListener('change', qrGenerate);
+  const qrSizeEl = document.getElementById('qr-size');
+  const qrEclEl = document.getElementById('qr-ecl');
+  const qrFgEl = document.getElementById('qr-fg-color');
 
-  qrLoadCDN().then(() => {
-    if (document.getElementById('qr-input').value.trim()) qrGenerate();
-  }).catch(() => qrShowSnackbar('Failed to load QR library. Check your connection.', 'error'));
+  if (qrSizeEl) qrSizeEl.addEventListener('change', qrGenerate);
+  if (qrEclEl) qrEclEl.addEventListener('change', qrGenerate);
+  if (qrFgEl) qrFgEl.addEventListener('change', qrGenerate);
+
+  if (document.getElementById('qr-input')?.value.trim()) qrGenerate();
 }
 
 function qrOnInput() {
@@ -64,7 +37,7 @@ function qrOnInput() {
 
 function qrGenerate() {
   if (typeof QRCode === 'undefined') {
-    qrLoadCDN().then(qrGenerate).catch(() => qrShowSnackbar('Failed to load QR library.', 'error'));
+    console.error('QR library not loaded');
     return;
   }
   const input = document.getElementById('qr-input').value.trim();
@@ -81,12 +54,12 @@ function qrGenerate() {
   const svgBtn = document.getElementById('qr-svg-btn');
 
   if (!input) {
-    canvas.style.display = 'none';
+    if (canvas) canvas.style.display = 'none';
     if (emptyHint) emptyHint.style.display = 'block';
-    caption.textContent = '';
-    downloadBtn.disabled = true;
-    copyBtn.disabled = true;
-    svgBtn.disabled = true;
+    if (caption) caption.textContent = '';
+    if (downloadBtn) downloadBtn.disabled = true;
+    if (copyBtn) copyBtn.disabled = true;
+    if (svgBtn) svgBtn.disabled = true;
     return;
   }
 
@@ -129,12 +102,13 @@ function qrDownload(format) {
     a.click();
     qrShowSnackbar('PNG downloaded!', 'success');
   } else if (format === 'svg') {
+    const size = parseInt(document.getElementById('qr-size').value) || 256;
     const ecl = document.getElementById('qr-ecl').value || 'M';
     const fgColor = document.getElementById('qr-fg-color').value || '#000000';
     const bgColor = document.getElementById('qr-bg-color').value || '#ffffff';
 
     QRCode.toString(input, {
-      width: 10,
+      width: size,
       margin: 1,
       errorCorrectionLevel: ecl,
       type: 'image/svg+xml',
@@ -164,6 +138,7 @@ function qrCopyImage() {
   }
 
   canvas.toBlob((blob) => {
+    if (!blob) return;
     const item = new ClipboardItem({['image/png']: blob});
     navigator.clipboard.write([item]).then(() => {
       qrShowSnackbar('QR code copied to clipboard!', 'success');
@@ -186,5 +161,3 @@ function qrShowSnackbar(msg, type = 'info') {
   clearTimeout(qrSnackTimer);
   qrSnackTimer = setTimeout(() => { bar.remove(); }, 3200);
 }
-
-// qrInit() is called by app.js showPanel() when user opens the qrcode panel
