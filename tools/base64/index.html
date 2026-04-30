@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base64 Encode/Decode — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'base64';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-base64">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Base64</p>
+        <p class="nav-subtitle">Encode &amp; decode in your browser</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="tool-tabs" id="b64-tabs">
+          <button class="tool-tab active" data-tab="encode">Encode</button>
+          <button class="tool-tab" data-tab="decode">Decode</button>
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Input</label>
+          <textarea class="tool-textarea" id="b64-input" placeholder="Paste text or Base64 string here…" rows="12" spellcheck="false"></textarea>
+        </div>
+        <div class="tool-output-wrap" id="b64-output-wrap" hidden>
+          <div class="tool-output-header">
+            <span class="tool-output-label">Output</span>
+            <button class="tool-copy-btn" id="b64-copy">Copy</button>
+          </div>
+          <textarea class="tool-textarea tool-output" id="b64-output" rows="12" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Actions</p>
+          <button class="panel-cta-btn" id="b64-run" style="width:100%; margin-bottom:12px">✓ Convert</button>
+          <button class="fmt-btn" id="b64-clear" style="width:100%">Clear Input</button>
+        </div>
+        <p class="tool-error" id="b64-error" hidden style="margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

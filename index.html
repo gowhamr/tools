@@ -4,1468 +4,176 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KaruviLab — Simple tools, fast results.</title>
-
-  <!-- SEO -->
-  <meta name="description" content="KaruviLab: free browser-based tool to compress, convert, create and validate images and PDFs. 8 formats, 17 calculators. 100% private — no uploads." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://karuvilab.vercel.app/" />
-  <meta name="author" content="KaruviLab" />
-  <meta name="keywords" content="KaruviLab, image compressor, PDF compressor, image converter, JPG PNG WebP AVIF TIFF BMP HEIC, passport photo tool, SIP calculator, browser tool, no upload" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="KaruviLab" />
-  <meta property="og:title" content="KaruviLab — Simple tools, fast results." />
-  <meta property="og:description" content="Image &amp; PDF tools + 17 calculators. Compress, convert, create, validate — 100% private, all in your browser." />
-  <meta property="og:url" content="https://karuvilab.vercel.app/" />
-  <meta property="og:image" content="https://karuvilab.vercel.app/icons/icon.svg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="KaruviLab — Simple tools, fast results." />
-  <meta name="twitter:description" content="Image &amp; PDF tools + 17 calculators. 100% private — all processing is local." />
-  <meta name="twitter:image" content="https://karuvilab.vercel.app/icons/icon.svg" />
-
-  <!-- PWA -->
+  <meta name="description" content="KaruviLab: free browser-based tools. 100% private — no uploads." />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#4F46E5" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="KaruviLab" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-  <link rel="apple-touch-icon" href="icons/icon-180.png" />
-
-
-
-  <!-- Theme: applied before paint to prevent flash of unstyled content -->
-  <script>(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
   <link rel="stylesheet" href="css/style.css" />
+  <script>window.SHELL_ACTIVE = 'home';</script>
 </head>
-<body class="app-shell">
+<body>
 
-  <!-- ── Privacy Stripe ── -->
-  <!-- SVG icon sprite -->
-  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <!-- Home -->
-      <symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/>
-      </symbol>
-      <!-- Compress -->
-      <symbol id="ic-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
-        <path d="M9 9l6 6M15 9l-6 6"/>
-      </symbol>
-      <!-- Convert -->
-      <symbol id="ic-convert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/>
-        <path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
-      </symbol>
-      <!-- Create / image -->
-      <symbol id="ic-create" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-        <path d="M21 15l-5-5L5 21"/>
-      </symbol>
-      <!-- PDF / document -->
-      <symbol id="ic-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-        <path d="M14 2v6h6M9 13h6M9 17h4"/>
-      </symbol>
-      <!-- Validate / shield check -->
-      <symbol id="ic-validate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        <path d="M9 12l2 2 4-4"/>
-      </symbol>
-      <!-- Calc / grid -->
-      <symbol id="ic-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="4" y="2" width="16" height="20" rx="2"/>
-        <path d="M8 6h8"/><rect x="8" y="10" width="2" height="2" rx=".5"/><rect x="11" y="10" width="2" height="2" rx=".5"/><rect x="14" y="10" width="2" height="2" rx=".5"/>
-        <rect x="8" y="14" width="2" height="2" rx=".5"/><rect x="11" y="14" width="2" height="2" rx=".5"/><rect x="14" y="14" width="2" height="2" rx=".5"/>
-        <rect x="8" y="18" width="2" height="2" rx=".5"/><rect x="11" y="18" width="2" height="2" rx=".5"/><rect x="14" y="18" width="2" height="2" rx=".5"/>
-      </symbol>
-      <!-- FAQ / help circle -->
-      <symbol id="ic-faq" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/>
-      </symbol>
-      <!-- Bolt / Workspace -->
-      <symbol id="ic-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-      </symbol>
-      <!-- Apps grid / Tools -->
-      <symbol id="ic-apps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-      </symbol>
-      <!-- Curly braces / JSON-XML -->
-      <symbol id="ic-braces" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5a2 2 0 002 2h1"/>
-        <path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/>
-      </symbol>
-      <!-- Link / Base64 -->
-      <symbol id="ic-b64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-      </symbol>
-      <!-- Regex / pattern slash -->
-      <symbol id="ic-regex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M12 8v4M12 16h.01"/>
-        <path d="M9 10l6 4M15 10l-6 4"/>
-      </symbol>
-      <!-- Markdown editor -->
-      <symbol id="ic-markdown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="2"/>
-        <path d="M6 15V9l3 3 3-3v6"/>
-        <path d="M17 9l-2.5 3 2.5 3"/>
-      </symbol>
-      <!-- QR Code -->
-      <symbol id="ic-qrcode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
-        <rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/>
-        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/>
-        <path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/>
-      </symbol>
-    </defs>
-  </svg>
-
-  <header class="top-stripe" role="banner">
-    <div class="ts-brand">
-      <div class="ts-logo" style="background: #6366F1; border-radius: 9px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2v7.31"/><path d="M14 9.31V2"/><path d="M8.5 2h7"/><path d="M14 9.31L20.39 21H3.61L10 9.31"/>
-        </svg>
-      </div>
-      <div class="ts-brand-text">
-        <span class="ts-name">KaruviLab</span>
-        <span class="ts-tagline">Fast &middot; Private &middot; No uploads</span>
-      </div>
-      <!-- Desktop nav links (hidden on mobile via CSS) -->
-      <nav class="ts-desktop-nav" aria-label="Main navigation" style="display:none">
-        <button class="ts-nav-link active" data-panel="home">Home</button>
-        <button class="ts-nav-link" data-panel="compressor">Compress</button>
-        <button class="ts-nav-link" data-panel="converter">Convert</button>
-        <button class="ts-nav-link" data-panel="creator">Create</button>
-        <button class="ts-nav-link" data-panel="pdf">PDF</button>
-        <button class="ts-nav-link" data-panel="validator">Validate</button>
-        <button class="ts-nav-link" data-panel="calculators">Calculators</button>
-        <button class="ts-nav-link" data-panel="markdown">Markdown</button>
-        <button class="ts-nav-link" data-panel="qrcode">QR Code</button>
-      </nav>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-        <!-- Moon: shown in light mode → click to go dark -->
-        <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <!-- Sun: shown in dark mode → click to go light -->
-        <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </button>
-      <span class="ts-badge" style="font-size: .65rem; font-weight: 800; padding: 4px 10px; border-radius: 8px;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        PRIVATE
-      </span>
-    </div>
-  </header>
-
-  <!-- ── Viewport ── -->
-  <div class="viewport">
-
-    <!-- ── Sidebar (desktop only) ── -->
-    <aside class="app-sidebar" id="app-sidebar" aria-label="Tool navigation">
-      <span class="sb-section-lbl">File Tools</span>
-      <button class="sb-link" data-panel="compressor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
-        Compress
-      </button>
-      <button class="sb-link" data-panel="converter">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
-        Convert
-      </button>
-      <button class="sb-link" data-panel="creator">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Create / Resize
-      </button>
-      <button class="sb-link" data-panel="pdf">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
-        PDF Tools
-      </button>
-      <span class="sb-section-lbl">Utilities</span>
-      <button class="sb-link" data-panel="validator">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        Validate
-      </button>
-      <button class="sb-link" data-panel="calculators">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><rect x="8" y="10" width="2" height="2" rx=".5"/><rect x="11" y="10" width="2" height="2" rx=".5"/><rect x="14" y="10" width="2" height="2" rx=".5"/><rect x="8" y="14" width="2" height="2" rx=".5"/><rect x="11" y="14" width="2" height="2" rx=".5"/><rect x="14" y="14" width="2" height="2" rx=".5"/></svg>
-        Calculators
-      </button>
-      <span class="sb-section-lbl">Developer</span>
-      <button class="sb-link" data-panel="base64">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-        Base64
-      </button>
-      <button class="sb-link" data-panel="regex">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/><path d="M9 10l6 4M15 10l-6 4"/></svg>
-        Regex Tester
-      </button>
-      <button class="sb-link" data-panel="formatter">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5a2 2 0 002 2h1"/><path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/></svg>
-        JSON / XML
-      </button>
-      <button class="sb-link" data-panel="markdown">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 15V9l3 3 3-3v6"/><path d="M17 9l-2.5 3 2.5 3"/></svg>
-        Markdown
-      </button>
-      <button class="sb-link" data-panel="qrcode">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg>
-        QR Code
-      </button>
-    </aside>
-
-    <div class="panel-container">
-
-      <!-- ══════════ HOME PANEL ══════════ -->
-      <div class="panel" id="panel-home" data-panel="home">
-
-        <!-- Full-bleed gradient hero banner -->
-        <div class="home-hero-banner">
-          <div class="home-hero-inner">
-            <div class="home-hero-text">
-              <div class="home-hero-kicker">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                100% LOCAL PROCESSING
-              </div>
-              <h1 class="home-hero-title">Powerful tools that<br><span style="color:var(--blue)">run in your browser</span></h1>
-              <p class="home-hero-sub">Compress, convert &amp; validate files and PDFs &mdash; nothing leaves your device.</p>
-              <div class="home-hero-ctas">
-                <button class="home-hero-cta-primary" data-panel="tools"><svg width="18" height="18" style="margin-right:8px"><use href="#ic-apps"/></svg> Explore Tools</button>
-                <button class="home-hero-cta-ghost" data-panel="history"><svg width="18" height="18" style="margin-right:8px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Recent Files</button>
-              </div>
-            </div>
-            <div class="home-hero-graphic">
-              <div class="mock-3d-window">
-                 <div class="mock-3d-dots"><span></span><span></span><span></span></div>
-                 <div class="mock-3d-icons">
-                    <!-- Image Tools -->
-                    <div class="mock-icon" style="color:#3B82F6; top: 40px; left: 40px;">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    </div>
-                    <!-- PDF Tools -->
-                    <div class="mock-icon" style="color:#EF4444; top: 40px; right: 40px;">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    </div>
-                    <!-- Developer Tools -->
-                    <div class="mock-icon" style="color:#10B981; bottom: 40px; left: 40px;">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    </div>
-                    <!-- More Tools -->
-                    <div class="mock-icon" style="color:#8B5CF6; bottom: 40px; right: 40px;">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                    </div>
-                 </div>
-                 <div class="mock-shield">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#6366F1" stroke="#4F46E5" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="3"/></svg>
-                 </div>
-              </div>
-            </div>
-          </div>
+  <!-- Home Hero -->
+  <div class="home-hero-banner">
+    <div class="home-hero-inner">
+      <div class="home-hero-text">
+        <div class="home-hero-kicker">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          100% LOCAL PROCESSING
         </div>
-        <div class="home-wrap">
-
-          <p class="cat-label" id="file-tools-label">File Tools</p>
-          <div class="cat-grid" id="file-tools-grid">
-            <button class="cat-btn" data-panel="compressor">
-              <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg><use href="#ic-compress"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Compress Image</span>
-                <span class="cat-btn-desc">Reduce image size<br>without losing quality</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="converter">
-              <span class="cat-icon" style="--c:#F3E8FF;--f:#7C3AED"><svg><use href="#ic-convert"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Convert</span>
-                <span class="cat-btn-desc">Convert images to<br>PDF and more</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="creator">
-              <span class="cat-icon" style="--c:#DCFCE7;--f:#16A34A"><svg><use href="#ic-create"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Create</span>
-                <span class="cat-btn-desc">Create passport photos,<br>banners &amp; more</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="pdf">
-              <span class="cat-icon" style="--c:#FEE2E2;--f:#DC2626"><svg><use href="#ic-pdf"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">PDF Tools</span>
-                <span class="cat-btn-desc">Merge, split, watermark<br>and more</span>
-              </span>
-            </button>
-          </div>
-
-          <p class="cat-label">Utilities</p>
-          <div class="cat-grid">
-            <button class="cat-btn" data-panel="validator">
-              <span class="cat-icon" style="--c:#CCFBF1;--f:#0D9488"><svg><use href="#ic-validate"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Validate</span>
-                <span class="cat-btn-desc">Check portal<br>requirements</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="calculators">
-              <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg><use href="#ic-calc"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Calculators</span>
-                <span class="cat-btn-desc">17+ calculators for<br>daily use</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="qrcode">
-              <span class="cat-icon" style="--c:#F5F3FF;--f:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">QR Code</span>
-                <span class="cat-btn-desc">Generate QR codes<br>instantly</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="history">
-              <span class="cat-icon" style="--c:#EEF2FF;--f:#3B82F6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">History</span>
-                <span class="cat-btn-desc">View your recent<br>files &amp; actions</span>
-              </span>
-            </button>
-          </div>
-
-          <p class="cat-label">Developer Tools</p>
-          <div class="cat-grid">
-            <button class="cat-btn" data-panel="base64">
-              <span class="cat-icon" style="--c:#FEF3C7;--f:#D97706"><svg><use href="#ic-b64"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Base64</span>
-                <span class="cat-btn-desc">Encode &amp; decode<br>strings</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="regex">
-              <span class="cat-icon" style="--c:#FCE7F3;--f:#DB2777"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M9 10l6 4M15 10l-6 4"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Regex Tester</span>
-                <span class="cat-btn-desc">Build &amp; test<br>patterns</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="formatter">
-              <span class="cat-icon" style="--c:#ECFDF5;--f:#059669"><svg><use href="#ic-braces"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">JSON / XML</span>
-                <span class="cat-btn-desc">Format &amp; validate<br>JSON or XML</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="markdown">
-              <span class="cat-icon" style="--c:#F3E8FF;--f:#9333EA"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15V9l3 3 3-3v6M17 13l-2 2 2 2"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Markdown</span>
-                <span class="cat-btn-desc">Edit &amp; preview<br>Markdown</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="texttools">
-              <span class="cat-icon" style="--c:#EFF6FF;--f:#3B82F6"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Text Tools</span>
-                <span class="cat-btn-desc">Transform &amp; analyze<br>text</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="hash">
-              <span class="cat-icon" style="--c:#F5F3FF;--f:#A855F7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Hash Generator</span>
-                <span class="cat-btn-desc">Generate MD5, SHA<br>&amp; other hashes</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="urlencode">
-              <span class="cat-icon" style="--c:#FFF1F2;--f:#EF4444"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">URL Encoder</span>
-                <span class="cat-btn-desc">Encode / decode<br>URLs</span>
-              </span>
-            </button>
-            <button class="cat-btn" data-panel="moretools">
-              <span class="cat-icon" style="--c:#F1F5F9;--f:#64748B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">More Tools</span>
-                <span class="cat-btn-desc">Explore all developer<br>utilities</span>
-              </span>
-            </button>
-            <a href="tools/split-copy-text/index.html" class="cat-btn" style="text-decoration:none">
-              <span class="cat-icon" style="--c:#EEF2FF;--f:#6366F1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></span>
-              <span class="cat-btn-text">
-                <span class="cat-btn-name">Split &amp; Copy</span>
-                <span class="cat-btn-desc">Break large text<br>for mobile clipboard</span>
-              </span>
-            </a>
-          </div>
-          
-          <div class="bottom-banner">
-             <div class="bottom-banner-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-             </div>
-             <div class="bottom-banner-text">
-                <p class="bottom-banner-title">All tools work offline in your browser.</p>
-                <p class="bottom-banner-sub">Your privacy is our priority.</p>
-             </div>
-             <a href="pages/privacy.html" class="bottom-banner-btn" style="text-decoration:none">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-          </div>
-</div><!-- /home-wrap -->
-
-        <!-- ── Site footer ── -->
-        <footer class="home-footer">
-          <div class="home-footer-inner">
-            <div class="home-footer-brand">
-              <div class="home-footer-mark">K</div>
-              <div>
-                <p class="home-footer-name">KaruviLab</p>
-                <p class="home-footer-tagline">Fast &middot; Private &middot; No uploads</p>
-              </div>
-            </div>
-            <nav class="home-footer-nav" aria-label="Legal and info links">
-              <a href="pages/about.html">About</a>
-              <a href="pages/guides.html">Guides</a>
-              <a href="pages/privacy.html">Privacy Policy</a>
-              <a href="pages/terms.html">Terms</a>
-              <a href="pages/disclaimer.html">Disclaimer</a>
-              <a href="pages/contact.html">Contact</a>
-            </nav>
-            <p class="home-footer-copy">&copy; 2026 KaruviLab. All processing runs in your browser &mdash; your files never leave your device.</p>
-          </div>
-        </footer>
-
-      </div>
-
-      <!-- ══════════ COMPRESSOR ══════════ -->
-      <div class="panel tool-panel has-split" id="panel-compressor" data-panel="compressor">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Compress Files</p>
-            <p class="nav-subtitle">Reduce image &amp; PDF size instantly</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-
-          <div class="panel-upload-group">
-            <div class="upload-zone upload-zone-hero" id="compressor-drop">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload Files</p>
-              <p class="upload-sub"><label for="compressor-input">Tap to select</label> or drag files here</p>
-              <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
-            </div>
-          </div>
-
-          <div class="panel-settings-group">
-            <div class="preset-chips">
-              <button class="preset-chip" data-preset="small">
-                <span class="preset-chip-name">Small</span>
-                <span class="preset-chip-desc">≤80 KB</span>
-              </button>
-              <button class="preset-chip active" data-preset="medium">
-                <span class="preset-chip-name">Medium</span>
-                <span class="preset-chip-desc">≤150 KB</span>
-              </button>
-              <button class="preset-chip" data-preset="high">
-                <span class="preset-chip-name">High Quality</span>
-                <span class="preset-chip-desc">≤300 KB</span>
-              </button>
-            </div>
-            <div class="slider-group">
-              <p class="slider-group-title">Compression Settings</p>
-              <div class="slider-row">
-                <div class="slider-header">
-                  <span class="slider-label">Image target size</span>
-                  <span class="slider-val" id="img-target-kb-val">150 KB</span>
-                </div>
-                <input type="range" id="img-target-kb" min="10" max="500" step="10" value="150" />
-              </div>
-              <div class="slider-row">
-                <div class="slider-header">
-                  <span class="slider-label">Max width</span>
-                  <span class="slider-val" id="img-max-width-val">1200 px</span>
-                </div>
-                <input type="range" id="img-max-width" min="200" max="4000" step="100" value="1200" />
-              </div>
-              <div class="slider-row">
-                <div class="slider-header">
-                  <span class="slider-label">PDF target size</span>
-                  <span class="slider-val" id="pdf-target-mb-val">1.5 MB</span>
-                </div>
-                <input type="range" id="pdf-target-mb" min="0.5" max="10" step="0.5" value="1.5" />
-              </div>
-            </div>
-            <div class="panel-cta-bar">
-              <button class="panel-cta-btn" id="compress-btn" disabled>
-                <svg width="18" height="18"><use href="#ic-bolt"/></svg>
-                Compress Now
-              </button>
-            </div>
-          </div>
-
-          <div class="panel-files-group">
-            <div id="compressor-file-list" class="file-list"></div>
-            <div id="compressor-results" class="results-area"></div>
-          </div>
-
-        </div><!-- /panel-scroll -->
-      </div>
-
-      <!-- ══════════ CONVERTER ══════════ -->
-      <div class="panel tool-panel has-split" id="panel-converter" data-panel="converter">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Convert</p>
-            <p class="nav-subtitle">Transform to any image format instantly</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-
-          <div class="panel-upload-group">
-            <div class="upload-zone upload-zone-hero" id="converter-drop">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/>
-                  <path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload Files</p>
-              <p class="upload-sub"><label for="converter-input">Tap to select</label> or drag files here</p>
-              <p class="upload-formats">JPG &middot; PNG &middot; GIF &middot; WebP &middot; AVIF &middot; TIFF &middot; BMP &middot; HEIC &middot; PDF</p>
-              <input type="file" id="converter-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
-            </div>
-          </div>
-
-          <div class="panel-settings-group">
-            <div class="settings-card">
-              <p class="settings-card-title">Output Settings</p>
-              <div class="settings-row">
-                <span class="settings-label">Convert to</span>
-                <select id="convert-to-format">
-                  <optgroup label="Classic">
-                    <option value="jpg">JPG / JPEG</option>
-                    <option value="jfif">JFIF</option>
-                    <option value="png">PNG</option>
-                    <option value="gif">GIF</option>
-                    <option value="bmp">BMP</option>
-                    <option value="tiff">TIFF</option>
-                  </optgroup>
-                  <optgroup label="Modern">
-                    <option value="webp">WebP ✦</option>
-                    <option value="avif">AVIF ✦</option>
-                  </optgroup>
-                  <optgroup label="Document">
-                    <option value="pdf">PDF</option>
-                  </optgroup>
-                </select>
-              </div>
-              <div class="slider-row">
-                <div class="slider-header">
-                  <span class="slider-label">Quality</span>
-                  <span class="slider-val" id="convert-quality-val">85%</span>
-                </div>
-                <input type="range" id="convert-quality" min="0.1" max="1" step="0.05" value="0.85" />
-              </div>
-            </div>
-            <p id="modern-fmt-note" class="fmt-note" style="display:none"></p>
-            <div class="panel-cta-bar">
-              <button class="panel-cta-btn" id="convert-btn" disabled>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/>
-                  <path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/>
-                </svg>
-                Convert Now
-              </button>
-            </div>
-          </div>
-
-          <div class="panel-files-group">
-            <div id="converter-file-list" class="file-list"></div>
-            <div id="converter-results" class="results-area"></div>
-          </div>
-
-        </div><!-- /panel-scroll -->
-      </div>
-
-      <!-- ══════════ IMAGE CREATOR ══════════ -->
-      <div class="panel tool-panel has-split" id="panel-creator" data-panel="creator">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Create / Resize</p>
-            <p class="nav-subtitle">Passport photos &amp; custom sizes</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-
-          <div class="panel-upload-group">
-          <div class="preset-chips">
-            <button class="preset-chip preset-btn" data-w="200" data-h="230" data-label="Passport Photo">
-              <span class="preset-chip-name">Passport</span>
-              <span class="preset-chip-desc">200×230</span>
-            </button>
-            <button class="preset-chip preset-btn" data-w="140" data-h="60" data-label="Signature">
-              <span class="preset-chip-name">Signature</span>
-              <span class="preset-chip-desc">140×60</span>
-            </button>
-            <button class="preset-chip preset-btn" data-w="200" data-h="200" data-label="Thumb Impression">
-              <span class="preset-chip-name">Thumb</span>
-              <span class="preset-chip-desc">200×200</span>
-            </button>
-            <button class="preset-chip preset-btn" data-w="1000" data-h="700" data-label="ID Proof">
-              <span class="preset-chip-name">ID Proof</span>
-              <span class="preset-chip-desc">1000×700</span>
-            </button>
-          </div>
-
-          <div class="settings-card">
-            <p class="settings-card-title">Dimensions &amp; Style</p>
-            <div class="dim-quick-wrap settings-row">
-              <input type="text" id="create-dim-quick" placeholder="e.g. 578x385 or 1920x1080" class="dim-quick-input" />
-              <button class="dim-apply-btn" id="create-dim-apply">Apply</button>
-            </div>
-            <div class="dim-fields-row">
-              <div class="dim-field">
-                <span class="dim-field-label">Width</span>
-                <div class="input-with-unit">
-                  <input type="number" id="create-width" value="200" min="1" max="10000" />
-                  <span class="unit">px</span>
-                </div>
-              </div>
-              <label class="dim-lock-btn">
-                <input type="checkbox" id="create-lock-ratio" checked />
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              </label>
-              <div class="dim-field">
-                <span class="dim-field-label">Height</span>
-                <div class="input-with-unit">
-                  <input type="number" id="create-height" value="230" min="1" max="10000" />
-                  <span class="unit">px</span>
-                </div>
-              </div>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Background</span>
-              <select id="create-bg">
-                <option value="#ffffff">White</option>
-                <option value="#f5f5f5">Light Gray</option>
-                <option value="#fffde7">Light Yellow</option>
-                <option value="#e8f5e9">Light Green</option>
-              </select>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Output format</span>
-              <select id="create-format">
-                <option value="jpeg">JPG</option>
-                <option value="png">PNG</option>
-                <option value="gif">GIF</option>
-                <option value="bmp">BMP</option>
-                <option value="tiff">TIFF</option>
-                <option value="webp">WebP</option>
-                <option value="avif">AVIF</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="upload-zone upload-zone-sm" id="creator-drop">
-            <div class="upload-icon-wrap-sm">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-            <div class="upload-sm-text">
-              <p class="upload-sm-title">Upload Image to Resize <span class="upload-sm-optional">(optional)</span></p>
-              <p class="upload-or"><label for="creator-input">Tap to browse</label> or drag here</p>
-            </div>
-            <input type="file" id="creator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" />
-          </div>
-
-          <div class="creator-preview-card" id="creator-preview-wrap">
-            <canvas id="creator-canvas" style="display:none;max-width:100%;border-radius:8px"></canvas>
-            <p class="preview-hint" id="creator-preview-hint">Preview will appear here</p>
-          </div>
-
-          <div id="creator-result" class="results-area"></div>
-        </div><!-- /panel-upload-group -->
-        </div><!-- /panel-scroll -->
-        <div class="panel-cta-bar">
-          <button class="panel-cta-btn" id="create-btn" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-            </svg>
-            Create / Resize
-          </button>
+        <h1 class="home-hero-title">Powerful tools that<br><span style="color:var(--blue)">run in your browser</span></h1>
+        <p class="home-hero-sub">Compress, convert &amp; validate files and PDFs &mdash; nothing leaves your device.</p>
+        <div class="home-hero-ctas">
+          <a href="#file-tools-label" class="home-hero-cta-primary" style="text-decoration:none">Explore Tools</a>
+          <button class="home-hero-cta-ghost" data-action="open-faq">How it works</button>
         </div>
       </div>
-
-      <!-- ══════════ PDF TOOLS ══════════ -->
-      <div class="panel tool-panel" id="panel-pdf" data-panel="pdf">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">PDF Tools</p>
-            <p class="nav-subtitle">Create, merge &amp; compress PDFs</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-
-          <div class="pdf-tool-tabs">
-            <button class="pdf-tab active" data-pdf-tab="img-to-pdf"><svg><use href="#ic-create"/></svg> Images → PDF</button>
-            <button class="pdf-tab" data-pdf-tab="merge-pdf"><svg><use href="#ic-pdf"/></svg> Merge PDFs</button>
-            <button class="pdf-tab" data-pdf-tab="pdf-compress"><svg><use href="#ic-compress"/></svg> Compress</button>
-          </div>
-
-          <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
-            <div class="upload-zone upload-zone-hero" id="img-to-pdf-drop">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload Images</p>
-              <p class="upload-sub"><label for="img-to-pdf-input">Tap to select</label> or drag files here</p>
-              <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" multiple />
-            </div>
-            <div class="settings-card">
-              <p class="settings-card-title">Page Settings</p>
-              <div class="settings-row">
-                <span class="settings-label">Page size</span>
-                <select id="pdf-page-size">
-                  <option value="a4">A4</option>
-                  <option value="letter">Letter</option>
-                  <option value="fit">Fit to image</option>
-                </select>
-              </div>
-              <div class="settings-row" style="border-bottom:none">
-                <span class="settings-label">Orientation</span>
-                <select id="pdf-orientation">
-                  <option value="portrait">Portrait</option>
-                  <option value="landscape">Landscape</option>
-                </select>
-              </div>
-            </div>
-            <div id="img-to-pdf-list" class="file-list"></div>
-            <div id="img-to-pdf-result" class="results-area"></div>
-            <div class="pdf-cta-wrap">
-              <button class="panel-cta-btn" id="img-to-pdf-btn" disabled>📄 Create PDF</button>
-            </div>
-          </div>
-
-          <div id="pdf-tab-merge-pdf" class="pdf-panel">
-            <div class="upload-zone upload-zone-hero" id="merge-pdf-drop">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload PDF Files</p>
-              <p class="upload-sub"><label for="merge-pdf-input">Tap to select</label> or drag files here</p>
-              <p class="upload-formats">PDF only · Select 2 or more</p>
-              <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
-            </div>
-            <div id="merge-pdf-list" class="file-list"></div>
-            <div id="merge-pdf-result" class="results-area"></div>
-            <div class="pdf-cta-wrap">
-              <button class="panel-cta-btn" id="merge-pdf-btn" disabled>📋 Merge PDFs</button>
-            </div>
-          </div>
-
-          <div id="pdf-tab-pdf-compress" class="pdf-panel">
-            <div class="upload-zone upload-zone-hero" id="pdf-compress-drop">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload a PDF</p>
-              <p class="upload-sub"><label for="pdf-compress-input">Tap to select</label> or drag file here</p>
-              <input type="file" id="pdf-compress-input" accept=".pdf" />
-            </div>
-            <div class="settings-card">
-              <p class="settings-card-title">Compression Settings</p>
-              <div class="slider-row" style="border-bottom:none">
-                <div class="slider-header">
-                  <span class="slider-label">Image quality inside PDF</span>
-                  <span class="slider-val" id="pdf-img-quality-val">60%</span>
-                </div>
-                <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
-              </div>
-            </div>
-            <div id="pdf-compress-list" class="file-list"></div>
-            <div id="pdf-compress-result" class="results-area"></div>
-            <div class="pdf-cta-wrap">
-              <button class="panel-cta-btn" id="pdf-compress-btn" disabled>🗜 Compress PDF</button>
-            </div>
-          </div>
-
-        </div><!-- /panel-scroll -->
-      </div>
-
-      <!-- ══════════ VALIDATOR ══════════ -->
-      <div class="panel tool-panel" id="panel-validator" data-panel="validator">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Validate</p>
-            <p class="nav-subtitle">Check government portal requirements</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-
-          <div class="upload-zone upload-zone-hero" id="validator-drop">
-            <div class="upload-icon-wrap">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-            <p class="upload-main">Upload to Validate</p>
-            <p class="upload-sub"><label for="validator-input">Tap to select</label> or drag file here</p>
-            <input type="file" id="validator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" />
-          </div>
-
-          <p class="tool-label">Document Type</p>
-          <div class="doc-type-chips">
-            <button class="doc-type-chip preset-chip active" data-doc-type="general">
-              <span class="preset-chip-name">General</span>
-            </button>
-            <button class="doc-type-chip preset-chip" data-doc-type="passport_photo">
-              <span class="preset-chip-name">Passport</span>
-            </button>
-            <button class="doc-type-chip preset-chip" data-doc-type="signature">
-              <span class="preset-chip-name">Signature</span>
-            </button>
-            <button class="doc-type-chip preset-chip" data-doc-type="id_proof">
-              <span class="preset-chip-name">ID Proof</span>
-            </button>
-            <button class="doc-type-chip preset-chip" data-doc-type="thumb_impression">
-              <span class="preset-chip-name">Thumb Print</span>
-            </button>
-          </div>
-          <select id="validator-doc-type" style="display:none">
-            <option value="general">General (any)</option>
-            <option value="passport_photo">Passport Photo</option>
-            <option value="signature">Signature</option>
-            <option value="id_proof">ID Proof</option>
-            <option value="thumb_impression">Thumb Impression</option>
-          </select>
-
-          <div id="validator-result" class="results-area"></div>
-
-          <details class="rules-details">
-            <summary>View validation rules</summary>
-            <div class="rules-table-wrap">
-              <table class="rules-table">
-                <thead><tr><th>Document</th><th>Format</th><th>Size</th><th>Dimensions</th><th>Background</th></tr></thead>
-                <tbody>
-                  <tr><td>Passport Photo</td><td>JPG/JPEG</td><td>10–200 KB</td><td>200&times;230 px</td><td>White/Light</td></tr>
-                  <tr><td>Signature</td><td>JPG/JPEG</td><td>4–50 KB</td><td>140&times;60 px</td><td>White</td></tr>
-                  <tr><td>ID Proof</td><td>JPG/PNG/PDF</td><td>100–1000 KB</td><td>—</td><td>—</td></tr>
-                  <tr><td>Thumb Impression</td><td>JPG</td><td>10–50 KB</td><td>—</td><td>—</td></tr>
-                  <tr><td>General</td><td>All formats</td><td>—</td><td>max 1000 px wide</td><td>—</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </details>
-
-        </div><!-- /panel-scroll -->
-        <div class="panel-cta-bar">
-          <button class="panel-cta-btn" id="validate-btn" disabled>✓ Validate File</button>
-        </div>
-      </div>
-
-      <!-- ══════════ CALCULATORS ══════════ -->
-      <div class="panel tool-panel" id="panel-calculators" data-panel="calculators">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <span class="nav-title">Calculators</span>
-        </div>
-        <div class="panel-scroll" id="calc-panel-scroll">
-          <div id="calc-embed-container">
-            <div class="calc-loading-state">
-              <div class="calc-spinner"></div>
-              <p class="calc-loading-text">Loading calculators&hellip;</p>
-            </div>
-          </div>
-        </div><!-- /panel-scroll -->
-      </div>
-
-      <!-- ══════════ BASE64 ══════════ -->
-      <div class="panel tool-panel has-split" id="panel-base64" data-panel="base64">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Base64</p>
-            <p class="nav-subtitle">Encode &amp; decode in your browser</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-          <div class="panel-upload-group">
-            <div class="tool-tabs" id="b64-tabs">
-              <button class="tool-tab active" data-tab="encode">Encode</button>
-              <button class="tool-tab" data-tab="decode">Decode</button>
-            </div>
-            <div class="tool-section">
-              <label class="tool-label">Input</label>
-              <textarea class="tool-textarea" id="b64-input" placeholder="Paste text or Base64 string here…" rows="12" spellcheck="false"></textarea>
-            </div>
-            <div class="tool-output-wrap" id="b64-output-wrap" hidden>
-              <div class="tool-output-header">
-                <span class="tool-output-label">Output</span>
-                <button class="tool-copy-btn" id="b64-copy">Copy</button>
-              </div>
-              <textarea class="tool-textarea tool-output" id="b64-output" rows="12" readonly spellcheck="false"></textarea>
-            </div>
-          </div>
-          <div class="panel-settings-group">
-            <div class="settings-card">
-              <p class="settings-card-title">Actions</p>
-              <button class="panel-cta-btn" id="b64-run" style="width:100%; margin-bottom:12px">✓ Convert</button>
-              <button class="fmt-btn" id="b64-clear" style="width:100%">Clear Input</button>
-            </div>
-            <p class="tool-error" id="b64-error" hidden style="margin-top:12px"></p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ REGEX ══════════ -->
-      <div class="panel tool-panel" id="panel-regex" data-panel="regex">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Regex Tester</p>
-            <p class="nav-subtitle">Build, test &amp; generate patterns</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-          <label class="tool-label">Common Presets</label>
-          <div class="regex-preset-grid" id="regex-presets">
-            <button class="regex-preset-chip" data-pattern="^[\w.-]+@[\w-]+\.[a-z]{2,}$" data-flags="i">Email</button>
-            <button class="regex-preset-chip" data-pattern="^[6-9]\d{9}$" data-flags="">IN Phone</button>
-            <button class="regex-preset-chip" data-pattern="^(\+91[-\s]?)?[6-9]\d{9}$" data-flags="">IN Mobile</button>
-            <button class="regex-preset-chip" data-pattern="https?://[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&amp;'()*+,;=%]+" data-flags="i">URL</button>
-            <button class="regex-preset-chip" data-pattern="\d{4}-\d{2}-\d{2}" data-flags="g">Date YYYY-MM-DD</button>
-            <button class="regex-preset-chip" data-pattern="^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$" data-flags="">IPv4</button>
-            <button class="regex-preset-chip" data-pattern="^[A-Z]{5}[0-9]{4}[A-Z]$" data-flags="i">PAN</button>
-            <button class="regex-preset-chip" data-pattern="^[1-9][0-9]{5}$" data-flags="">PIN Code</button>
-          </div>
-          <div class="tool-section">
-            <label class="tool-label">Pattern</label>
-            <div class="regex-pattern-row">
-              <span class="regex-slash">/</span>
-              <input type="text" class="regex-pattern-input" id="regex-pattern" placeholder="[\w.-]+@[\w-]+\.[a-z]+" spellcheck="false">
-              <span class="regex-slash">/</span>
-              <div class="regex-flags">
-                <label class="regex-flag-lbl"><input type="checkbox" id="rf-g" value="g"> g</label>
-                <label class="regex-flag-lbl"><input type="checkbox" id="rf-i" value="i" checked> i</label>
-                <label class="regex-flag-lbl"><input type="checkbox" id="rf-m" value="m"> m</label>
-              </div>
-            </div>
-          </div>
-          <div class="tool-section">
-            <label class="tool-label">Test String</label>
-            <textarea class="tool-textarea" id="regex-test" rows="5" placeholder="Enter text to test against the pattern…" spellcheck="false"></textarea>
-          </div>
-          <button class="fmt-btn fmt-btn-primary" id="regex-run" style="margin-bottom:12px;">&#9889; Test Pattern</button>
-          <div class="tool-output-wrap" id="regex-output-wrap" hidden>
-            <div class="tool-output-header">
-              <span class="tool-output-label" id="regex-match-count"></span>
-            </div>
-            <div class="regex-highlighted" id="regex-highlighted"></div>
-          </div>
-          <p class="tool-error" id="regex-error" hidden></p>
-        </div>
-      </div>
-
-      <!-- ══════════ JSON / XML FORMATTER ══════════ -->
-      <div class="panel tool-panel" id="panel-formatter" data-panel="formatter">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">JSON / XML Formatter</p>
-            <p class="nav-subtitle">Beautify &amp; minify instantly</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-          <div class="tool-tabs" id="fmt-tabs">
-            <button class="tool-tab active" data-tab="json">JSON</button>
-            <button class="tool-tab" data-tab="xml">XML</button>
-          </div>
-          <div class="tool-section">
-            <label class="tool-label">Input</label>
-            <textarea class="tool-textarea" id="fmt-input" placeholder="Paste JSON or XML here…" rows="8" spellcheck="false"></textarea>
-          </div>
-          <div class="fmt-actions">
-            <button class="fmt-btn fmt-btn-primary" id="fmt-beautify">&#10024; Beautify</button>
-            <button class="fmt-btn" id="fmt-minify">Minify</button>
-            <button class="fmt-btn" id="fmt-clear">Clear</button>
-          </div>
-          <div class="tool-output-wrap" id="fmt-output-wrap" hidden>
-            <div class="tool-output-header">
-              <span class="tool-output-label">Output</span>
-              <button class="tool-copy-btn" id="fmt-copy">Copy</button>
-            </div>
-            <pre class="fmt-pre" id="fmt-output"></pre>
-          </div>
-          <p class="tool-error" id="fmt-error" hidden></p>
-        </div>
-      </div>
-
-      <!-- ══════════ MARKDOWN EDITOR ══════════ -->
-      <div class="panel tool-panel" id="panel-markdown" data-panel="markdown">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Markdown Editor</p>
-            <p class="nav-subtitle">Write, preview &amp; export Markdown</p>
-          </div>
-          <div class="md-nav-actions">
-            <button class="md-icon-btn" id="md-find-toggle" title="Find &amp; Replace (Ctrl+F)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </button>
-            <button class="md-icon-btn" id="md-sync-toggle" title="Scroll sync" aria-pressed="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-              <span class="md-sync-dot" id="md-sync-dot"></span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Tab bar -->
-        <div class="md-tab-bar" role="tablist">
-          <button class="md-tab active" id="md-tab-editor" data-md-tab="editor" role="tab" aria-selected="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Editor
-          </button>
-          <button class="md-tab" id="md-tab-upload" data-md-tab="upload" role="tab" aria-selected="false">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload .md
-          </button>
-          <!-- Mobile view toggle (editor tab only) -->
-          <div class="md-mobile-view-toggle" id="md-mobile-view-toggle">
-            <button class="md-mvt-btn active" id="md-mvt-edit" onclick="mdSetMobileView('editor')">Edit</button>
-            <button class="md-mvt-btn" id="md-mvt-preview" onclick="mdSetMobileView('preview')">Preview</button>
-          </div>
-        </div>
-
-        <!-- Find & Replace bar -->
-        <div class="md-find-bar hidden" id="md-find-bar">
-          <input class="md-find-input" id="md-find-input" placeholder="Find…" onkeydown="mdFindKeyNav(event)" oninput="mdRunFind()" />
-          <span class="md-find-count" id="md-find-count"></span>
-          <input class="md-find-input md-replace-input" id="md-replace-input" placeholder="Replace…" />
-          <button class="md-find-btn" onclick="mdDoReplace(false)">Replace</button>
-          <button class="md-find-btn" onclick="mdDoReplace(true)">All</button>
-          <button class="md-find-btn md-find-close" onclick="mdToggleFindBar()">✕</button>
-        </div>
-
-        <!-- Editor mode panels -->
-        <div class="md-mode-panel active" id="md-panel-editor">
-          <div class="md-split">
-
-            <!-- LEFT: Editor pane -->
-            <div class="md-editor-pane" id="md-editor-pane">
-              <!-- Toolbar row 1: formatting -->
-              <div class="md-toolbar" role="toolbar" aria-label="Formatting">
-                <button class="md-tb-btn" onclick="mdInsertSyntax('**','**')" title="Bold"><b>B</b></button>
-                <button class="md-tb-btn md-tb-italic" onclick="mdInsertSyntax('*','*')" title="Italic"><i>I</i></button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('~~','~~')" title="Strikethrough"><s>S</s></button>
-                <button class="md-tb-btn md-tb-mono" onclick="mdInsertSyntax('\`','\`')" title="Inline Code">&lt;/&gt;</button>
-                <div class="md-tb-sep"></div>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('## ','')" title="Heading">H2</button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('\n> ','')" title="Blockquote">"</button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('\n- ','')" title="Bullet list">•—</button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('\n1. ','')" title="Numbered list">1.</button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('[','](url)')" title="Link">🔗</button>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('![alt](',') ')" title="Image">🖼</button>
-                <div class="md-tb-sep"></div>
-                <button class="md-tb-btn" onclick="mdInsertSyntax('\n```\n','\n```')" title="Code block">{ }</button>
-                <div class="md-table-wrap" id="md-table-wrap">
-                  <button class="md-tb-btn" id="md-table-btn" onclick="mdToggleTablePicker(event)" title="Insert Table">⊞ Table</button>
-                  <div class="md-table-popup hidden" id="md-table-popup">
-                    <div class="md-table-grid" id="md-table-grid"></div>
-                    <div class="md-table-size" id="md-table-size">Hover to select</div>
-                  </div>
-                </div>
-                <div class="md-tb-sep"></div>
-                <button class="md-tb-btn" onclick="mdLoadSample()" title="Load sample">Sample</button>
-                <button class="md-tb-btn md-tb-danger" onclick="mdClearEditor()" title="Clear">✕</button>
-              </div>
-              <!-- Toolbar row 2: diagrams -->
-              <div class="md-toolbar md-toolbar-diagrams" role="toolbar" aria-label="Diagrams">
-                <span class="md-tb-row-lbl">Diagrams:</span>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('flowchart')" title="Flowchart">⬡ Flow</button>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('sequence')" title="Sequence">⇄ Seq</button>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('pie')" title="Pie">◔ Pie</button>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('gantt')" title="Gantt">▦ Gantt</button>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('class')" title="Class">⬚ Class</button>
-                <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('er')" title="ER">⬟ ER</button>
-              </div>
-              <textarea class="md-textarea" id="md-editor"
-                placeholder="# Start writing Markdown here…&#10;&#10;Type and see the live preview on the right →"
-                oninput="mdOnEditorInput()" spellcheck="false" aria-label="Markdown editor"></textarea>
-              <div class="md-stat-bar" id="md-stat-bar">
-                <span>Lines: <strong id="md-stat-lines">0</strong></span>
-                <span>Words: <strong id="md-stat-words">0</strong></span>
-                <span>Chars: <strong id="md-stat-chars">0</strong></span>
-                <span>Read: <strong id="md-stat-read">0 min</strong></span>
-              </div>
-              <div class="md-export-bar">
-                <span class="md-export-lbl">Export:</span>
-                <button class="md-export-btn" onclick="mdExportHTML('editor')">HTML</button>
-                <button class="md-export-btn" onclick="mdExportPDF('editor')">PDF</button>
-                <button class="md-export-btn" onclick="mdExportWord('editor')">Word</button>
-              </div>
-            </div>
-
-            <!-- RIGHT: Preview pane -->
-            <div class="md-preview-pane" id="md-preview-pane">
-              <div class="md-preview-header">
-                <span class="md-preview-title">Live Preview</span>
-                <span class="md-sync-indicator" id="md-sync-indicator" title="Scroll synced"></span>
-                <button class="md-copy-md-btn" id="md-copy-md-btn" onclick="mdCopyMarkdown('editor')" title="Copy Markdown">Copy MD</button>
-              </div>
-              <div class="md-preview-body" id="md-preview-body">
-                <div class="md-empty-state" id="md-empty-state">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
-                  <p>Start typing to see preview</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Upload mode panel -->
-        <div class="md-mode-panel" id="md-panel-upload">
-          <div class="panel-scroll" style="padding:16px">
-            <div class="upload-zone upload-zone-hero" id="md-drop-zone"
-              onclick="document.getElementById('md-file-input').click()"
-              ondragover="mdHandleDragOver(event)" ondragleave="mdHandleDragLeave(event)" ondrop="mdHandleDrop(event)"
-              role="button" tabindex="0" aria-label="Upload markdown file">
-              <div class="upload-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>
-                </svg>
-              </div>
-              <p class="upload-main">Upload .md File</p>
-              <p class="upload-sub"><label for="md-file-input">Tap to browse</label> or drag here</p>
-              <p class="upload-formats">.md &middot; .markdown</p>
-              <input type="file" id="md-file-input" accept=".md,text/markdown,.markdown" onchange="mdHandleFileInput(event)" />
-            </div>
-            <div class="md-file-info hidden" id="md-file-info">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              <span id="md-file-name">file.md</span>
-              <button class="md-find-btn" onclick="mdClearUpload()">Clear</button>
-            </div>
-            <div class="md-upload-preview-card hidden" id="md-upload-preview-card">
-              <div class="md-preview-header">
-                <span class="md-preview-title">Preview</span>
-                <span class="md-upload-wc" id="md-upload-wc">0 words</span>
-                <button class="md-copy-md-btn" onclick="mdCopyMarkdown('upload')">Copy MD</button>
-              </div>
-              <div class="md-preview-body" id="md-upload-preview-body"></div>
-              <div class="md-export-bar">
-                <span class="md-export-lbl">Export:</span>
-                <button class="md-export-btn" onclick="mdExportHTML('upload')">HTML</button>
-                <button class="md-export-btn" onclick="mdExportPDF('upload')">PDF</button>
-                <button class="md-export-btn" onclick="mdExportWord('upload')">Word</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ QR CODE GENERATOR ══════════ -->
-      <div class="panel tool-panel" id="panel-qrcode" data-panel="qrcode">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">QR Code Generator</p>
-            <p class="nav-subtitle">Generate QR codes instantly in your browser</p>
-          </div>
-        </div>
-        <div class="panel-scroll" style="padding:16px">
-
-          <div class="settings-card">
-            <p class="settings-card-title">Content</p>
-            <div class="qr-input-group">
-              <textarea class="tool-textarea" id="qr-input" rows="3"
-                placeholder="Enter URL, text, phone number, email…"
-                spellcheck="false"></textarea>
-            </div>
-            <div class="qr-preset-row">
-              <button class="qr-preset-chip" data-qr-prefix="https://">URL</button>
-              <button class="qr-preset-chip" data-qr-prefix="mailto:">Email</button>
-              <button class="qr-preset-chip" data-qr-prefix="tel:">Phone</button>
-              <button class="qr-preset-chip" data-qr-prefix="sms:">SMS</button>
-              <button class="qr-preset-chip" data-qr-prefix="WIFI:T:WPA;S:;P:;;">Wi-Fi</button>
-            </div>
-          </div>
-
-          <div class="settings-card">
-            <p class="settings-card-title">Options</p>
-            <div class="settings-row">
-              <span class="settings-label">Size</span>
-              <select id="qr-size">
-                <option value="128">128 × 128</option>
-                <option value="256" selected>256 × 256</option>
-                <option value="512">512 × 512</option>
-              </select>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Error correction</span>
-              <select id="qr-ecl">
-                <option value="L">Low (L)</option>
-                <option value="M" selected>Medium (M)</option>
-                <option value="Q">Quartile (Q)</option>
-                <option value="H">High (H)</option>
-              </select>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Foreground</span>
-              <input type="color" id="qr-fg-color" value="#000000" class="qr-color-input" />
-            </div>
-            <div class="settings-row" style="border-bottom:none">
-              <span class="settings-label">Background</span>
-              <input type="color" id="qr-bg-color" value="#ffffff" class="qr-color-input" />
-            </div>
-          </div>
-
-          <button class="panel-cta-btn" id="qr-gen-btn" style="width:100%;margin-bottom:14px">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg>
-            Generate QR Code
-          </button>
-
-          <div class="qr-preview-card" id="qr-preview-card">
-            <div class="qr-canvas-wrap">
-              <canvas id="qr-canvas" width="256" height="256"></canvas>
-              <div class="qr-empty-hint" id="qr-empty-hint">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg>
-                <p>Enter content above to generate</p>
-              </div>
-            </div>
-            <p class="qr-caption" id="qr-caption"></p>
-          </div>
-
-          <div class="panel-cta-bar" style="position:static;padding:0;margin-top:12px">
-            <button class="panel-cta-btn" id="qr-download-btn" disabled onclick="qrDownload('png')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download PNG
-            </button>
-            <button class="fmt-btn" id="qr-copy-btn" disabled onclick="qrCopyImage()" style="margin-left:8px">Copy Image</button>
-            <button class="fmt-btn" id="qr-svg-btn" disabled onclick="qrDownload('svg')" style="margin-left:8px">SVG</button>
-          </div>
-
-        </div><!-- /panel-scroll -->
-      </div>
-
-    
-      <!-- ══════════ HISTORY ══════════ -->
-      <div class="panel tool-panel" id="panel-history" data-panel="history">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">History</p>
-            <p class="nav-subtitle">View your recent files and actions</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-          <div class="md-empty-state">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <p>Your history will appear here.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ TEXT TOOLS ══════════ -->
-      <div class="panel tool-panel" id="panel-texttools" data-panel="texttools">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Text Tools</p>
-            <p class="nav-subtitle">Transform & analyze text</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-           <textarea class="tool-textarea" rows="10" placeholder="Paste your text here..."></textarea>
-           <div class="fmt-actions" style="margin-top:16px">
-             <button class="fmt-btn fmt-btn-primary">Uppercase</button>
-             <button class="fmt-btn">Lowercase</button>
-             <button class="fmt-btn">Count Words</button>
+      <div class="home-hero-graphic">
+        <div class="mock-3d-window">
+           <div class="mock-3d-dots"><span></span><span></span><span></span></div>
+           <div class="mock-3d-icons">
+              <div class="mock-icon" style="color:#3B82F6; top: 40px; left: 40px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+              <div class="mock-icon" style="color:#EF4444; top: 40px; right: 40px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="mock-icon" style="color:#10B981; bottom: 40px; left: 40px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+              <div class="mock-icon" style="color:#8B5CF6; bottom: 40px; right: 40px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></div>
            </div>
+           <div class="mock-shield"><svg width="40" height="40" viewBox="0 0 24 24" fill="#6366F1" stroke="#4F46E5" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="3"/></svg></div>
         </div>
-      </div>
-
-      <!-- ══════════ HASH GENERATOR ══════════ -->
-      <div class="panel tool-panel" id="panel-hash" data-panel="hash">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">Hash Generator</p>
-            <p class="nav-subtitle">Generate secure hashes</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-           <input type="text" class="workspace-input" style="margin-bottom:16px" placeholder="Enter text to hash...">
-           <div class="settings-card">
-              <div class="settings-row"><span>MD5</span><span class="link">Copy</span></div>
-              <div class="settings-row"><span>SHA-256</span><span class="link">Copy</span></div>
-              <div class="settings-row" style="border:none"><span>SHA-512</span><span class="link">Copy</span></div>
-           </div>
-        </div>
-      </div>
-
-      <!-- ══════════ URL ENCODER ══════════ -->
-      <div class="panel tool-panel" id="panel-urlencode" data-panel="urlencode">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">URL Encoder</p>
-            <p class="nav-subtitle">Safe URL encoding & decoding</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-           <textarea class="tool-textarea" rows="6" placeholder="Paste URL here..."></textarea>
-           <div class="fmt-actions" style="margin-top:16px">
-             <button class="fmt-btn fmt-btn-primary">Encode</button>
-             <button class="fmt-btn">Decode</button>
-           </div>
-        </div>
-      </div>
-
-      <!-- ══════════ MORE TOOLS ══════════ -->
-      <div class="panel tool-panel" id="panel-moretools" data-panel="moretools">
-        <div class="panel-nav">
-          <button class="nav-back" data-back aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <div class="nav-head">
-            <p class="nav-title">More Tools</p>
-            <p class="nav-subtitle">Experimental & extra utilities</p>
-          </div>
-        </div>
-        <div class="panel-scroll">
-          <p class="hint">More tools coming soon!</p>
-        </div>
-      </div>
-
-    </div><!-- /panel-container -->
-  </div><!-- /viewport -->
-
-  <!-- ── Bottom Dock ── -->
-  <nav class="dock" id="dock" aria-label="Tool navigation">
-    <button class="dock-btn active" data-dock="home" aria-label="Home">
-      <svg class="dock-icon"><use href="#ic-home"/></svg>
-      <span class="dock-lbl">Home</span>
-    </button>
-    <button class="dock-btn" data-dock="tools" aria-label="Tools">
-      <svg class="dock-icon"><use href="#ic-apps"/></svg>
-      <span class="dock-lbl">Tools</span>
-    </button>
-    <button class="dock-btn" data-dock="history" aria-label="History">
-      <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span class="dock-lbl">History</span>
-    </button>
-    <button class="dock-btn" id="more-open-btn" data-dock="more" aria-label="More">
-      <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="dock-lbl">More</span>
-    </button>
-  </nav>
-
-  <!-- ── FAQ Overlay ── -->
-  <div class="faq-overlay hidden" id="faq-overlay" role="dialog" aria-modal="true" aria-label="FAQ and Info">
-    <div class="faq-sheet">
-      <div class="faq-drag-handle"></div>
-      <div class="faq-sheet-header">
-        <h2>FAQ &amp; Info</h2>
-        <button class="faq-close" id="faq-close-btn" aria-label="Close">&#10005;</button>
-      </div>
-
-      <details class="faq-item" open>
-        <summary>Are my files safe and private?</summary>
-        <p>All image and PDF processing runs entirely inside your browser using JavaScript. Your files are never sent to any server — they stay on your device the entire time.</p>
-      </details>
-      <details class="faq-item" open>
-        <summary>Does it work offline?</summary>
-        <p>Yes. Install the tool via the "Add to Home Screen" prompt on Android/Chrome or the install icon in your browser's address bar. Once installed, the full tool works without an internet connection.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Is it free to use?</summary>
-        <p>Yes — no payment, no sign-up, no limits. Every feature is available at no cost.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Which browsers are supported?</summary>
-        <p>Chrome 90+, Edge 90+, Firefox 90+, and Safari 15+. WebP and AVIF export require Chrome/Edge 90+ or Firefox 65+. HEIC reading works in all modern browsers via the heic2any library.</p>
-      </details>
-      <details class="faq-item">
-        <summary>What is the maximum file size I can process?</summary>
-        <p>There is no hard limit imposed by the tool — the practical limit is your device's available RAM. Very large files (over 50 MB) may be slow on lower-end devices.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Will compressed images pass government portal uploads?</summary>
-        <p>The tool implements known portal requirements as of April 2026. Government portals can change their rules at any time — always verify on the official portal before submission. Use the Validate tool to check compliance.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Which calculators are included?</summary>
-        <p>17 calculators: Financial (SIP, Compound Interest, EMI, GST, Discount, Currency), Date &amp; Time (Age, Date, Time, World Clock, UTC/IST), Math (Standard, Percentage, Numeral), Conversions (Storage, Temperature, Speed).</p>
-      </details>
-
-      <div class="faq-footer">
-        <div class="faq-fmt-row">
-          <span>JPG</span><span>PNG</span><span>GIF</span><span>WebP</span>
-          <span>AVIF</span><span>TIFF</span><span>BMP</span><span>HEIC</span><span>PDF</span>
-        </div>
-        <nav class="faq-nav">
-          <a href="pages/calculators.html" target="_blank" rel="noopener">&#129518; Calculators</a>
-          <a href="pages/about.html" target="_blank" rel="noopener">About Us</a>
-          <a href="pages/contact.html" target="_blank" rel="noopener">Contact</a>
-          <a href="pages/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
-          <a href="pages/terms.html" target="_blank" rel="noopener">Terms</a>
-          <a href="pages/disclaimer.html" target="_blank" rel="noopener">Disclaimer</a>
-        </nav>
-        <p class="faq-copy">&copy; 2026 KaruviLab by R Gowtham. All rights reserved.</p>
-        <p class="faq-contact">
-          <a href="mailto:wanderseven@proton.me">&#9993; wanderseven@proton.me</a>
-          &ensp;&middot;&ensp;
-          <a href="https://wanderseven.com" target="_blank" rel="noopener">&#127760; wanderseven.com</a>
-        </p>
       </div>
     </div>
   </div>
 
-  <!-- ── CDN Libraries ── -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script src="https://unpkg.com/utif@3.1.0/UTIF.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <div class="home-wrap">
+    <p class="cat-label" id="file-tools-label">File Tools</p>
+    <div class="cat-grid">
+      <a href="tools/compress/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#EEF2FF;--f:#4F46E5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/><path d="M9 9l6 6M15 9l-6 6"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Compress Image</span>
+          <span class="cat-btn-desc">Reduce image size without quality loss</span>
+        </span>
+      </a>
+      <a href="tools/convert/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#F3E8FF;--f:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Convert</span>
+          <span class="cat-btn-desc">Convert images to PDF and more</span>
+        </span>
+      </a>
+      <a href="tools/create/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#DCFCE7;--f:#16A34A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Create</span>
+          <span class="cat-btn-desc">Passport photos, banners & resize</span>
+        </span>
+      </a>
+      <a href="tools/pdf/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#FEE2E2;--f:#DC2626"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">PDF Tools</span>
+          <span class="cat-btn-desc">Merge, split, watermark and more</span>
+        </span>
+      </a>
+    </div>
 
-  <!-- ── App Scripts ── -->
-  <script src="js/lib/qrcode.min.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/format-utils.js"></script>
-  <script src="js/validator.js"></script>
-  <script src="js/image-tools.js"></script>
-  <script src="js/pdf-tools.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/markdown-tool.js"></script>
-  <script src="js/qrcode-tool.js"></script>
+    <p class="cat-label">Utilities</p>
+    <div class="cat-grid">
+      <a href="tools/validate/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#CCFBF1;--f:#0D9488"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Validate</span>
+          <span class="cat-btn-desc">Check portal requirements</span>
+        </span>
+      </a>
+      <a href="tools/calculators/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#FEF9C3;--f:#CA8A04"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><rect x="8" y="10" width="2" height="2" rx=".5"/><rect x="11" y="10" width="2" height="2" rx=".5"/><rect x="14" y="10" width="2" height="2" rx=".5"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Calculators</span>
+          <span class="cat-btn-desc">17+ calculators for daily use</span>
+        </span>
+      </a>
+      <a href="tools/qrcode/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#F5F3FF;--f:#7C3AED"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3M14 18h2M18 18h3M21 21h-3v-3"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">QR Code</span>
+          <span class="cat-btn-desc">Generate QR codes instantly</span>
+        </span>
+      </a>
+      <a href="tools/split-copy/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#EEF2FF;--f:#6366F1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Split & Copy</span>
+          <span class="cat-btn-desc">Break large text for mobile</span>
+        </span>
+      </a>
+    </div>
 
-  <!-- ── PWA Service Worker ── -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
-    }
-  </script>
+    <p class="cat-label">Developer Tools</p>
+    <div class="cat-grid">
+      <a href="tools/base64/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#F0F9FF;--f:#0EA5E9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Base64</span>
+          <span class="cat-btn-desc">Encode & decode strings</span>
+        </span>
+      </a>
+      <a href="tools/regex/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#FFF1F2;--f:#E11D48"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Regex Tester</span>
+          <span class="cat-btn-desc">Test regular expressions</span>
+        </span>
+      </a>
+      <a href="tools/format/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#F0FDFA;--f:#0D9488"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Formatter</span>
+          <span class="cat-btn-desc">JSON & XML beautifier</span>
+        </span>
+      </a>
+      <a href="tools/markdown/" class="cat-btn" style="text-decoration:none">
+        <span class="cat-icon" style="--c:#F8FAFC;--f:#475569"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+        <span class="cat-btn-text">
+          <span class="cat-btn-name">Markdown</span>
+          <span class="cat-btn-desc">Editor with live preview</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="home-footer">
+    <div class="home-footer-inner">
+      <div class="home-footer-brand">
+        <div class="home-footer-mark">K</div>
+        <div>
+          <p class="home-footer-name">KaruviLab</p>
+          <p class="home-footer-tagline">Fast &middot; Private &middot; No uploads</p>
+        </div>
+      </div>
+      <nav class="home-footer-nav">
+        <a href="pages/about.html">About</a>
+        <a href="pages/privacy.html">Privacy</a>
+        <a href="pages/terms.html">Terms</a>
+        <a href="pages/contact.html">Contact</a>
+      </nav>
+      <p class="home-footer-copy">&copy; 2026 KaruviLab. All processing runs in your browser.</p>
+    </div>
+  </footer>
+
+  <div class="faq-overlay hidden" id="faq-overlay">
+    <div class="faq-sheet">
+      <div class="faq-drag-handle"></div>
+      <div class="faq-sheet-header">
+        <h2>How it works</h2>
+        <button class="faq-close" id="faq-close-btn">&times;</button>
+      </div>
+      <div class="faq-item">
+        <p>KaruviLab uses modern browser technologies (WebAssembly, Canvas API) to process files directly on your device. Your data never touches our servers.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shell.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>

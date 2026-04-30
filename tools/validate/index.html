@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validate Document — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'validate';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-validator">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Validate</p>
+        <p class="nav-subtitle">Check government portal requirements</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+
+      <div class="upload-zone upload-zone-hero" id="validator-drop">
+        <div class="upload-icon-wrap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <p class="upload-main">Upload to Validate</p>
+        <p class="upload-sub"><label for="validator-input">Tap to select</label> or drag file here</p>
+        <input type="file" id="validator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" />
+      </div>
+
+      <p class="tool-label">Document Type</p>
+      <div class="doc-type-chips">
+        <button class="doc-type-chip preset-chip active" data-doc-type="general">
+          <span class="preset-chip-name">General</span>
+        </button>
+        <button class="doc-type-chip preset-chip" data-doc-type="passport_photo">
+          <span class="preset-chip-name">Passport</span>
+        </button>
+        <button class="doc-type-chip preset-chip" data-doc-type="signature">
+          <span class="preset-chip-name">Signature</span>
+        </button>
+        <button class="doc-type-chip preset-chip" data-doc-type="id_proof">
+          <span class="preset-chip-name">ID Proof</span>
+        </button>
+        <button class="doc-type-chip preset-chip" data-doc-type="thumb_impression">
+          <span class="preset-chip-name">Thumb Print</span>
+        </button>
+      </div>
+      <select id="validator-doc-type" style="display:none">
+        <option value="general">General (any)</option>
+        <option value="passport_photo">Passport Photo</option>
+        <option value="signature">Signature</option>
+        <option value="id_proof">ID Proof</option>
+        <option value="thumb_impression">Thumb Impression</option>
+      </select>
+
+      <div id="validator-result" class="results-area"></div>
+
+      <details class="rules-details">
+        <summary>View validation rules</summary>
+        <div class="rules-table-wrap">
+          <table class="rules-table">
+            <thead><tr><th>Document</th><th>Format</th><th>Size</th><th>Dimensions</th><th>Background</th></tr></thead>
+            <tbody>
+              <tr><td>Passport Photo</td><td>JPG/JPEG</td><td>10–200 KB</td><td>200&times;230 px</td><td>White/Light</td></tr>
+              <tr><td>Signature</td><td>JPG/JPEG</td><td>4–50 KB</td><td>140&times;60 px</td><td>White</td></tr>
+              <tr><td>ID Proof</td><td>JPG/PNG/PDF</td><td>100–1000 KB</td><td>—</td><td>—</td></tr>
+              <tr><td>Thumb Impression</td><td>JPG</td><td>10–50 KB</td><td>—</td><td>—</td></tr>
+              <tr><td>General</td><td>All formats</td><td>—</td><td>max 1000 px wide</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+    </div>
+    <div class="panel-cta-bar" style="position:static;padding:0">
+      <button class="panel-cta-btn" id="validate-btn" disabled>✓ Validate File</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/validator.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

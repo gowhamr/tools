@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Editor — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'markdown';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Markdown Editor</p>
+        <p class="nav-subtitle">Write, preview & export Markdown</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <!-- Tab bar -->
+      <div class="md-tab-bar" role="tablist">
+        <button class="md-tab active" id="md-tab-editor" data-md-tab="editor" role="tab" aria-selected="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editor
+        </button>
+        <button class="md-tab" id="md-tab-upload" data-md-tab="upload" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload .md
+        </button>
+        <!-- Mobile view toggle (editor tab only) -->
+        <div class="md-mobile-view-toggle" id="md-mobile-view-toggle">
+          <button class="md-mvt-btn active" id="md-mvt-edit" onclick="mdSetMobileView('editor')">Edit</button>
+          <button class="md-mvt-btn" id="md-mvt-preview" onclick="mdSetMobileView('preview')">Preview</button>
+        </div>
+      </div>
+
+      <!-- Find & Replace bar -->
+      <div class="md-find-bar hidden" id="md-find-bar">
+        <input class="md-find-input" id="md-find-input" placeholder="Find…" onkeydown="mdFindKeyNav(event)" oninput="mdRunFind()" />
+        <span class="md-find-count" id="md-find-count"></span>
+        <input class="md-find-input md-replace-input" id="md-replace-input" placeholder="Replace…" />
+        <button class="md-find-btn" onclick="mdDoReplace(false)">Replace</button>
+        <button class="md-find-btn" onclick="mdDoReplace(true)">All</button>
+        <button class="md-find-btn md-find-close" onclick="mdToggleFindBar()">✕</button>
+      </div>
+
+      <!-- Editor mode panels -->
+      <div class="md-mode-panel active" id="md-panel-editor">
+        <div class="md-split">
+
+          <!-- LEFT: Editor pane -->
+          <div class="md-editor-pane" id="md-editor-pane">
+            <!-- Toolbar row 1: formatting -->
+            <div class="md-toolbar" role="toolbar" aria-label="Formatting">
+              <button class="md-tb-btn" onclick="mdInsertSyntax('**','**')" title="Bold"><b>B</b></button>
+              <button class="md-tb-btn md-tb-italic" onclick="mdInsertSyntax('*','*')" title="Italic"><i>I</i></button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('~~','~~')" title="Strikethrough"><s>S</s></button>
+              <button class="md-tb-btn md-tb-mono" onclick="mdInsertSyntax('\`','\`')" title="Inline Code">&lt;/&gt;</button>
+              <div class="md-tb-sep"></div>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('## ','')" title="Heading">H2</button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('\n> ','')" title="Blockquote">"</button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('\n- ','')" title="Bullet list">•—</button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('\n1. ','')" title="Numbered list">1.</button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('[','](url)')" title="Link">🔗</button>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('![alt](',') ')" title="Image">🖼</button>
+              <div class="md-tb-sep"></div>
+              <button class="md-tb-btn" onclick="mdInsertSyntax('\n```\n','\n```')" title="Code block">{ }</button>
+              <div class="md-table-wrap" id="md-table-wrap">
+                <button class="md-tb-btn" id="md-table-btn" onclick="mdToggleTablePicker(event)" title="Insert Table">⊞ Table</button>
+                <div class="md-table-popup hidden" id="md-table-popup">
+                  <div class="md-table-grid" id="md-table-grid"></div>
+                  <div class="md-table-size" id="md-table-size">Hover to select</div>
+                </div>
+              </div>
+              <div class="md-tb-sep"></div>
+              <button class="md-tb-btn" onclick="mdLoadSample()" title="Load sample">Sample</button>
+              <button class="md-tb-btn md-tb-danger" onclick="mdClearEditor()" title="Clear">✕</button>
+            </div>
+            <!-- Toolbar row 2: diagrams -->
+            <div class="md-toolbar md-toolbar-diagrams" role="toolbar" aria-label="Diagrams">
+              <span class="md-tb-row-lbl">Diagrams:</span>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('flowchart')" title="Flowchart">⬡ Flow</button>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('sequence')" title="Sequence">⇄ Seq</button>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('pie')" title="Pie">◔ Pie</button>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('gantt')" title="Gantt">▦ Gantt</button>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('class')" title="Class">⬚ Class</button>
+              <button class="md-tb-btn md-tb-diag" onclick="mdInsertDiagram('er')" title="ER">⬟ ER</button>
+            </div>
+            <textarea class="md-textarea" id="md-editor"
+              placeholder="# Start writing Markdown here…&#10;&#10;Type and see the live preview on the right →"
+              oninput="mdOnEditorInput()" spellcheck="false" aria-label="Markdown editor"></textarea>
+            <div class="md-stat-bar" id="md-stat-bar">
+              <span>Lines: <strong id="md-stat-lines">0</strong></span>
+              <span>Words: <strong id="md-stat-words">0</strong></span>
+              <span>Chars: <strong id="md-stat-chars">0</strong></span>
+              <span>Read: <strong id="md-stat-read">0 min</strong></span>
+            </div>
+            <div class="md-export-bar">
+              <span class="md-export-lbl">Export:</span>
+              <button class="md-export-btn" onclick="mdExportHTML('editor')">HTML</button>
+              <button class="md-export-btn" onclick="mdExportPDF('editor')">PDF</button>
+              <button class="md-export-btn" onclick="mdExportWord('editor')">Word</button>
+            </div>
+          </div>
+
+          <!-- RIGHT: Preview pane -->
+          <div class="md-preview-pane" id="md-preview-pane">
+            <div class="md-preview-header">
+              <span class="md-preview-title">Live Preview</span>
+              <span class="md-sync-indicator" id="md-sync-indicator" title="Scroll synced"></span>
+              <button class="md-copy-md-btn" id="md-copy-md-btn" onclick="mdCopyMarkdown('editor')" title="Copy Markdown">Copy MD</button>
+            </div>
+            <div class="md-preview-body" id="md-preview-body">
+              <div class="md-empty-state" id="md-empty-state">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                <p>Start typing to see preview</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload mode panel -->
+      <div class="md-mode-panel" id="md-panel-upload">
+        <div class="panel-scroll" style="padding:16px">
+          <div class="upload-zone upload-zone-hero" id="md-drop-zone"
+            onclick="document.getElementById('md-file-input').click()"
+            ondragover="mdHandleDragOver(event)" ondragleave="mdHandleDragLeave(event)" ondrop="mdHandleDrop(event)"
+            role="button" tabindex="0" aria-label="Upload markdown file">
+            <div class="upload-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>
+              </svg>
+            </div>
+            <p class="upload-main">Upload .md File</p>
+            <p class="upload-sub"><label for="md-file-input">Tap to browse</label> or drag here</p>
+            <p class="upload-formats">.md &middot; .markdown</p>
+            <input type="file" id="md-file-input" accept=".md,text/markdown,.markdown" onchange="mdHandleFileInput(event)" />
+          </div>
+          <div class="md-file-info hidden" id="md-file-info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="md-file-name">file.md</span>
+            <button class="md-find-btn" onclick="mdClearUpload()">Clear</button>
+          </div>
+          <div class="md-upload-preview-card hidden" id="md-upload-preview-card">
+            <div class="md-preview-header">
+              <span class="md-preview-title">Preview</span>
+              <span class="md-upload-wc" id="md-upload-wc">0 words</span>
+              <button class="md-copy-md-btn" onclick="mdCopyMarkdown('upload')">Copy MD</button>
+            </div>
+            <div class="md-preview-body" id="md-upload-preview-body"></div>
+            <div class="md-export-bar">
+              <span class="md-export-lbl">Export:</span>
+              <button class="md-export-btn" onclick="mdExportHTML('upload')">HTML</button>
+              <button class="md-export-btn" onclick="mdExportPDF('upload')">PDF</button>
+              <button class="md-export-btn" onclick="mdExportWord('upload')">Word</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/markdown-tool.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

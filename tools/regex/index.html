@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Tester — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'regex';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Regex Tester</p>
+        <p class="nav-subtitle">Build &amp; test regular expressions</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <label class="tool-label">Presets</label>
+        <div class="regex-preset-grid">
+          <button class="regex-preset-chip" data-pattern="[\w.-]+@[\w-]+\.[a-z]+" data-flags="i">Email</button>
+          <button class="regex-preset-chip" data-pattern="^[1-9][0-9]{9}$" data-flags="">Phone (10d)</button>
+          <button class="regex-preset-chip" data-pattern="^https?://[\w.-]+\.[a-z]{2,}" data-flags="i">URL</button>
+        </div>
+      </div>
+      <div class="tool-section">
+        <label class="tool-label">Pattern</label>
+        <div class="regex-pattern-row">
+          <span class="regex-slash">/</span>
+          <input type="text" class="regex-pattern-input" id="regex-pattern" placeholder="[\w.-]+@[\w-]+\.[a-z]+" spellcheck="false">
+          <span class="regex-slash">/</span>
+          <div class="regex-flags">
+            <label class="regex-flag-lbl"><input type="checkbox" id="rf-g" value="g"> g</label>
+            <label class="regex-flag-lbl"><input type="checkbox" id="rf-i" value="i" checked> i</label>
+            <label class="regex-flag-lbl"><input type="checkbox" id="rf-m" value="m"> m</label>
+          </div>
+        </div>
+      </div>
+      <div class="tool-section">
+        <label class="tool-label">Test String</label>
+        <textarea class="tool-textarea" id="regex-test" rows="5" placeholder="Enter text to test against the pattern…" spellcheck="false"></textarea>
+      </div>
+      <button class="fmt-btn fmt-btn-primary" id="regex-run" style="margin-bottom:12px;">⚡ Test Pattern</button>
+      <div class="tool-output-wrap" id="regex-output-wrap" hidden>
+        <div class="tool-output-header">
+          <span class="tool-output-label" id="regex-match-count"></span>
+        </div>
+        <div class="regex-highlighted" id="regex-highlighted"></div>
+      </div>
+      <p class="tool-error" id="regex-error" hidden></p>
+    </div>
+  </div>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

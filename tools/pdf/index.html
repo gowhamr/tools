@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Tools — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'pdf';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-pdf">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">PDF Tools</p>
+        <p class="nav-subtitle">Create, merge &amp; compress PDFs</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+
+      <div class="pdf-tool-tabs">
+        <button class="pdf-tab active" data-pdf-tab="img-to-pdf">Images → PDF</button>
+        <button class="pdf-tab" data-pdf-tab="merge-pdf">Merge PDFs</button>
+        <button class="pdf-tab" data-pdf-tab="pdf-compress">Compress</button>
+      </div>
+
+      <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
+        <div class="upload-zone upload-zone-hero" id="img-to-pdf-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload Images</p>
+          <p class="upload-sub"><label for="img-to-pdf-input">Tap to select</label> or drag files here</p>
+          <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" multiple />
+        </div>
+        <div class="settings-card">
+          <p class="settings-card-title">Page Settings</p>
+          <div class="settings-row">
+            <span class="settings-label">Page size</span>
+            <select id="pdf-page-size">
+              <option value="a4">A4</option>
+              <option value="letter">Letter</option>
+              <option value="fit">Fit to image</option>
+            </select>
+          </div>
+          <div class="settings-row" style="border-bottom:none">
+            <span class="settings-label">Orientation</span>
+            <select id="pdf-orientation">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+        </div>
+        <div id="img-to-pdf-list" class="file-list"></div>
+        <div id="img-to-pdf-result" class="results-area"></div>
+        <div class="pdf-cta-wrap">
+          <button class="panel-cta-btn" id="img-to-pdf-btn" disabled>📄 Create PDF</button>
+        </div>
+      </div>
+
+      <div id="pdf-tab-merge-pdf" class="pdf-panel">
+        <div class="upload-zone upload-zone-hero" id="merge-pdf-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload PDF Files</p>
+          <p class="upload-sub"><label for="merge-pdf-input">Tap to select</label> or drag files here</p>
+          <p class="upload-formats">PDF only · Select 2 or more</p>
+          <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
+        </div>
+        <div id="merge-pdf-list" class="file-list"></div>
+        <div id="merge-pdf-result" class="results-area"></div>
+        <div class="pdf-cta-wrap">
+          <button class="panel-cta-btn" id="merge-pdf-btn" disabled>📋 Merge PDFs</button>
+        </div>
+      </div>
+
+      <div id="pdf-tab-pdf-compress" class="pdf-panel">
+        <div class="upload-zone upload-zone-hero" id="pdf-compress-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload a PDF</p>
+          <p class="upload-sub"><label for="pdf-compress-input">Tap to select</label> or drag file here</p>
+          <input type="file" id="pdf-compress-input" accept=".pdf" />
+        </div>
+        <div class="settings-card">
+          <p class="settings-card-title">Compression Settings</p>
+          <div class="slider-row" style="border-bottom:none">
+            <div class="slider-header">
+              <span class="slider-label">Image quality inside PDF</span>
+              <span class="slider-val" id="pdf-img-quality-val">60%</span>
+            </div>
+            <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
+          </div>
+        </div>
+        <div id="pdf-compress-list" class="file-list"></div>
+        <div id="pdf-compress-result" class="results-area"></div>
+        <div class="pdf-cta-wrap">
+          <button class="panel-cta-btn" id="pdf-compress-btn" disabled>🗜 Compress PDF</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/pdf-tools.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

@@ -1,83 +1,89 @@
-/* Service Worker — KaruviLab */
-const CACHE = 'karuvilab-v9';
-
-const SHELL = [
-  './',
-  './index.html',
-  './css/style.css',
-  './css/pages.css',
-  './js/utils.js',
-  './js/lib/qrcode.min.js',
-  './js/format-utils.js',
-  './js/validator.js',
-  './js/image-tools.js',
-  './js/pdf-tools.js',
-  './js/theme.js',
-  './js/app.js',
-  './js/markdown-tool.js',
-  './js/qrcode-tool.js',
-  './manifest.json',
-  './icons/icon.svg',
-  './icons/icon-180.png',
-  './pages/about.html',
-  './pages/calculators.html',
-  './pages/contact.html',
-  './pages/privacy.html',
-  './pages/terms.html',
-  './pages/disclaimer.html',
-  './pages/guides.html',
-  './tools/split-copy-text/index.html',
+const CACHE_NAME = 'karuvilab-v10';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/css/style.css',
+  '/js/app.js',
+  '/js/theme.js',
+  '/js/utils.js',
+  '/js/format-utils.js',
+  '/js/image-tools.js',
+  '/js/pdf-tools.js',
+  '/js/validator.js',
+  '/js/markdown-tool.js',
+  '/js/qrcode-tool.js',
+  '/js/shell.js',
+  '/js/home.js',
+  '/js/split-tool.js',
+  '/js/lib/qrcode.min.js',
+  '/manifest.json',
+  '/icons/icon.svg',
+  '/pages/about.html',
+  '/pages/calculators.html',
+  '/pages/contact.html',
+  '/pages/privacy.html',
+  '/pages/terms.html',
+  '/tools/compress/',
+  '/tools/convert/',
+  '/tools/create/',
+  '/tools/pdf/',
+  '/tools/validate/',
+  '/tools/calculators/',
+  '/tools/base64/',
+  '/tools/regex/',
+  '/tools/format/',
+  '/tools/markdown/',
+  '/tools/qrcode/',
+  '/tools/split-copy/'
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  const { request } = e;
-  if (request.method !== 'GET') return;
-
-  // CDN libraries are version-pinned — safe to serve from cache forever
-  if (
-    request.url.includes('cdnjs.cloudflare.com') ||
-    request.url.includes('unpkg.com') ||
-    request.url.includes('cdn.jsdelivr.net') ||
-    request.url.includes('fonts.googleapis.com') ||
-    request.url.includes('fonts.gstatic.com')
-  ) {
-    e.respondWith(
-      caches.match(request).then(cached => {
-        if (cached) return cached;
-        return fetch(request).then(res => {
-          if (res.ok) caches.open(CACHE).then(c => c.put(request, res.clone()));
-          return res;
+self.addEventListener('fetch', (event) => {
+  // Try network first, then cache
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((response) => {
+          if (response) return response;
+          // Return offline page for navigation requests if nothing matches
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+          return null;
         });
       })
-    );
-    return;
-  }
-
-  // All same-origin requests (HTML, CSS, JS, images): network-first so
-  // page refresh always gets the latest deployed version. Falls back to
-  // cache when offline.
-  if (request.url.startsWith(self.location.origin)) {
-    e.respondWith(
-      fetch(request)
-        .then(res => {
-          if (res.ok) caches.open(CACHE).then(c => c.put(request, res.clone()));
-          return res;
-        })
-        .catch(() => caches.match(request).then(r => r || caches.match('./index.html')))
-    );
-  }
+  );
 });

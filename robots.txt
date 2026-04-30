@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /google*.html
 
-Sitemap: https://wanderseven.com/sitemap.xml
+Sitemap: https://karuvilab.com/sitemap.xml

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compress Image — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'compress';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Compress Files</p>
+        <p class="nav-subtitle">Reduce image &amp; PDF size instantly</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="upload-zone upload-zone-hero" id="compressor-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload Files</p>
+          <p class="upload-sub"><label for="compressor-input">Tap to select</label> or drag files here</p>
+          <input type="file" id="compressor-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif,.pdf" multiple />
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="preset-chips">
+          <button class="preset-chip" data-preset="small">
+            <span class="preset-chip-name">Small</span>
+            <span class="preset-chip-desc">≤80 KB</span>
+          </button>
+          <button class="preset-chip active" data-preset="medium">
+            <span class="preset-chip-name">Medium</span>
+            <span class="preset-chip-desc">≤150 KB</span>
+          </button>
+          <button class="preset-chip" data-preset="high">
+            <span class="preset-chip-name">High Quality</span>
+            <span class="preset-chip-desc">≤300 KB</span>
+          </button>
+        </div>
+        <div class="slider-group">
+          <p class="slider-group-title">Compression Settings</p>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Image target size</span>
+              <span class="slider-val" id="img-target-kb-val">150 KB</span>
+            </div>
+            <input type="range" id="img-target-kb" min="10" max="500" step="10" value="150" />
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Max width</span>
+              <span class="slider-val" id="img-max-width-val">1200 px</span>
+            </div>
+            <input type="range" id="img-max-width" min="200" max="4000" step="100" value="1200" />
+          </div>
+        </div>
+        <div class="panel-cta-bar" style="position:static;padding:0">
+          <button class="panel-cta-btn" id="compress-btn" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14V4h10l6 6v10H4v-2"/><path d="M14 4v6h6"/><path d="M7 14l5-5 5 5"/></svg>
+            Compress Now
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-files-group">
+        <div class="file-list" id="compressor-file-list"></div>
+        <div class="results-area" id="compressor-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/utif@3.1.0/UTIF.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/image-tools.js"></script>
+  <script src="../../js/pdf-tools.js"></script>
+  <script src="../../js/app.js"></script>
+</body>
+</html>

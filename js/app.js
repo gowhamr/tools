@@ -3,6 +3,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ══════════════════════════════════════════════════════
+  //  AUTO-INIT FOR STANDALONE PAGES
+  // ══════════════════════════════════════════════════════
+  const shellActive = window.SHELL_ACTIVE;
+  if (shellActive === 'calculators') maybeLoadCalculators();
+  if (shellActive === 'markdown') maybeLoadMarkdown();
+  if (shellActive === 'qrcode') maybeLoadQRCode();
+
+  // ══════════════════════════════════════════════════════
   //  PANEL NAVIGATION
   // ══════════════════════════════════════════════════════
   let activePanel = 'home';
@@ -24,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('calc-embed-container');
     if (!container) return;
 
-    fetch('pages/calculators.html')
+    fetch('/pages/calculators.html')
       .then(r => r.text())
       .then(html => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -1041,38 +1049,5 @@ function formatXml(text, minify) {
       });
     });
   })();
-
-  // ══════════════════════════════════════════════════════
-  //  RIPPLE EFFECT  (panel-cta-btn + hero CTA)
-  // ══════════════════════════════════════════════════════
-  function spawnRipple(btn, e) {
-    if (btn.disabled) return;
-    const r    = btn.getBoundingClientRect();
-    const size = Math.max(r.width, r.height);
-    const el   = document.createElement('span');
-    el.className = 'ripple';
-    el.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
-    btn.appendChild(el);
-    el.addEventListener('animationend', () => el.remove(), { once: true });
-  }
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.panel-cta-btn, .home-hero-cta-primary, .fmt-btn, .cat-btn, .dock-btn, .home-hero-cta-ghost');
-    if (btn) spawnRipple(btn, e);
-  });
-
-  // ══════════════════════════════════════════════════════
-  //  HEADER SCROLL SHADOW
-  // ══════════════════════════════════════════════════════
-  const stripe = document.querySelector('.top-stripe');
-  if (stripe) {
-    document.querySelectorAll('.panel').forEach(p => {
-      p.addEventListener('scroll', () => {
-        stripe.classList.toggle('scrolled', p.scrollTop > 4);
-      }, { passive: true });
-    });
-    window.addEventListener('scroll', () => {
-      stripe.classList.toggle('scrolled', window.scrollY > 4);
-    }, { passive: true });
-  }
 
 });

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split & Copy Text — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'split-copy';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Split & Copy Text</p>
+        <p class="nav-subtitle">Break large text for mobile clipboard</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <label class="tool-label">Input Text</label>
+        <textarea class="tool-textarea" id="split-input" rows="8" placeholder="Paste large text here..."></textarea>
+      </div>
+      <div class="options-row">
+        <div class="opt-label">
+          <span class="tool-label">Split By</span>
+          <select id="split-delimiter">
+            <option value="line">Line Break</option>
+            <option value="comma">Comma</option>
+            <option value="space">Space</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <input type="text" id="split-custom-delim" class="workspace-input" style="display:none; margin-top:10px;" placeholder="Enter custom delimiter...">
+      </div>
+      <div class="fmt-actions" style="margin-top:16px">
+        <button class="fmt-btn fmt-btn-primary" id="split-btn">Split Text</button>
+        <button class="fmt-btn" id="join-btn" disabled>Join Back</button>
+        <button class="fmt-btn" id="copy-all-btn" disabled>Copy All</button>
+      </div>
+      <div class="tool-section" style="margin-top:20px">
+        <label class="tool-label" id="split-part-count">0 parts</label>
+        <div id="split-results" class="results-area"></div>
+      </div>
+    </div>
+  </div>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/split-tool.js"></script>
+</body>
+</html>
