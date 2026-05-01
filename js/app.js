@@ -150,18 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFaq(); });
 
   // ══════════════════════════════════════════════════════
-  //  PDF SUB-TABS
-  // ══════════════════════════════════════════════════════
-  document.querySelectorAll('.pdf-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.pdf-tab').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.pdf-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('pdf-tab-' + btn.dataset.pdfTab)?.classList.add('active');
-    });
-  });
-
-  // ══════════════════════════════════════════════════════
   //  DROP ZONE FACTORY
   // ══════════════════════════════════════════════════════
   function setupDropZone(zoneId, inputId, fileListId, onFilesAdded) {
@@ -503,110 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
       attachClipboardBtns(resultEl, () => blob);
     } catch (err) { resultEl.innerHTML = errorCard('Create', err.message); }
-  });
-
-  // ══════════════════════════════════════════════════════
-  //  PDF – Images → PDF
-  // ══════════════════════════════════════════════════════
-  const imgToPdfFiles = setupDropZone('img-to-pdf-drop','img-to-pdf-input','img-to-pdf-list', files => {
-    document.getElementById('img-to-pdf-btn').disabled = files.length === 0;
-  });
-  document.getElementById('img-to-pdf-btn')?.addEventListener('click', async () => {
-    const resultEl = document.getElementById('img-to-pdf-result');
-    resultEl.innerHTML = processingMsg('Building PDF…');
-    try {
-      const blob = await PdfTools.imagesToPdf(imgToPdfFiles,
-        document.getElementById('pdf-page-size').value,
-        document.getElementById('pdf-orientation').value);
-      const url = URL.createObjectURL(blob);
-      resultEl.innerHTML = successCard('combined.pdf', blob, imgToPdfFiles.length + ' image(s) → PDF', url, 'combined.pdf');
-    } catch (err) { resultEl.innerHTML = errorCard('PDF Creation', err.message); }
-  });
-
-  // ══════════════════════════════════════════════════════
-  //  PDF – Merge
-  // ══════════════════════════════════════════════════════
-  const mergePdfFiles = setupDropZone('merge-pdf-drop','merge-pdf-input','merge-pdf-list', files => {
-    document.getElementById('merge-pdf-btn').disabled = files.length < 2;
-  });
-  document.getElementById('merge-pdf-btn')?.addEventListener('click', async () => {
-    const resultEl = document.getElementById('merge-pdf-result');
-    resultEl.innerHTML = processingMsg('Merging PDFs…');
-    try {
-      const blob = await PdfTools.mergePdfs(mergePdfFiles);
-      const url = URL.createObjectURL(blob);
-      resultEl.innerHTML = successCard('merged.pdf', blob, mergePdfFiles.length + ' files merged', url, 'merged.pdf');
-    } catch (err) { resultEl.innerHTML = errorCard('PDF Merge', err.message); }
-  });
-
-  // ══════════════════════════════════════════════════════
-  //  PDF – Compress
-  // ══════════════════════════════════════════════════════
-  let pdfCompressFile = null;
-  const pdfCompressDrop  = document.getElementById('pdf-compress-drop');
-  const pdfCompressInput = document.getElementById('pdf-compress-input');
-  const pdfCompressBtn   = document.getElementById('pdf-compress-btn');
-
-  pdfCompressDrop?.addEventListener('click', e => {
-    if (!e.target.classList.contains('link') && e.target.tagName !== 'LABEL') pdfCompressInput.click();
-  });
-  ['dragenter','dragover'].forEach(ev =>
-    pdfCompressDrop?.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.add('drag-over'); })
-  );
-  ['dragleave','drop'].forEach(ev =>
-    pdfCompressDrop?.addEventListener(ev, e => { e.preventDefault(); pdfCompressDrop.classList.remove('drag-over'); })
-  );
-  pdfCompressDrop?.addEventListener('drop', e => {
-    const f = e.dataTransfer.files[0];
-    if (f && /\.pdf$/i.test(f.name)) setPdfFile(f);
-  });
-  pdfCompressInput?.addEventListener('change', () => {
-    if (pdfCompressInput.files[0]) setPdfFile(pdfCompressInput.files[0]);
-    pdfCompressInput.value = '';
-  });
-
-  function setPdfFile(f) {
-    pdfCompressFile = f;
-    document.getElementById('pdf-compress-list').innerHTML = `
-      <div class="file-item">
-        <span class="file-icon">&#128196;</span>
-        <div class="file-info">
-          <div class="file-name">${Utils.escHtml(f.name)}</div>
-          <div class="file-meta">${Utils.formatBytes(f.size)}</div>
-        </div>
-        <span class="file-fmt-badge" style="background:#fecaca;color:#b91c1c">PDF</span>
-      </div>`;
-    pdfCompressBtn.disabled = false;
-  }
-
-  pdfCompressBtn?.addEventListener('click', async () => {
-    if (!pdfCompressFile) return;
-    const resultEl = document.getElementById('pdf-compress-result');
-    const quality  = Number(document.getElementById('pdf-img-quality').value);
-    resultEl.innerHTML = processingMsg('Compressing PDF… (this may take a moment)');
-    try {
-      const blob = await PdfTools.compressPdf(pdfCompressFile, quality, (pg, total) => {
-        resultEl.innerHTML = processingMsg(`Processing page ${pg} / ${total}…`);
-      });
-      const dot  = pdfCompressFile.name.lastIndexOf('.');
-      const base = dot > 0 ? pdfCompressFile.name.slice(0, dot) : pdfCompressFile.name;
-      const filename = base + '_compressed.pdf';
-      const url  = URL.createObjectURL(blob);
-      const saved = pdfCompressFile.size - blob.size;
-      const cls   = blob.size < pdfCompressFile.size ? 'success' : 'warn';
-      const badge = blob.size < pdfCompressFile.size
-        ? '<span class="status-badge badge-success">Compressed</span>'
-        : '<span class="status-badge badge-warn">Processed</span>';
-      resultEl.innerHTML = `
-        <div class="result-card ${cls}">
-          <div class="result-header"><h4>${Utils.escHtml(filename)}</h4>${badge}</div>
-          ${Utils.sizeBars(pdfCompressFile.size, blob.size)}
-          <div class="result-meta">${saved > 0 ? `<span>Saved ${Utils.formatBytes(saved)}</span>` : '<span>File could not be reduced further</span>'}</div>
-          <div class="download-row">
-            <a class="btn btn-success btn-small" href="${url}" download="${Utils.escHtml(filename)}">&#11015; Download</a>
-          </div>
-        </div>`;
-    } catch (err) { resultEl.innerHTML = errorCard('PDF Compression', err.message); }
   });
 
   // ══════════════════════════════════════════════════════

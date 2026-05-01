@@ -3,123 +3,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDF Tools — KaruviLab</title>
+  <title>Premium PDF Tools — KaruviLab</title>
+  <meta name="description" content="Merge, split, compress, and convert images to PDF. Fast, secure, and entirely local PDF processing in your browser." />
   <link rel="stylesheet" href="../../css/style.css" />
   <script>window.SHELL_ACTIVE = 'pdf';</script>
+  <style>
+    .pdf-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+    }
+    @media (min-width: 768px) {
+      .pdf-hub-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    }
+    .pdf-tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdf-tool-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    .pdf-tool-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+      background: var(--blue); opacity: 0; transition: opacity 0.3s;
+    }
+    .pdf-tool-card:hover::before { opacity: 1; }
+
+    .pdf-tool-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+    }
+    .pdf-tool-card:hover .pdf-tool-icon {
+      background: var(--blue); color: #fff; transform: scale(1.1);
+    }
+    .pdf-tool-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .pdf-tool-desc { font-size: 0.85rem; color: var(--text-3); line-height: 1.5; }
+    
+    .premium-badge {
+      position: absolute; top: 10px; right: -25px;
+      background: #F59E0B; color: #fff;
+      font-size: 0.6rem; font-weight: 900;
+      padding: 2px 30px; transform: rotate(45deg);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
 <body>
-  <div class="panel tool-panel active" id="panel-pdf">
+  <div class="panel tool-panel active">
     <div class="panel-nav">
       <div class="nav-head">
-        <p class="nav-title">Advanced PDF Tools</p>
-        <p class="nav-subtitle">Create, merge &amp; compress PDFs locally</p>
+        <p class="nav-title">Premium PDF Suite</p>
+        <p class="nav-subtitle">High-performance document tools, 100% local</p>
       </div>
     </div>
     <div class="panel-scroll">
-
-      <div class="pdf-tool-tabs">
-        <button class="pdf-tab active" data-pdf-tab="img-to-pdf">Images → PDF</button>
-        <button class="pdf-tab" data-pdf-tab="merge-pdf">Merge PDFs</button>
-        <button class="pdf-tab" data-pdf-tab="pdf-compress">Compress</button>
-      </div>
-
-      <div id="pdf-tab-img-to-pdf" class="pdf-panel active">
-        <div class="upload-zone upload-zone-hero" id="img-to-pdf-drop">
-          <div class="upload-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>
-            </svg>
-          </div>
-          <p class="upload-main">Upload Images</p>
-          <p class="upload-sub"><label for="img-to-pdf-input">Tap to select</label> or drag files here</p>
-          <input type="file" id="img-to-pdf-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" multiple />
-        </div>
-        <div class="settings-card">
-          <p class="settings-card-title">Page Settings</p>
-          <div class="settings-row">
-            <span class="settings-label">Page size</span>
-            <select id="pdf-page-size">
-              <option value="a4">A4</option>
-              <option value="letter">Letter</option>
-              <option value="fit">Fit to image</option>
-            </select>
-          </div>
-          <div class="settings-row" style="border-bottom:none">
-            <span class="settings-label">Orientation</span>
-            <select id="pdf-orientation">
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
-          </div>
-        </div>
-        <div id="img-to-pdf-list" class="file-list"></div>
-        <div id="img-to-pdf-result" class="results-area"></div>
-        <div class="pdf-cta-wrap">
-          <button class="panel-cta-btn" id="img-to-pdf-btn" disabled>📄 Create PDF</button>
-        </div>
-      </div>
-
-      <div id="pdf-tab-merge-pdf" class="pdf-panel">
-        <div class="upload-zone upload-zone-hero" id="merge-pdf-drop">
-          <div class="upload-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>
-            </svg>
-          </div>
-          <p class="upload-main">Upload PDF Files</p>
-          <p class="upload-sub"><label for="merge-pdf-input">Tap to select</label> or drag files here</p>
-          <p class="upload-formats">PDF only · Select 2 or more</p>
-          <input type="file" id="merge-pdf-input" accept=".pdf" multiple />
-        </div>
-        <div id="merge-pdf-list" class="file-list"></div>
-        <div id="merge-pdf-result" class="results-area"></div>
-        <div class="pdf-cta-wrap">
-          <button class="panel-cta-btn" id="merge-pdf-btn" disabled>📋 Merge PDFs</button>
-        </div>
-      </div>
-
-      <div id="pdf-tab-pdf-compress" class="pdf-panel">
-        <div class="upload-zone upload-zone-hero" id="pdf-compress-drop">
-          <div class="upload-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/>
-            </svg>
-          </div>
-          <p class="upload-main">Upload a PDF</p>
-          <p class="upload-sub"><label for="pdf-compress-input">Tap to select</label> or drag file here</p>
-          <input type="file" id="pdf-compress-input" accept=".pdf" />
-        </div>
-        <div class="settings-card">
-          <p class="settings-card-title">Compression Settings</p>
-          <div class="slider-row" style="border-bottom:none">
-            <div class="slider-header">
-              <span class="slider-label">Image quality inside PDF</span>
-              <span class="slider-val" id="pdf-img-quality-val">60%</span>
+      <div class="tool-section">
+        <div class="pdf-hub-grid">
+          <a href="merge/" class="pdf-tool-card">
+            <div class="pdf-tool-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="12" y1="12" x2="12" y2="18"/></svg>
             </div>
-            <input type="range" id="pdf-img-quality" min="0.1" max="1" step="0.05" value="0.6" />
-          </div>
-        </div>
-        <div id="pdf-compress-list" class="file-list"></div>
-        <div id="pdf-compress-result" class="results-area"></div>
-        <div class="pdf-cta-wrap">
-          <button class="panel-cta-btn" id="pdf-compress-btn" disabled>🗜 Compress PDF</button>
+            <div class="pdf-tool-title">Merge PDF</div>
+            <div class="pdf-tool-desc">Combine multiple PDF files into one document.</div>
+          </a>
+
+          <a href="split/" class="pdf-tool-card">
+            <div class="pdf-tool-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            </div>
+            <div class="pdf-tool-title">Split PDF</div>
+            <div class="pdf-tool-desc">Extract pages or split your PDF into multiple files.</div>
+          </a>
+
+          <a href="img-to-pdf/" class="pdf-tool-card">
+            <div class="pdf-tool-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="pdf-tool-title">Images to PDF</div>
+            <div class="pdf-tool-desc">Convert JPG, PNG, and more into a clean PDF.</div>
+          </a>
+
+          <a href="compress/" class="pdf-tool-card">
+            <div class="pdf-tool-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14V4h10l6 6v10H4v-2"/><path d="M14 4v6h6"/><path d="M7 14l5-5 5 5"/></svg>
+            </div>
+            <div class="pdf-tool-title">Compress PDF</div>
+            <div class="pdf-tool-desc">Reduce PDF file size without losing quality.</div>
+          </a>
         </div>
       </div>
 
+      <div class="tool-section info-section" style="margin-top: 40px;">
+        <h3>Why KaruviLab PDF Tools?</h3>
+        <p>Most online PDF tools upload your sensitive documents to their servers. <strong>KaruviLab works differently.</strong> Every operation happens directly in your browser using WebAssembly and Javascript. Your data never leaves your device.</p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px;">
+           <div>
+             <h4 style="color:var(--blue); margin-bottom:8px;">🔒 Private</h4>
+             <p style="font-size:0.85rem;">Zero server uploads. Your privacy is guaranteed.</p>
+           </div>
+           <div>
+             <h4 style="color:var(--blue); margin-bottom:8px;">⚡ Fast</h4>
+             <p style="font-size:0.85rem;">Instant processing powered by your device hardware.</p>
+           </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-
-  <!-- Scripts -->
   <script src="../../js/shell.js"></script>
   <script src="../../js/theme.js"></script>
   <script src="../../js/utils.js"></script>
-  <script src="../../js/format-utils.js"></script>
-  <script src="../../js/pdf-tools.js"></script>
   <script src="../../js/app.js"></script>
 </body>
 </html>

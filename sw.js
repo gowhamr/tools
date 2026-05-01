@@ -1,4 +1,4 @@
-const CACHE_NAME = 'karuvilab-v12';
+const CACHE_NAME = 'karuvilab-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -27,6 +27,10 @@ const ASSETS = [
   './tools/convert/',
   './tools/create/',
   './tools/pdf/',
+  './tools/pdf/merge/',
+  './tools/pdf/split/',
+  './tools/pdf/img-to-pdf/',
+  './tools/pdf/compress/',
   './tools/validate/',
   './tools/calculators/',
   './tools/calculators/sip/',

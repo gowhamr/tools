@@ -177,5 +177,49 @@ const PdfTools = (() => {
     }
   }
 
-  return { imagesToPdf, mergePdfs, compressPdf, pdfPageToImage };
+  /**
+   * Split a PDF into individual pages or ranges.
+   * @param {File|Blob} pdf
+   * @param {string} range – e.g. "1-3, 5, 8-10"
+   * @returns {Promise<Blob[]>}
+   */
+  async function splitPdf(pdf, range = 'all') {
+    const lib = pdfLib();
+    if (!lib) throw new Error('pdf-lib library not loaded');
+
+    const ab = await Utils.readAsArrayBuffer(pdf);
+    const srcDoc = await lib.PDFDocument.load(ab, { ignoreEncryption: true });
+    const pageCount = srcDoc.getPageCount();
+    
+    let pagesToExtract = [];
+    if (range === 'all') {
+      pagesToExtract = Array.from({ length: pageCount }, (_, i) => [i]);
+    } else {
+      // Simple parser for "1-2, 4"
+      const parts = range.split(',').map(s => s.trim());
+      for (const part of parts) {
+        if (part.includes('-')) {
+          const [start, end] = part.split('-').map(Number);
+          const rangePages = [];
+          for (let i = start - 1; i < end; i++) if (i >= 0 && i < pageCount) rangePages.push(i);
+          if (rangePages.length) pagesToExtract.push(rangePages);
+        } else {
+          const num = parseInt(part) - 1;
+          if (num >= 0 && num < pageCount) pagesToExtract.push([num]);
+        }
+      }
+    }
+
+    const results = [];
+    for (const indices of pagesToExtract) {
+      const newDoc = await lib.PDFDocument.create();
+      const copiedPages = await newDoc.copyPages(srcDoc, indices);
+      copiedPages.forEach(p => newDoc.addPage(p));
+      const bytes = await newDoc.save();
+      results.push(new Blob([bytes], { type: 'application/pdf' }));
+    }
+    return results;
+  }
+
+  return { imagesToPdf, mergePdfs, compressPdf, pdfPageToImage, splitPdf };
 })();
