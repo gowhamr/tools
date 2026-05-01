@@ -94,9 +94,18 @@
       el('calc-btn').onclick = () => {
         const res = el('date-result');
         if (dateMode === 'diff') {
-          const a = new Date(el('date-start').value);
-          const b = new Date(el('date-end').value);
-          if (isNaN(a) || isNaN(b)) return;
+          const sVal = el('date-start').value;
+          const eVal = el('date-end').value;
+          if (!sVal || !eVal) {
+            Shell.toast('Please select both start and end dates.', 'warn');
+            return;
+          }
+          const a = new Date(sVal);
+          const b = new Date(eVal);
+          if (isNaN(a) || isNaN(b)) {
+            Shell.toast('Invalid date format.', 'error');
+            return;
+          }
           const days = Math.round((b - a) / (1000 * 60 * 60 * 24));
           const abs = Math.abs(days);
           res.innerHTML = `
@@ -107,9 +116,18 @@
               ${metric('Years', fmt(abs / 365.25, 1))}
             </div>`;
         } else {
-          const base = new Date(el('date-base').value);
-          const d = +el('date-days').value;
-          if (isNaN(base)) return;
+          const bVal = el('date-base').value;
+          const dVal = el('date-days').value;
+          if (!bVal || dVal === '') {
+            Shell.toast('Please enter start date and days.', 'warn');
+            return;
+          }
+          const base = new Date(bVal);
+          const d = +dVal;
+          if (isNaN(base)) {
+            Shell.toast('Invalid start date.', 'error');
+            return;
+          }
           const result = new Date(base.getTime() + d * 86400000);
           const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
           res.innerHTML = `

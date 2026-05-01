@@ -62,10 +62,24 @@
       el('age-dob').value = '1995-01-01';
 
       el('calc-btn').onclick = () => {
-        const dob = new Date(el('age-dob').value);
-        const asof = new Date(el('age-as').value);
-        if (isNaN(dob) || isNaN(asof) || dob > asof) {
-          alert('Please enter valid dates.'); return;
+        const dobVal = el('age-dob').value;
+        const asofVal = el('age-as').value;
+        
+        if (!dobVal || !asofVal) {
+          Shell.toast('Please select both dates.', 'warn');
+          return;
+        }
+
+        const dob = new Date(dobVal);
+        const asof = new Date(asofVal);
+        
+        if (isNaN(dob) || isNaN(asof)) {
+          Shell.toast('Please enter valid dates.', 'error');
+          return;
+        }
+        if (dob > asof) {
+          Shell.toast('Date of birth cannot be in the future.', 'warn');
+          return;
         }
         
         let years = asof.getFullYear() - dob.getFullYear();

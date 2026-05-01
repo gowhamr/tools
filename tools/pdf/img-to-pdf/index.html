@@ -119,6 +119,10 @@
       input.onchange = () => { handleFiles(input.files); input.value = ''; };
 
       btn.onclick = async () => {
+        if (files.length === 0) {
+          Shell.toast('Please upload some images first.', 'warn');
+          return;
+        }
         results.innerHTML = `<div class="processing-wrap">
           <div class="processing-msg">${Utils.spinnerHTML()} Creating PDF from ${files.length} images...</div>
           <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
@@ -152,8 +156,10 @@
                 </a>
               </div>
             </div>`;
+          Shell.toast('PDF created successfully!', 'success');
         } catch (err) {
           results.innerHTML = `<div class="result-card error"><h4>Conversion Failed</h4><p>${err.message}</p></div>`;
+          Shell.toast('Creation failed: ' + err.message, 'error');
         }
       };
 

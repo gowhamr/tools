@@ -87,7 +87,7 @@ function qrGenerate() {
       color: { dark: fgColor, light: bgColor }
     }, (err) => {
       if (err) {
-        qrShowSnackbar('QR generation failed: ' + err.message, 'error');
+        Shell.toast('QR generation failed: ' + err.message, 'error');
         return;
       }
       canvas.style.display = 'block';
@@ -98,13 +98,16 @@ function qrGenerate() {
       if (svgBtn) svgBtn.disabled = false;
     });
   } catch(e) {
-    qrShowSnackbar('Error: ' + e.message, 'error');
+    Shell.toast('Error: ' + e.message, 'error');
   }
 }
 
 function qrDownload(format) {
   const input = document.getElementById('qr-input').value.trim();
-  if (!input) return;
+  if (!input) {
+    Shell.toast('Enter content to generate QR first.', 'warn');
+    return;
+  }
 
   if (format === 'png') {
     const canvas = document.getElementById('qr-canvas');
@@ -114,7 +117,7 @@ function qrDownload(format) {
     a.href = url;
     a.download = `qrcode-${Date.now()}.png`;
     a.click();
-    qrShowSnackbar('PNG downloaded!', 'success');
+    Shell.toast('PNG downloaded!', 'success');
   } else if (format === 'svg') {
     const size = parseInt(document.getElementById('qr-size').value) || 256;
     const ecl = document.getElementById('qr-ecl').value || 'M';
@@ -129,7 +132,7 @@ function qrDownload(format) {
       color: { dark: fgColor, light: bgColor }
     }, (err, svg) => {
       if (err) {
-        qrShowSnackbar('SVG export failed: ' + err.message, 'error');
+        Shell.toast('SVG export failed: ' + err.message, 'error');
         return;
       }
       const blob = new Blob([svg], {type:'image/svg+xml'});
@@ -139,7 +142,7 @@ function qrDownload(format) {
       a.download = `qrcode-${Date.now()}.svg`;
       a.click();
       URL.revokeObjectURL(url);
-      qrShowSnackbar('SVG downloaded!', 'success');
+      Shell.toast('SVG downloaded!', 'success');
     });
   }
 }
@@ -147,7 +150,7 @@ function qrDownload(format) {
 function qrCopyImage() {
   const canvas = document.getElementById('qr-canvas');
   if (!canvas || canvas.style.display === 'none') {
-    qrShowSnackbar('Generate a QR code first.', 'error');
+    Shell.toast('Generate a QR code first.', 'warn');
     return;
   }
 
@@ -156,7 +159,7 @@ function qrCopyImage() {
     try {
       const item = new ClipboardItem({['image/png']: blob});
       navigator.clipboard.write([item]).then(() => {
-        qrShowSnackbar('QR code copied to clipboard!', 'success');
+        Shell.toast('QR code copied to clipboard!', 'success');
         const btn = document.getElementById('qr-copy-btn');
         if (btn) {
           const oldText = btn.textContent;
@@ -164,24 +167,14 @@ function qrCopyImage() {
           setTimeout(() => { btn.textContent = oldText; }, 2000);
         }
       }).catch(err => {
-        qrShowSnackbar('Copy failed: ' + err.message, 'error');
+        Shell.toast('Copy failed: ' + err.message, 'error');
       });
     } catch (e) {
-      qrShowSnackbar('Clipboard API not supported or error: ' + e.message, 'error');
+      Shell.toast('Clipboard API not supported or error: ' + e.message, 'error');
     }
   });
 }
 
-let qrSnackTimer;
 function qrShowSnackbar(msg, type = 'info') {
-  const old = document.querySelector('.qr-snackbar');
-  if (old) old.remove();
-
-  const bar = document.createElement('div');
-  bar.className = 'qr-snackbar show';
-  bar.textContent = msg;
-  bar.style.background = type === 'error' ? '#dc2626' : type === 'success' ? '#059669' : '#3b82f6';
-  document.body.appendChild(bar);
-  clearTimeout(qrSnackTimer);
-  qrSnackTimer = setTimeout(() => { bar.remove(); }, 3200);
+  Shell.toast(msg, type === 'error' ? 'error' : type === 'success' ? 'success' : 'info');
 }

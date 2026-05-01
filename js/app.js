@@ -302,12 +302,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function runCompressor() {
     const resultsEl = document.getElementById('compressor-results');
-    if (!compressorFiles.length) { resultsEl.innerHTML = ''; return; }
+    if (!compressorFiles.length) {
+      Shell.toast('Please upload some files first.', 'warn');
+      return;
+    }
     resultsEl.innerHTML = processingMsg(`Processing ${compressorFiles.length} file(s)…`);
     const targetKB = Number(document.getElementById('img-target-kb').value) || 100;
     const maxWidth = Number(document.getElementById('img-max-width').value)  || 1000;
     const resultBlobs = [];
     let html = '';
+    let successCount = 0;
     for (const file of compressorFiles) {
       try {
         if (/\.pdf$/i.test(file.name)) {
@@ -320,10 +324,18 @@ document.addEventListener('DOMContentLoaded', () => {
           resultBlobs.push(blob);
           html += buildResultCard(file, blob, 'compressed', 'img', fmtKey);
         }
-      } catch (err) { html += errorCard(file.name, err.message); resultBlobs.push(null); }
+        successCount++;
+      } catch (err) { 
+        html += errorCard(file.name, err.message); 
+        resultBlobs.push(null);
+        Shell.toast(`Error processing ${file.name}: ${err.message}`, 'error');
+      }
     }
     resultsEl.innerHTML = html;
     attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    if (successCount > 0) {
+      Shell.toast(`Successfully compressed ${successCount} file(s)`, 'success');
+    }
   }
 
   // ══════════════════════════════════════════════════════
@@ -351,12 +363,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('convert-btn')?.addEventListener('click', async () => {
     const resultsEl = document.getElementById('converter-results');
-    if (!converterFiles.length) return;
+    if (!converterFiles.length) {
+      Shell.toast('Please upload some files to convert.', 'warn');
+      return;
+    }
     const targetFmt = document.getElementById('convert-to-format').value;
     const quality   = Number(document.getElementById('convert-quality').value);
     resultsEl.innerHTML = processingMsg('Converting…');
     const resultBlobs = [];
     let html = '';
+    let successCount = 0;
     for (const file of converterFiles) {
       try {
         const srcExt = Utils.getExt(file.name);
@@ -375,10 +391,18 @@ document.addEventListener('DOMContentLoaded', () => {
           const note = fallback ? `<em style="color:var(--warn)">(browser fallback → JPG)</em>` : '';
           html += buildResultCard(file, blob, 'converted', 'img', fmtKey, note);
         }
-      } catch (err) { html += errorCard(file.name, err.message); resultBlobs.push(null); }
+        successCount++;
+      } catch (err) { 
+        html += errorCard(file.name, err.message); 
+        resultBlobs.push(null);
+        Shell.toast(`Error converting ${file.name}: ${err.message}`, 'error');
+      }
     }
     resultsEl.innerHTML = html;
     attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    if (successCount > 0) {
+      Shell.toast(`Successfully converted ${successCount} file(s)`, 'success');
+    }
   });
 
   // ══════════════════════════════════════════════════════
@@ -455,10 +479,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultEl = document.getElementById('creator-result');
     const canvasEl = document.getElementById('creator-canvas');
     const hintEl   = document.getElementById('creator-preview-hint');
+    
+    const w = parseInt(widthInput.value);
+    const h = parseInt(heightInput.value);
+    
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+      Shell.toast('Please enter valid dimensions (W x H).', 'warn');
+      widthInput.focus();
+      return;
+    }
+    if (w > 10000 || h > 10000) {
+      Shell.toast('Dimensions are too large (max 10,000px).', 'warn');
+      return;
+    }
+
     resultEl.innerHTML = processingMsg('Creating…');
     try {
-      const w   = parseInt(widthInput.value);
-      const h   = parseInt(heightInput.value);
       const bg  = document.getElementById('create-bg').value;
       const fmt = document.getElementById('create-format').value;
       const { blob, canvas: c, fmtKey, fallback } = await ImageTools.create({
@@ -490,7 +526,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>`;
       attachClipboardBtns(resultEl, () => blob);
-    } catch (err) { resultEl.innerHTML = errorCard('Create', err.message); }
+      Shell.toast('Image created successfully!', 'success');
+    } catch (err) { 
+      resultEl.innerHTML = errorCard('Create', err.message);
+      Shell.toast('Creation failed: ' + err.message, 'error');
+    }
   });
 
   // ══════════════════════════════════════════════════════
@@ -514,12 +554,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('validator-doc-type')?.addEventListener('change', () => { if (validatorFile) runValidator(validatorFile); });
 
   async function runValidator(file) {
+    if (!file) {
+      Shell.toast('Please select a file to validate.', 'warn');
+      return;
+    }
     validatorFile = file;
     const resultEl = document.getElementById('validator-result');
     const docType  = document.getElementById('validator-doc-type').value;
     resultEl.innerHTML = processingMsg('Validating…');
     try {
       const { passed, checks } = await Validator.validate(file, docType);
+      if (passed) Shell.toast('Validation Passed!', 'success');
+      else Shell.toast('Validation Failed — check details.', 'warn');
+      
       let checksHtml = '<ul class="check-list">';
       checks.forEach(c => {
         const icon = c.pass ? '&#9989;' : '&#10060;';
@@ -551,10 +598,17 @@ document.addEventListener('DOMContentLoaded', () => {
             Utils.downloadBlob(fixed, name);
             btn.innerHTML = '&#9989; Fixed &amp; Downloaded';
             btn.className = 'btn btn-success btn-small';
-          } catch (e) { btn.innerHTML = '&#10060; ' + Utils.escHtml(e.message); }
+            Shell.toast('File fixed and downloaded!', 'success');
+          } catch (e) { 
+            btn.innerHTML = '&#10060; ' + Utils.escHtml(e.message); 
+            Shell.toast('Auto-fix failed: ' + e.message, 'error');
+          }
         });
       }
-    } catch (err) { resultEl.innerHTML = errorCard(file.name, err.message); }
+    } catch (err) { 
+      resultEl.innerHTML = errorCard(file.name, err.message);
+      Shell.toast('Validation error: ' + err.message, 'error');
+    }
   }
 
   // ══════════════════════════════════════════════════════
@@ -679,6 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showErr(msg) {
       if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
       if (outWrap) outWrap.hidden = true;
+      Shell.toast(msg, 'error');
     }
     function showOut(val) {
       if (output) output.value = val;
@@ -688,16 +743,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     runBtn.addEventListener('click', () => {
       const text = input.value.trim();
-      if (!text) { showErr('Please enter some text first.'); return; }
+      if (!text) {
+        Shell.toast('Please enter some text or base64 to process.', 'warn');
+        input.focus();
+        return;
+      }
       try {
         if (getMode() === 'encode') {
           const bytes = new TextEncoder().encode(text);
           const bin   = String.fromCharCode(...bytes);
           showOut(btoa(bin));
+          Shell.toast('Text encoded successfully', 'success');
         } else {
           const bin   = atob(text);
           const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
           showOut(new TextDecoder().decode(bytes));
+          Shell.toast('Base64 decoded successfully', 'success');
         }
       } catch {
         showErr(getMode() === 'decode'
@@ -788,25 +849,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     runBtn.addEventListener('click', () => {
-      const pattern = patternInput.value;
+      const pattern = patternInput.value.trim();
       const testStr = testInput?.value || '';
       if (errEl) errEl.hidden = true;
-      if (!pattern) { if (errEl) { errEl.textContent = 'Enter a regex pattern.'; errEl.hidden = false; } return; }
+      if (!pattern) { 
+        const msg = 'Enter a regex pattern.';
+        if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+        Shell.toast(msg, 'warn');
+        patternInput.focus();
+        return; 
+      }
 
       let re;
       try {
         const flags = getFlags().includes('g') ? getFlags() : getFlags() + 'g';
         re = new RegExp(pattern, flags);
       } catch (e) {
-        if (errEl) { errEl.textContent = 'Invalid regex: ' + e.message; errEl.hidden = false; }
+        const msg = 'Invalid regex: ' + e.message;
+        if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
         if (outWrap) outWrap.hidden = true;
+        Shell.toast(msg, 'error');
         return;
       }
 
       const matches = [...testStr.matchAll(re)];
-      if (matchCount) matchCount.textContent = matches.length
-        ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
-        : 'No matches found';
+      if (matchCount) {
+        matchCount.textContent = matches.length
+          ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
+          : 'No matches found';
+        
+        if (matches.length > 0) Shell.toast(`Found ${matches.length} matches`, 'success');
+        else Shell.toast('No matches found', 'info');
+      }
 
       let result = '';
       let last = 0;
@@ -844,11 +918,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function showErr(msg) {
       if (fmtErr) { fmtErr.textContent = msg; fmtErr.hidden = false; }
       if (fmtOutWrap) fmtOutWrap.hidden = true;
+      Shell.toast(msg, 'error');
     }
     function showOut(val) {
       if (fmtOutput) fmtOutput.textContent = val;
       if (fmtOutWrap) fmtOutWrap.hidden = false;
       if (fmtErr) fmtErr.hidden = true;
+      Shell.toast('Formatted successfully', 'success');
     }
 
     function formatJson(text, minify) {
@@ -904,7 +980,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function run(minify) {
       const text = fmtInput.value.trim();
-      if (!text) { showErr('Please paste some content first.'); return; }
+      if (!text) {
+        Shell.toast('Please paste some content first.', 'warn');
+        fmtInput.focus();
+        return;
+      }
       try {
         showOut(getMode() === 'json' ? formatJson(text, minify) : formatXml(text, minify));
       } catch (e) {

@@ -177,6 +177,31 @@
           }
         }
       });
+    },
+
+    toast(msg, type = 'info', duration = 3000) {
+      let container = document.getElementById('ts-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'ts-toast-container';
+        document.body.appendChild(container);
+      }
+      
+      const el = document.createElement('div');
+      el.className = `ts-toast ts-toast-${type}`;
+      
+      let icon = 'ℹ️';
+      if (type === 'success') icon = '✅';
+      if (type === 'error')   icon = '❌';
+      if (type === 'warn')    icon = '⚠️';
+      
+      el.innerHTML = `<span class="ts-toast-icon">${icon}</span><span class="ts-toast-msg">${msg}</span>`;
+      container.appendChild(el);
+      
+      setTimeout(() => {
+        el.classList.add('out');
+        setTimeout(() => el.remove(), 400);
+      }, duration);
     }
   };
 

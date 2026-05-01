@@ -61,9 +61,22 @@
         </div>`;
 
       el('calc-btn').onclick = () => {
-        const p = +el('disc-p').value;
-        const r = +el('disc-r').value;
-        if (p <= 0) return;
+        const pVal = el('disc-p').value;
+        const rVal = el('disc-r').value;
+        
+        if (!pVal || isNaN(+pVal) || +pVal <= 0) {
+          Shell.toast('Please enter a valid original price.', 'warn');
+          el('disc-p').focus();
+          return;
+        }
+        if (!rVal || isNaN(+rVal) || +rVal < 0 || +rVal > 100) {
+          Shell.toast('Please enter a discount between 0 and 100.', 'warn');
+          el('disc-r').focus();
+          return;
+        }
+
+        const p = +pVal;
+        const r = +rVal;
         
         const saved = p * r / 100;
         const final = p - saved;

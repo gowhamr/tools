@@ -63,7 +63,11 @@
         if (!v) { fields.forEach(f => { if (f !== src) f.value = ''; }); return; }
         
         const n = parseInt(v, base);
-        if (isNaN(n)) return;
+        if (isNaN(n)) {
+          src.style.borderColor = 'var(--error)';
+          return;
+        }
+        src.style.borderColor = '';
         
         fields.forEach(f => {
           if (f === src) return;

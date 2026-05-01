@@ -113,17 +113,33 @@
       });
 
       el('split-btn').onclick = async () => {
-        if (!selectedFile) return;
+        if (!selectedFile) {
+          Shell.toast('Please upload a PDF file first.', 'warn');
+          return;
+        }
         const results = el('split-results');
+        const range = mode === 'all' ? 'all' : el('split-range').value;
+        
+        if (mode === 'range' && !range.trim()) {
+          Shell.toast('Please enter a page range.', 'warn');
+          el('split-range').focus();
+          return;
+        }
+
         results.innerHTML = `<div class="processing-wrap">
           <div class="processing-msg">${Utils.spinnerHTML()} Splitting PDF...</div>
           <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
         </div>`;
         
         try {
-          const range = mode === 'all' ? 'all' : el('split-range').value;
           const blobs = await PdfTools.splitPdf(selectedFile, range);
           
+          if (blobs.length === 0) {
+            Shell.toast('No pages were extracted. Check your range.', 'warn');
+            results.innerHTML = '';
+            return;
+          }
+
           results.innerHTML = `<p style="font-size:0.8rem; font-weight:700; margin-bottom:12px;">${blobs.length} files generated:</p>`;
           blobs.forEach((blob, i) => {
             const url = URL.createObjectURL(blob);
@@ -137,8 +153,10 @@
               </div>
             `);
           });
+          Shell.toast(`Successfully split into ${blobs.length} files.`, 'success');
         } catch (err) {
           results.innerHTML = `<div class="result-card error"><h4>Split Failed</h4><p>${err.message}</p></div>`;
+          Shell.toast('Split failed: ' + err.message, 'error');
         }
       };
 

@@ -76,7 +76,17 @@
       });
 
       el('calc-btn').onclick = () => {
-        const amt = +el('gst-amt').value;
+        const amtVal = el('gst-amt').value;
+        if (!amtVal || isNaN(+amtVal)) {
+          Shell.toast('Please enter a valid amount.', 'warn');
+          el('gst-amt').focus();
+          return;
+        }
+        const amt = +amtVal;
+        if (amt < 0) {
+          Shell.toast('Amount cannot be negative.', 'warn');
+          return;
+        }
         const rate = +el('gst-rate').value;
         let base, gst, total;
         if (gstMode === 'add') {

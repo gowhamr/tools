@@ -175,7 +175,14 @@
       function calculate() {
         const dateStr = el('wc-date').value;
         const timeStr = el('wc-time').value;
-        if (!dateStr || !timeStr || !wcSource) return;
+        if (!dateStr || !timeStr) {
+          Shell.toast('Please select both date and time.', 'warn');
+          return;
+        }
+        if (!wcSource) {
+          Shell.toast('Please select a source city.', 'warn');
+          return;
+        }
         
         const [y, mo, d] = dateStr.split('-').map(Number);
         const [hh, mm] = timeStr.split(':').map(Number);

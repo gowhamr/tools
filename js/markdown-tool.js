@@ -296,13 +296,24 @@ function mdFindKeyNav(e) {
 function mdDoReplace(all) {
   const q = document.getElementById('md-find-input').value;
   const r = document.getElementById('md-replace-input').value;
-  if (!q) return;
+  if (!q) {
+    Shell.toast('Enter text to find.', 'warn');
+    return;
+  }
   const ta = document.getElementById('md-editor');
   if (all) {
+    const count = ta.value.split(q).length - 1;
+    if (count === 0) {
+      Shell.toast('No matches found to replace.', 'info');
+      return;
+    }
     ta.value = ta.value.split(q).join(r);
-    mdShowSnackbar('Replaced all occurrences.', 'info');
+    mdShowSnackbar(`Replaced ${count} occurrence(s).`, 'info');
   } else {
-    if (!mdFindMatches.length) return;
+    if (!mdFindMatches.length) {
+      Shell.toast('No match found to replace.', 'info');
+      return;
+    }
     const idx = mdFindMatches[mdFindIndex];
     ta.value = ta.value.substring(0, idx) + r + ta.value.substring(idx + q.length);
     mdShowSnackbar('Replaced 1 occurrence.', 'info');
@@ -535,13 +546,7 @@ function mdExportWord(source) {
 
 let mdSnackTimer;
 function mdShowSnackbar(msg, type='info') {
-  const bar = document.createElement('div');
-  bar.className = 'md-snackbar show';
-  bar.textContent = msg;
-  bar.style.background = type === 'error' ? '#dc2626' : '#059669';
-  document.body.appendChild(bar);
-  clearTimeout(mdSnackTimer);
-  mdSnackTimer = setTimeout(() => { bar.remove(); }, 3200);
+  Shell.toast(msg, type === 'error' ? 'error' : 'success');
 }
 
 // mdInit() is called by app.js showPanel() when user opens the markdown panel
