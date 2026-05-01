@@ -17,6 +17,10 @@
       this.setupErrorHandling();
     },
 
+    goHome() {
+      window.location.href = window.KARUVI_BASE;
+    },
+
     render() {
       const active = window.SHELL_ACTIVE || 'home';
       document.body.classList.add('app-shell');
@@ -168,6 +172,8 @@
       });
     }
   };
+
+  window.Shell = shell;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => shell.init());
