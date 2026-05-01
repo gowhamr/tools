@@ -26,6 +26,7 @@
     </div>
 
     <div class="panel-scroll">
+      <nav class="breadcrumb-nav"><a href="../../">Home</a> <span class="breadcrumb-sep">/</span> <a href="../">Tools</a> <span class="breadcrumb-sep">/</span> <span class="current">JSON to CSV</span></nav>
       <div class="panel-upload-group">
         <div class="tool-section">
           <label class="tool-label">Input JSON</label>
@@ -63,13 +64,20 @@
     document.addEventListener('DOMContentLoaded', () => {
       const el = id => document.getElementById(id);
       const input = el('json-input');
-      const preview = el('csv-preview');
+      const output = el('csv-output');
+      const outputWrap = el('csv-output-wrap');
       const downloadBtn = el('csv-download');
+      const copyBtn = el('csv-copy');
+      const runBtn = el('json-csv-run');
+      const clearBtn = el('json-csv-clear');
+      const errEl = el('json-csv-error');
 
       function update() {
         const jsonText = input.value.trim();
+        errEl.hidden = true;
+        
         if (!jsonText) {
-          preview.textContent = '';
+          outputWrap.hidden = true;
           downloadBtn.disabled = true;
           return;
         }
@@ -77,20 +85,34 @@
         try {
           const data = JSON.parse(jsonText);
           const csv = FormatUtils.jsonToCsv(Array.isArray(data) ? data : [data]);
-          preview.textContent = csv;
+          output.value = csv;
+          outputWrap.hidden = false;
           downloadBtn.disabled = !csv;
         } catch (e) {
-          preview.textContent = 'Invalid JSON: ' + e.message;
-          preview.style.color = 'var(--error)';
+          errEl.textContent = 'Invalid JSON: ' + e.message;
+          errEl.hidden = false;
+          outputWrap.hidden = true;
           downloadBtn.disabled = true;
         }
       }
 
       input.oninput = Utils.debounce(update, 300);
+      runBtn.onclick = update;
+      
+      clearBtn.onclick = () => {
+        input.value = '';
+        update();
+      };
+
+      copyBtn.onclick = () => {
+        output.select();
+        document.execCommand('copy');
+        Shell.toast('CSV copied to clipboard', 'success');
+      };
 
       downloadBtn.onclick = () => {
-        const csv = preview.textContent;
-        if (!csv || csv.startsWith('Invalid JSON')) return;
+        const csv = output.value;
+        if (!csv) return;
         const blob = new Blob([csv], { type: 'text/csv' });
         Utils.downloadBlob(blob, `export-${Date.now()}.csv`);
         Shell.toast('CSV downloaded!', 'success');
