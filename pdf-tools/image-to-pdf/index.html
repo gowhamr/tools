@@ -12,7 +12,7 @@
   <div class="panel tool-panel active">
     <div class="panel-nav">
 
-      <div class="nav-back" onclick="Shell.goHome()">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
       <div class="nav-head">
@@ -23,8 +23,8 @@
     <div class="panel-scroll">
       <div class="tool-section">
         <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
-          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
-          <a href="../" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/pdf-tools/" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
           <span style="color:var(--text-1); font-weight:600;">Images to PDF</span>
         </nav>
 
@@ -110,96 +110,105 @@
   <script src="../../js/format-utils.js"></script>
   <script src="../../js/pdf-tools.js"></script>
   <script>
-    (function() {
-      const el = id => document.getElementById(id);
-      const dropZone = el('img-drop'), input = el('img-input'), list = el('img-file-list'), btn = el('img-btn'), results = el('img-result');
-      let files = [];
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const ready = await Shell.waitForLibs(['jspdf'], 'Images to PDF');
+        if (!ready) return;
 
-      function updateUI() {
-        list.innerHTML = files.map((f, i) => `
-          <div class="file-item">
-            <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-              <div style="width:32px;height:32px;border-radius:4px;overflow:hidden;background:#eee;">
-                <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
-              </div>
-              <span style="font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escHtml(f.name)}</span>
-            </div>
-            <button class="remove-btn" onclick="window.removeFile(${i})">&times;</button>
-          </div>
-        `).join('');
-        btn.disabled = files.length === 0;
-      }
+        (function() {
+          const el = id => document.getElementById(id);
+          const dropZone = el('img-drop'), input = el('img-input'), list = el('img-file-list'), btn = el('img-btn'), results = el('img-result');
+          let files = [];
 
-      window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
-
-      const handleFiles = (newFiles) => {
-        let addedCount = 0;
-        const ALL_IMG = ['jpg','jpeg','png','webp','avif','tiff','tif','bmp','heic','heif'];
-        Array.from(newFiles).forEach(f => {
-          const check = Utils.validateFile(f, ALL_IMG, 20);
-          if (check.valid) {
-            files.push(f);
-            addedCount++;
-          } else {
-            Shell.toast(`${f.name}: ${check.error}`, 'error');
-          }
-        });
-        if (addedCount > 0) updateUI();
-      };
-
-      dropZone.onclick = () => input.click();
-      dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
-      dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
-      dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); };
-      input.onchange = () => { handleFiles(input.files); input.value = ''; };
-
-      btn.onclick = async () => {
-        if (files.length === 0) {
-          Shell.toast('Please upload some images first.', 'warn');
-          return;
-        }
-        results.innerHTML = `<div class="processing-wrap">
-          <div class="processing-msg">${Utils.spinnerHTML()} Creating PDF from ${files.length} images...</div>
-          <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
-        </div>`;
-        try {
-          const ps = el('pdf-page-size').value;
-          const orient = el('pdf-orientation').value;
-          const blob = await PdfTools.imagesToPdf(files, ps, orient);
-          const url = URL.createObjectURL(blob);
-          const name = `images_${Date.now()}.pdf`;
-          results.innerHTML = `
-            <div class="result-card success-pop">
-              <div class="result-header">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <div class="success-check">✓</div>
-                  <h4>${name}</h4>
+          function updateUI() {
+            list.innerHTML = files.map((f, i) => `
+              <div class="file-item">
+                <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+                  <div style="width:32px;height:32px;border-radius:4px;overflow:hidden;background:#eee;">
+                    <img src="${URL.createObjectURL(f)}" style="width:100%;height:100%;object-fit:cover;">
+                  </div>
+                  <span style="font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escHtml(f.name)}</span>
                 </div>
-                <span class="status-badge badge-success">Created</span>
+                <button class="remove-btn" onclick="window.removeFile(${i})" aria-label="Remove image">&times;</button>
               </div>
-              <div class="preview-wrap pdf-preview-placeholder">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>PDF with ${files.length} Images</span>
-              </div>
-              <div class="result-meta">
-                <span>${Utils.formatBytes(blob.size)}</span>
-              </div>
-              <div class="download-row">
-                <a class="btn btn-primary btn-success-main" href="${url}" download="${name}">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Download PDF
-                </a>
-              </div>
-            </div>`;
-          Shell.toast('PDF created successfully!', 'success');
-        } catch (err) {
-          results.innerHTML = `<div class="result-card error"><h4>Conversion Failed</h4><p>${err.message}</p></div>`;
-          Shell.toast('Creation failed: ' + err.message, 'error');
-        }
-      };
+            `).join('');
+            btn.disabled = files.length === 0;
+          }
 
-      el('clear-btn').onclick = () => { files = []; results.innerHTML = ''; updateUI(); };
-    })();
+          window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
+
+          const handleFiles = (newFiles) => {
+            let addedCount = 0;
+            const ALL_IMG = ['jpg','jpeg','png','webp','avif','tiff','tif','bmp','heic','heif'];
+            Array.from(newFiles).forEach(f => {
+              const check = Utils.validateFile(f, ALL_IMG, 20);
+              if (check.valid) {
+                files.push(f);
+                addedCount++;
+              } else {
+                Shell.toast(`${f.name}: ${check.error}`, 'error');
+              }
+            });
+            if (addedCount > 0) updateUI();
+          };
+
+          dropZone.onclick = () => input.click();
+          dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
+          dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
+          dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); };
+          input.onchange = () => { handleFiles(input.files); input.value = ''; };
+
+          btn.onclick = async () => {
+            if (files.length === 0) {
+              Shell.toast('Please upload some images first.', 'warn');
+              return;
+            }
+            results.innerHTML = `<div class="processing-wrap">
+              <div class="processing-msg">${Utils.spinnerHTML()} Creating PDF from ${files.length} images...</div>
+              <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+            </div>`;
+            try {
+              const ps = el('pdf-page-size').value;
+              const orient = el('pdf-orientation').value;
+              const blob = await PdfTools.imagesToPdf(files, ps, orient);
+              const url = URL.createObjectURL(blob);
+              const name = `images_${Date.now()}.pdf`;
+              results.innerHTML = `
+                <div class="result-card success-pop">
+                  <div class="result-header">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="success-check">✓</div>
+                      <h4>${name}</h4>
+                    </div>
+                    <span class="status-badge badge-success">Created</span>
+                  </div>
+                  <div class="preview-wrap pdf-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>PDF with ${files.length} Images</span>
+                  </div>
+                  <div class="result-meta">
+                    <span>${Utils.formatBytes(blob.size)}</span>
+                  </div>
+                  <div class="download-row">
+                    <a class="btn btn-primary btn-success-main" href="${url}" download="${name}">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download PDF
+                    </a>
+                  </div>
+                </div>`;
+              Shell.toast('PDF created successfully!', 'success');
+            } catch (err) {
+              results.innerHTML = `<div class="result-card error"><h4>Conversion Failed</h4><p>${err.message}</p></div>`;
+              Shell.toast('Creation failed: ' + err.message, 'error');
+            }
+          };
+
+          el('clear-btn').onclick = () => { files = []; results.innerHTML = ''; updateUI(); };
+        })();
+      } catch (e) {
+        console.error('Images to PDF init failed:', e);
+      }
+    });
   </script>
 </body>
 </html>

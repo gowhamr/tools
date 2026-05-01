@@ -55,9 +55,9 @@ const PdfTools = (() => {
       }
 
       if (i === 0) {
-        doc = new JsPDF({ unit: 'pt', format: [pgW, pgH], orientation: 'p' });
+        doc = new JsPDF({ unit: 'pt', format: [pgW, pgH], orientation: orientation === 'landscape' ? 'l' : 'p' });
       } else {
-        doc.addPage([pgW, pgH], 'p');
+        doc.addPage([pgW, pgH], orientation === 'landscape' ? 'l' : 'p');
       }
 
       // Scale image to fit page with padding
@@ -205,25 +205,35 @@ const PdfTools = (() => {
     const pageCount = srcDoc.getPageCount();
 
     let pagesToExtract = [];
-    if (range === 'all') {
+    if (range === 'all' || !range.trim()) {
       pagesToExtract = Array.from({ length: pageCount }, (_, i) => [i]);
     } else {
-      // Simple parser for "1-2, 4"
+      // Validate range pattern: 1-3, 5, 8-10
+      if (!/^\s*\d+\s*(?:-\s*\d+\s*)?(?:,\s*\d+\s*(?:-\s*\d+\s*)?)*$/.test(range)) {
+        throw new Error('Invalid range format. Use numbers and ranges like "1-3, 5".');
+      }
+
       const parts = range.split(',').map(s => s.trim());
       for (const part of parts) {
         if (part.includes('-')) {
           const [start, end] = part.split('-').map(Number);
+          if (isNaN(start) || isNaN(end)) throw new Error(`Invalid range: ${part}`);
+          if (start > end) throw new Error(`Start page cannot be greater than end page: ${part}`);
+          if (start < 1 || end > pageCount) throw new Error(`Range ${part} is out of bounds (1-${pageCount})`);
+          
           const rangePages = [];
-          for (let i = start - 1; i < end; i++) if (i >= 0 && i < pageCount) rangePages.push(i);
+          for (let i = start - 1; i < end; i++) rangePages.push(i);
           if (rangePages.length) pagesToExtract.push(rangePages);
         } else {
-          const num = parseInt(part) - 1;
-          if (num >= 0 && num < pageCount) pagesToExtract.push([num]);
+          const num = parseInt(part);
+          if (isNaN(num)) throw new Error(`Invalid page number: ${part}`);
+          if (num < 1 || num > pageCount) throw new Error(`Page ${num} is out of bounds (1-${pageCount})`);
+          pagesToExtract.push([num - 1]);
         }
       }
     }
 
-    const results = [];
+    if (!pagesToExtract.length) throw new Error('No valid pages selected for split.');
     for (const indices of pagesToExtract) {
       if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       const newDoc = await lib.PDFDocument.create();

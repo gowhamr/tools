@@ -44,12 +44,15 @@ function qrOnInput() {
   qrDebounceTimer = setTimeout(qrGenerate, 150);
 }
 
+let lastQrRequestId = 0;
+
 function qrGenerate() {
   if (typeof QRCode === 'undefined') return;
   const inputEl = document.getElementById('qr-input');
   const canvas = document.getElementById('qr-canvas');
   if (!inputEl || !canvas) return;
   
+  const requestId = ++lastQrRequestId;
   const input = inputEl.value.trim();
   const size = parseInt(document.getElementById('qr-size')?.value) || 256;
   const ecl = document.getElementById('qr-ecl')?.value || 'M';
@@ -86,6 +89,7 @@ function qrGenerate() {
       errorCorrectionLevel: ecl,
       color: { dark: fgColor, light: bgColor }
     }, (err) => {
+      if (requestId !== lastQrRequestId) return;
       if (err) {
         Shell.toast('QR generation failed: ' + err.message, 'error');
         return;

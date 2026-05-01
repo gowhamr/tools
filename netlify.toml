@@ -19,3 +19,113 @@
   for = "/css/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/tools/calculators/age/*"
+  to = "/calculators/age-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/emi/*"
+  to = "/calculators/emi-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/gst/*"
+  to = "/calculators/gst-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/sip/*"
+  to = "/calculators/sip-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/percentage/*"
+  to = "/calculators/percentage-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/discount/*"
+  to = "/calculators/discount-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/unit/*"
+  to = "/calculators/unit-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/speed/*"
+  to = "/calculators/unit-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/temp/*"
+  to = "/calculators/unit-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/storage/*"
+  to = "/calculators/unit-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/date/*"
+  to = "/calculators/date-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/time/*"
+  to = "/calculators/time-calculator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/compound/*"
+  to = "/calculators/compound-interest/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/currency/*"
+  to = "/calculators/currency-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/numeral/*"
+  to = "/calculators/numeral-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/worldclock/*"
+  to = "/calculators/world-clock/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/calculators/utc/*"
+  to = "/calculators/utc-ist-converter/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/pdf/compress/*"
+  to = "/pdf-tools/compress-pdf/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/pdf/merge/*"
+  to = "/pdf-tools/merge-pdf/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/pdf/split/*"
+  to = "/pdf-tools/split-pdf/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/pdf/imgtopdf/*"
+  to = "/pdf-tools/image-to-pdf/"
+  status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404

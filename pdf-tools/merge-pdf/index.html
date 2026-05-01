@@ -12,7 +12,7 @@
   <div class="panel tool-panel active">
     <div class="panel-nav">
 
-      <div class="nav-back" onclick="Shell.goHome()">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
       <div class="nav-head">
@@ -23,8 +23,8 @@
     <div class="panel-scroll">
       <div class="tool-section">
         <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
-          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
-          <a href="../" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/pdf-tools/" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
           <span style="color:var(--text-1); font-weight:600;">Merge PDF</span>
         </nav>
 
@@ -89,92 +89,122 @@
   <script src="../../js/format-utils.js"></script>
   <script src="../../js/pdf-tools.js"></script>
   <script>
-    (function() {
-      const el = id => document.getElementById(id);
-      const dropZone = el('merge-drop'), input = el('merge-input'), list = el('merge-file-list'), btn = el('merge-btn'), results = el('merge-result');
-      let files = [];
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const ready = await Shell.waitForLibs(['PDFLib'], 'Merge PDF');
+        if (!ready) return;
 
-      function updateUI() {
-        list.innerHTML = files.map((f, i) => `
-          <div class="file-item">
-            <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span style="font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escHtml(f.name)}</span>
-            </div>
-            <span style="font-size:0.75rem;color:var(--text-3)">${Utils.formatBytes(f.size)}</span>
-            <button class="remove-btn" onclick="window.removeFile(${i})">&times;</button>
-          </div>
-        `).join('');
-        btn.disabled = files.length < 2;
-      }
+        (function() {
+          const el = id => document.getElementById(id);
+          const dropZone = el('merge-drop'), input = el('merge-input'), list = el('merge-file-list'), btn = el('merge-btn'), results = el('merge-result');
+          let files = [];
+          let isProcessing = false;
+          let abortCtrl = null;
 
-      window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
-
-      const handleFiles = (newFiles) => {
-        let addedCount = 0;
-        Array.from(newFiles).forEach(f => {
-          const check = Utils.validateFile(f, ['pdf'], 50);
-          if (check.valid) {
-            files.push(f);
-            addedCount++;
-          } else {
-            Shell.toast(`${f.name}: ${check.error}`, 'error');
-          }
-        });
-        if (addedCount > 0) updateUI();
-      };
-
-      dropZone.onclick = () => input.click();
-      dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
-      dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
-      dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); };
-      input.onchange = () => { handleFiles(input.files); input.value = ''; };
-
-      btn.onclick = async () => {
-        if (files.length < 2) {
-          Shell.toast('Please upload at least 2 PDF files to merge.', 'warn');
-          return;
-        }
-        results.innerHTML = `<div class="processing-wrap">
-          <div class="processing-msg">${Utils.spinnerHTML()} Merging ${files.length} PDFs...</div>
-          <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
-        </div>`;
-        try {
-          const blob = await PdfTools.mergePdfs(files);
-          const url = URL.createObjectURL(blob);
-          const name = `merged_${Date.now()}.pdf`;
-          results.innerHTML = `
-            <div class="result-card success-pop">
-              <div class="result-header">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <div class="success-check">✓</div>
-                  <h4>${name}</h4>
+          function updateUI() {
+            list.innerHTML = files.map((f, i) => `
+              <div class="file-item">
+                <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span style="font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Utils.escHtml(f.name)}</span>
                 </div>
-                <span class="status-badge badge-success">Merged</span>
+                <span style="font-size:0.75rem;color:var(--text-3)">${Utils.formatBytes(f.size)}</span>
+                <button class="remove-btn" onclick="window.removeFile(${i})" aria-label="Remove file">&times;</button>
               </div>
-              <div class="preview-wrap pdf-preview-placeholder">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>${files.length} Documents Combined</span>
-              </div>
-              <div class="result-meta">
-                <span>${Utils.formatBytes(blob.size)}</span>
-              </div>
-              <div class="download-row">
-                <a class="btn btn-primary btn-success-main" href="${url}" download="${name}">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Download Combined PDF
-                </a>
-              </div>
-            </div>`;
-          Shell.toast(`Successfully merged ${files.length} PDFs.`, 'success');
-        } catch (err) {
-          results.innerHTML = `<div class="result-card error"><h4>Merge Failed</h4><p>${err.message}</p></div>`;
-          Shell.toast('Merge failed: ' + err.message, 'error');
-        }
-      };
+            `).join('');
+            btn.disabled = files.length < 2 || isProcessing;
+          }
 
-      el('clear-btn').onclick = () => { files = []; results.innerHTML = ''; updateUI(); };
-    })();
+          window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
+
+          const handleFiles = (newFiles) => {
+            let addedCount = 0;
+            Array.from(newFiles).forEach(f => {
+              const check = Utils.validateFile(f, ['pdf'], 50);
+              if (check.valid) {
+                files.push(f);
+                addedCount++;
+              } else {
+                Shell.toast(`${f.name}: ${check.error}`, 'error');
+              }
+            });
+            if (addedCount > 0) updateUI();
+          };
+
+          dropZone.onclick = () => input.click();
+          dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag-over'); };
+          dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
+          dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); };
+          input.onchange = () => { handleFiles(input.files); input.value = ''; };
+
+          window.addEventListener('pagehide', () => abortCtrl?.abort());
+
+          btn.onclick = async () => {
+            if (files.length < 2 || isProcessing) {
+              if (files.length < 2) Shell.toast('Please upload at least 2 PDF files to merge.', 'warn');
+              return;
+            }
+
+            // Abort any previous run
+            abortCtrl?.abort();
+            abortCtrl = new AbortController();
+            const { signal } = abortCtrl;
+
+            isProcessing = true;
+            btn.disabled = true;
+            btn.innerHTML = Utils.spinnerHTML() + ' Merging…';
+
+            results.innerHTML = `<div class="processing-wrap">
+              <div class="processing-msg">${Utils.spinnerHTML()} Merging ${files.length} PDFs...</div>
+              <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+            </div>`;
+            try {
+              const blob = await PdfTools.mergePdfs(files, signal);
+              if (signal.aborted) return;
+
+              const url = URL.createObjectURL(blob);
+              const name = `merged_${Date.now()}.pdf`;
+              results.innerHTML = `
+                <div class="result-card success-pop">
+                  <div class="result-header">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="success-check">✓</div>
+                      <h4>${name}</h4>
+                    </div>
+                    <span class="status-badge badge-success">Merged</span>
+                  </div>
+                  <div class="preview-wrap pdf-preview-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>${files.length} Documents Combined</span>
+                  </div>
+                  <div class="result-meta">
+                    <span>${Utils.formatBytes(blob.size)}</span>
+                  </div>
+                  <div class="download-row">
+                    <a class="btn btn-primary btn-success-main" href="${url}" download="${name}">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download Combined PDF
+                    </a>
+                  </div>
+                </div>`;
+              Shell.toast(`Successfully merged ${files.length} PDFs.`, 'success');
+            } catch (err) {
+              if (err.name === 'AbortError') return;
+              results.innerHTML = `<div class="result-card error"><h4>Merge Failed</h4><p>${err.message}</p></div>`;
+              Shell.toast('Merge failed: ' + err.message, 'error');
+            } finally {
+              isProcessing = false;
+              btn.innerHTML = '📋 Merge Files Now';
+              btn.disabled = files.length < 2;
+            }
+          };
+
+          el('clear-btn').onclick = () => { abortCtrl?.abort(); files = []; results.innerHTML = ''; updateUI(); };
+        })();
+      } catch (e) {
+        console.error('Merge PDF init failed:', e);
+      }
+    });
   </script>
 </body>
 </html>

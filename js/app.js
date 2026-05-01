@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //  PANEL NAVIGATION
   // ══════════════════════════════════════════════════════
   let activePanel = 'home';
+  let panelTransitioning = false;
   const homePanel = document.getElementById('panel-home');
 
   const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','base64','regex','formatter','markdown','qrcode','history','texttools','hash','urlencode','moretools'];
@@ -33,15 +34,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showPanel(panelId) {
-    if (panelId === activePanel) return;
+    if (panelId === activePanel || panelTransitioning) return;
+    panelTransitioning = true;
+    
     const prev = document.querySelector('.panel.active');
     if (prev) prev.classList.remove('active');
 
     // Promote only the panels being animated to a GPU layer; demote after
-    const TRANSITION_MS = 300;
+    const TRANSITION_MS = 320;
     const animating = [homePanel, prev, document.getElementById('panel-' + panelId)].filter(Boolean);
     animating.forEach(p => { p.style.willChange = 'transform'; });
-    setTimeout(() => animating.forEach(p => { p.style.willChange = ''; }), TRANSITION_MS);
+    
+    setTimeout(() => {
+      animating.forEach(p => { p.style.willChange = ''; });
+      panelTransitioning = false;
+    }, TRANSITION_MS);
 
     if (panelId === 'home') {
       homePanel?.classList.remove('pushed');
@@ -828,18 +835,24 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         if (getMode() === 'encode') {
           const bytes = new TextEncoder().encode(text);
-          const bin   = String.fromCharCode(...bytes);
-          showOut(btoa(bin));
+          let binary = '';
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          showOut(btoa(binary));
           Shell.toast('Text encoded successfully', 'success');
         } else {
-          const bin   = atob(text);
-          const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+          const binary = atob(text);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
           showOut(new TextDecoder().decode(bytes));
           Shell.toast('Base64 decoded successfully', 'success');
         }
-      } catch {
+      } catch (err) {
         showErr(getMode() === 'decode'
-          ? 'Invalid Base64 string. Make sure the input is valid Base64.'
+          ? 'Invalid Base64 string: ' + err.message
           : 'Could not encode — check for unsupported characters.');
       }
     });
@@ -925,6 +938,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
+    let regexWorker = null;
+
     runBtn.addEventListener('click', () => {
       const pattern = patternInput.value.trim();
       const testStr = testInput?.value || '';
@@ -937,39 +952,65 @@ document.addEventListener('DOMContentLoaded', () => {
         return; 
       }
 
-      let re;
-      try {
-        const flags = getFlags().includes('g') ? getFlags() : getFlags() + 'g';
-        re = new RegExp(pattern, flags);
-      } catch (e) {
-        const msg = 'Invalid regex: ' + e.message;
-        if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
-        if (outWrap) outWrap.hidden = true;
-        Shell.toast(msg, 'error');
-        return;
-      }
-
-      const matches = [...testStr.matchAll(re)];
-      if (matchCount) {
-        matchCount.textContent = matches.length
-          ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
-          : 'No matches found';
-        
-        if (matches.length > 0) Shell.toast(`Found ${matches.length} matches`, 'success');
-        else Shell.toast('No matches found', 'info');
-      }
-
-      let result = '';
-      let last = 0;
-      for (const m of matches) {
-        result += escapeHtml(testStr.slice(last, m.index));
-        result += `<mark>${escapeHtml(m[0])}</mark>`;
-        last = m.index + m[0].length;
-        if (m[0].length === 0) { last++; }
-      }
-      result += escapeHtml(testStr.slice(last));
-      if (highlighted) highlighted.innerHTML = result;
+      const flags = getFlags().includes('g') ? getFlags() : getFlags() + 'g';
+      
+      // Clear previous output
+      if (highlighted) highlighted.innerHTML = '';
+      if (matchCount) matchCount.textContent = 'Processing…';
       if (outWrap) outWrap.hidden = false;
+      runBtn.disabled = true;
+      runBtn.textContent = '⚡ Testing…';
+
+      if (regexWorker) regexWorker.terminate();
+      regexWorker = new Worker('../../js/regex-worker.js');
+
+      const timeout = setTimeout(() => {
+        regexWorker.terminate();
+        regexWorker = null;
+        runBtn.disabled = false;
+        runBtn.textContent = '⚡ Test Pattern';
+        const msg = 'Regex took too long and was terminated (3s limit).';
+        if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+        Shell.toast(msg, 'error');
+      }, 3000);
+
+      regexWorker.onmessage = function(e) {
+        clearTimeout(timeout);
+        runBtn.disabled = false;
+        runBtn.textContent = '⚡ Test Pattern';
+        
+        if (e.data.type === 'error') {
+          const msg = 'Invalid regex: ' + e.data.message;
+          if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+          if (outWrap) outWrap.hidden = true;
+          Shell.toast(msg, 'error');
+          return;
+        }
+
+        const matches = e.data.matches;
+        if (matchCount) {
+          matchCount.textContent = matches.length
+            ? `${matches.length} match${matches.length > 1 ? 'es' : ''} found`
+            : 'No matches found';
+          
+          if (matches.length > 0) Shell.toast(`Found ${matches.length} matches`, 'success');
+          else Shell.toast('No matches found', 'info');
+        }
+
+        let result = '';
+        let last = 0;
+        for (const m of matches) {
+          result += escapeHtml(testStr.slice(last, m.index));
+          result += `<mark>${escapeHtml(m.value)}</mark>`;
+          last = m.index + m.value.length;
+          if (m.value.length === 0) { last++; }
+        }
+        result += escapeHtml(testStr.slice(last));
+        if (highlighted) highlighted.innerHTML = result;
+        if (outWrap) outWrap.hidden = false;
+      };
+
+      regexWorker.postMessage({ pattern, flags, testStr });
     });
   })();
 

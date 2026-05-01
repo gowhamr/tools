@@ -198,11 +198,20 @@ const Utils = (() => {
     }
 
     // Check extension
+    const ext = getExt(file.name);
     if (allowedExtensions.length > 0) {
-      const ext = getExt(file.name);
       if (!allowedExtensions.includes(ext)) {
         return { valid: false, error: `Invalid file type. Allowed: ${allowedExtensions.join(', ')}` };
       }
+    }
+
+    // Check MIME for images/pdfs
+    const isImg = ['jpg','jpeg','png','webp','avif','tiff','bmp','heic'].includes(ext);
+    if (isImg && !file.type.startsWith('image/')) {
+      return { valid: false, error: 'File content does not match image extension.' };
+    }
+    if (ext === 'pdf' && file.type !== 'application/pdf') {
+      return { valid: false, error: 'File content does not match PDF extension.' };
     }
 
     return { valid: true };

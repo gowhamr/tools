@@ -83,7 +83,12 @@ function mdLoadScript(src) {
     if (key && window[globalMap[key] || key]) return resolve();
     if (document.querySelector(`script[src="${src}"]`)) return resolve();
     const s = document.createElement('script');
-    s.src = src; s.onload = resolve; s.onerror = reject;
+    s.src = src; 
+    s.onload = resolve; 
+    s.onerror = (err) => {
+      Shell.toast(`Failed to load dependency: ${src}. Please check your connection.`, 'error');
+      reject(err);
+    };
     document.head.appendChild(s);
   });
 }

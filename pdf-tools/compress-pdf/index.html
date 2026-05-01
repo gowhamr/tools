@@ -12,7 +12,7 @@
   <div class="panel tool-panel active">
     <div class="panel-nav">
 
-      <div class="nav-back" onclick="Shell.goHome()">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
       <div class="nav-head">
@@ -28,8 +28,8 @@
   </noscript>
       <div class="tool-section">
         <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
-          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
-          <a href="../" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/pdf-tools/" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
           <span style="color:var(--text-1); font-weight:600;">Compress PDF</span>
         </nav>
 
@@ -107,8 +107,10 @@
   <script src="../../js/format-utils.js" defer></script>
   <script src="../../js/pdf-tools.js" defer></script>
   <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', async function() {
     try {
+      const ready = await Shell.waitForLibs(['jspdf', 'pdfjs-dist/build/pdf'], 'Compress PDF');
+      if (!ready) return;
 
     (function() {
       const el = id => document.getElementById(id);

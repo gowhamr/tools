@@ -3,8 +3,34 @@
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
-  "buildCommand": null,
   "outputDirectory": ".",
+  "redirects": [
+    { "source": "/tools/calculators/age/(.*)", "destination": "/calculators/age-calculator/", "permanent": true },
+    { "source": "/tools/calculators/emi/(.*)", "destination": "/calculators/emi-calculator/", "permanent": true },
+    { "source": "/tools/calculators/gst/(.*)", "destination": "/calculators/gst-calculator/", "permanent": true },
+    { "source": "/tools/calculators/sip/(.*)", "destination": "/calculators/sip-calculator/", "permanent": true },
+    { "source": "/tools/calculators/percentage/(.*)", "destination": "/calculators/percentage-calculator/", "permanent": true },
+    { "source": "/tools/calculators/discount/(.*)", "destination": "/calculators/discount-calculator/", "permanent": true },
+    { "source": "/tools/calculators/unit/(.*)", "destination": "/calculators/unit-converter/", "permanent": true },
+    { "source": "/tools/calculators/speed/(.*)", "destination": "/calculators/unit-converter/", "permanent": true },
+    { "source": "/tools/calculators/temp/(.*)", "destination": "/calculators/unit-converter/", "permanent": true },
+    { "source": "/tools/calculators/storage/(.*)", "destination": "/calculators/unit-converter/", "permanent": true },
+    { "source": "/tools/calculators/date/(.*)", "destination": "/calculators/date-calculator/", "permanent": true },
+    { "source": "/tools/calculators/time/(.*)", "destination": "/calculators/time-calculator/", "permanent": true },
+    { "source": "/tools/calculators/compound/(.*)", "destination": "/calculators/compound-interest/", "permanent": true },
+    { "source": "/tools/calculators/currency/(.*)", "destination": "/calculators/currency-converter/", "permanent": true },
+    { "source": "/tools/calculators/numeral/(.*)", "destination": "/calculators/numeral-converter/", "permanent": true },
+    { "source": "/tools/calculators/worldclock/(.*)", "destination": "/calculators/world-clock/", "permanent": true },
+    { "source": "/tools/calculators/utc/(.*)", "destination": "/calculators/utc-ist-converter/", "permanent": true },
+    { "source": "/tools/pdf/compress/(.*)", "destination": "/pdf-tools/compress-pdf/", "permanent": true },
+    { "source": "/tools/pdf/merge/(.*)", "destination": "/pdf-tools/merge-pdf/", "permanent": true },
+    { "source": "/tools/pdf/split/(.*)", "destination": "/pdf-tools/split-pdf/", "permanent": true },
+    { "source": "/tools/pdf/imgtopdf/(.*)", "destination": "/pdf-tools/image-to-pdf/", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/404.html", "has": [{ "type": "header", "key": "x-vercel-id" }] },
+    { "source": "/:path*", "destination": "/404.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

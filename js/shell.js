@@ -159,6 +159,7 @@
     },
 
     setupErrorHandling() {
+      const self = this;
       window.addEventListener('error', (e) => {
         // Catch errors from tool JS files and inline scripts (no filename for inline)
         const fromToolFile = e.filename && (e.filename.includes('/js/') || e.filename.includes('tool'));
@@ -166,20 +167,52 @@
         if (!fromToolFile && !fromInline) return;
 
         console.error('KaruviLab Tool Error:', e.message, e.filename || '(inline)');
-        const scroll = document.querySelector('.panel-scroll');
-        if (scroll && !scroll.querySelector('.tool-error-fallback')) {
-          const isCalc = window.SHELL_ACTIVE === 'calculators';
-          const err = document.createElement('div');
-          err.className = 'tool-error-fallback';
-          err.style.cssText = 'padding:40px 20px;text-align:center;color:var(--text-3);';
-          err.innerHTML = `
-            <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-            <p style="font-weight:600;margin-bottom:8px">${isCalc ? 'Calculator failed to load. Please refresh.' : 'Oops! This tool encountered an error.'}</p>
-            <p style="font-size:.85rem;margin-bottom:20px">Please try refreshing the page or contact support if the issue persists.</p>
-            <button onclick="location.reload()" class="fmt-btn" style="display:inline-flex">Refresh Page</button>
-          `;
-          scroll.prepend(err);
-        }
+        self.showFallbackError();
+      });
+    },
+
+    showFallbackError(msg) {
+      const scroll = document.querySelector('.panel-scroll');
+      if (scroll && !scroll.querySelector('.tool-error-fallback')) {
+        const isCalc = window.SHELL_ACTIVE === 'calculators';
+        const err = document.createElement('div');
+        err.className = 'tool-error-fallback';
+        err.style.cssText = 'padding:40px 20px;text-align:center;color:var(--text-3);';
+        err.innerHTML = `
+          <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+          <p style="font-weight:600;margin-bottom:8px">${msg || (isCalc ? 'Calculator failed to load. Please refresh.' : 'Oops! This tool encountered an error.')}</p>
+          <p style="font-size:.85rem;margin-bottom:20px">Please try refreshing the page or contact support if the issue persists.</p>
+          <button onclick="location.reload()" class="fmt-btn" style="display:inline-flex">Refresh Page</button>
+        `;
+        scroll.prepend(err);
+      }
+    },
+
+    /**
+     * Check if required libraries are loaded.
+     * @param {string[]} libs - Keys to check on window
+     * @param {string} toolName
+     * @returns {Promise<boolean>}
+     */
+    async waitForLibs(libs, toolName) {
+      let attempts = 0;
+      const maxAttempts = 50; // 5 seconds
+      
+      return new Promise((resolve) => {
+        const check = () => {
+          const missing = libs.filter(l => !window[l] && !(l.includes('.') && l.split('.').reduce((o,i)=>o[i], window)));
+          if (missing.length === 0) {
+            resolve(true);
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(check, 100);
+          } else {
+            this.toast(`Failed to load dependencies for ${toolName}. Please check your connection.`, 'error');
+            this.showFallbackError(`Could not load required libraries: ${missing.join(', ')}`);
+            resolve(false);
+          }
+        };
+        check();
       });
     },
 

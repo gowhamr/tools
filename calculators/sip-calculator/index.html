@@ -121,13 +121,13 @@
 <body class="app-shell">
   <div class="panel tool-panel active">
     <div class="panel-nav">
-      <div class="nav-back" onclick="Shell.goHome()">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
       <div class="nav-head">
         <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
-          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
-          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/calculators/" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
           <span style="color:var(--text-1); font-weight:600;">SIP Calculator</span>
         </nav>
         <h1 class="nav-title">SIP Calculator</h1>
@@ -298,19 +298,29 @@
       const inputs = ['lumpsum'];
 
       function calculate() {
-        const monthlySipBase = +el('in-sip').value;
-        const annualRate = +el('in-rate').value / 100;
-        const years = +el('in-years').value;
+        let monthlySipBase = +el('in-sip').value;
+        let annualRate = +el('in-rate').value / 100;
+        let years = +el('in-years').value;
         const stepUpPct = +el('in-stepup').value / 100;
-        const initialLumpsum = +el('in-lumpsum').value || 0;
+        let initialLumpsum = +el('in-lumpsum').value || 0;
         
+        // Validation and Limits
+        if (monthlySipBase < 0) monthlySipBase = 0;
+        if (monthlySipBase > 1000000) monthlySipBase = 1000000;
+        if (annualRate < 0) annualRate = 0;
+        if (annualRate > 1) annualRate = 1; // Max 100%
+        if (years < 1) years = 1;
+        if (years > 50) years = 50;
+        if (initialLumpsum < 0) initialLumpsum = 0;
+        if (initialLumpsum > 100000000) initialLumpsum = 100000000; // Max 10Cr
+
         const monthlyRate = annualRate / 12;
         const totalMonths = years * 12;
         const inflationRate = 0.06;
 
         // UI Updates
         el('val-sip').textContent = inr(monthlySipBase);
-        el('val-rate').textContent = el('in-rate').value + '%';
+        el('val-rate').textContent = (annualRate * 100).toFixed(1) + '%';
         el('val-years').textContent = years + 'Y';
         el('val-stepup').textContent = el('in-stepup').value + '%';
 

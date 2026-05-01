@@ -12,7 +12,7 @@
   <div class="panel tool-panel active">
     <div class="panel-nav">
 
-      <div class="nav-back" onclick="Shell.goHome()">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
       <div class="nav-head">
@@ -23,8 +23,8 @@
     <div class="panel-scroll">
       <div class="tool-section">
         <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
-          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
-          <a href="../" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="/pdf-tools/" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
           <span style="color:var(--text-1); font-weight:600;">Split PDF</span>
         </nav>
 
@@ -103,95 +103,104 @@
   <script src="../../js/format-utils.js"></script>
   <script src="../../js/pdf-tools.js"></script>
   <script>
-    (function() {
-      const el = id => document.getElementById(id);
-      let selectedFile = null;
-      let mode = 'all';
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const ready = await Shell.waitForLibs(['PDFLib'], 'Split PDF');
+        if (!ready) return;
 
-      const updateFileUI = async (file) => {
-        const check = Utils.validateFile(file, ['pdf'], 50);
-        if (!check.valid) {
-          Shell.toast(check.error, 'error');
-          return;
-        }
-        selectedFile = file;
-        el('pdf-name').textContent = file.name;
-        el('file-info').style.display = 'block';
-        el('split-settings').style.display = 'block';
-        
-        // Get page count
-        try {
-          const ab = await Utils.readAsArrayBuffer(file);
-          const pdfDoc = await PDFLib.PDFDocument.load(ab);
-          el('pdf-pages').textContent = pdfDoc.getPageCount() + ' pages';
-        } catch(e) { el('pdf-pages').textContent = 'Unknown pages'; }
-      };
+        (function() {
+          const el = id => document.getElementById(id);
+          let selectedFile = null;
+          let mode = 'all';
 
-      el('split-input').onchange = () => { if(el('split-input').files[0]) updateFileUI(el('split-input').files[0]); };
-      el('split-drop').onclick = () => el('split-input').click();
-      el('split-drop').ondragover = e => { e.preventDefault(); el('split-drop').classList.add('drag-over'); };
-      el('split-drop').ondragleave = () => el('split-drop').classList.remove('drag-over');
-      el('split-drop').ondrop = e => { e.preventDefault(); el('split-drop').classList.remove('drag-over'); if(e.dataTransfer.files[0]) updateFileUI(e.dataTransfer.files[0]); };
+          const updateFileUI = async (file) => {
+            const check = Utils.validateFile(file, ['pdf'], 50);
+            if (!check.valid) {
+              Shell.toast(check.error, 'error');
+              return;
+            }
+            selectedFile = file;
+            el('pdf-name').textContent = file.name;
+            el('file-info').style.display = 'block';
+            el('split-settings').style.display = 'block';
+            
+            // Get page count
+            try {
+              const ab = await Utils.readAsArrayBuffer(file);
+              const pdfDoc = await PDFLib.PDFDocument.load(ab);
+              el('pdf-pages').textContent = pdfDoc.getPageCount() + ' pages';
+            } catch(e) { el('pdf-pages').textContent = 'Unknown pages'; }
+          };
 
-      document.querySelectorAll('#split-mode-toggle button').forEach(b => {
-        b.onclick = () => {
-          document.querySelectorAll('#split-mode-toggle button').forEach(x => x.classList.remove('active'));
-          b.classList.add('active');
-          mode = b.dataset.mode;
-          el('range-input-wrap').style.display = mode === 'range' ? 'block' : 'none';
-        };
-      });
+          el('split-input').onchange = () => { if(el('split-input').files[0]) updateFileUI(el('split-input').files[0]); };
+          el('split-drop').onclick = () => el('split-input').click();
+          el('split-drop').ondragover = e => { e.preventDefault(); el('split-drop').classList.add('drag-over'); };
+          el('split-drop').ondragleave = () => el('split-drop').classList.remove('drag-over');
+          el('split-drop').ondrop = e => { e.preventDefault(); el('split-drop').classList.remove('drag-over'); if(e.dataTransfer.files[0]) updateFileUI(e.dataTransfer.files[0]); };
 
-      el('split-btn').onclick = async () => {
-        if (!selectedFile) {
-          Shell.toast('Please upload a PDF file first.', 'warn');
-          return;
-        }
-        const results = el('split-results');
-        const range = mode === 'all' ? 'all' : el('split-range').value;
-        
-        if (mode === 'range' && !range.trim()) {
-          Shell.toast('Please enter a page range.', 'warn');
-          el('split-range').focus();
-          return;
-        }
-
-        results.innerHTML = `<div class="processing-wrap">
-          <div class="processing-msg">${Utils.spinnerHTML()} Splitting PDF...</div>
-          <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
-        </div>`;
-        
-        try {
-          const blobs = await PdfTools.splitPdf(selectedFile, range);
-          
-          if (blobs.length === 0) {
-            Shell.toast('No pages were extracted. Check your range.', 'warn');
-            results.innerHTML = '';
-            return;
-          }
-
-          results.innerHTML = `<p style="font-size:0.8rem; font-weight:700; margin-bottom:12px;">${blobs.length} files generated:</p>`;
-          blobs.forEach((blob, i) => {
-            const url = URL.createObjectURL(blob);
-            const name = `${selectedFile.name.replace('.pdf','')}_part_${i+1}.pdf`;
-            results.insertAdjacentHTML('beforeend', `
-              <div class="result-card success-pop" style="margin-bottom:8px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                   <div style="font-size:0.85rem; font-weight:600;">${name}</div>
-                   <a class="btn btn-primary btn-small" style="padding:6px 12px; font-size:0.7rem;" href="${url}" download="${name}">Download</a>
-                </div>
-              </div>
-            `);
+          document.querySelectorAll('#split-mode-toggle button').forEach(b => {
+            b.onclick = () => {
+              document.querySelectorAll('#split-mode-toggle button').forEach(x => x.classList.remove('active'));
+              b.classList.add('active');
+              mode = b.dataset.mode;
+              el('range-input-wrap').style.display = mode === 'range' ? 'block' : 'none';
+            };
           });
-          Shell.toast(`Successfully split into ${blobs.length} files.`, 'success');
-        } catch (err) {
-          results.innerHTML = `<div class="result-card error"><h4>Split Failed</h4><p>${err.message}</p></div>`;
-          Shell.toast('Split failed: ' + err.message, 'error');
-        }
-      };
 
-      el('clear-btn').onclick = () => { location.reload(); };
-    })();
+          el('split-btn').onclick = async () => {
+            if (!selectedFile) {
+              Shell.toast('Please upload a PDF file first.', 'warn');
+              return;
+            }
+            const results = el('split-results');
+            const range = mode === 'all' ? 'all' : el('split-range').value;
+            
+            if (mode === 'range' && !range.trim()) {
+              Shell.toast('Please enter a page range.', 'warn');
+              el('split-range').focus();
+              return;
+            }
+
+            results.innerHTML = `<div class="processing-wrap">
+              <div class="processing-msg">${Utils.spinnerHTML()} Splitting PDF...</div>
+              <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+            </div>`;
+            
+            try {
+              const blobs = await PdfTools.splitPdf(selectedFile, range);
+              
+              if (blobs.length === 0) {
+                Shell.toast('No pages were extracted. Check your range.', 'warn');
+                results.innerHTML = '';
+                return;
+              }
+
+              results.innerHTML = `<p style="font-size:0.8rem; font-weight:700; margin-bottom:12px;">${blobs.length} files generated:</p>`;
+              blobs.forEach((blob, i) => {
+                const url = URL.createObjectURL(blob);
+                const name = `${selectedFile.name.replace('.pdf','')}_part_${i+1}.pdf`;
+                results.insertAdjacentHTML('beforeend', `
+                  <div class="result-card success-pop" style="margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                       <div style="font-size:0.85rem; font-weight:600;">${name}</div>
+                       <a class="btn btn-primary btn-small" style="padding:6px 12px; font-size:0.7rem;" href="${url}" download="${name}">Download</a>
+                    </div>
+                  </div>
+                `);
+              });
+              Shell.toast(`Successfully split into ${blobs.length} files.`, 'success');
+            } catch (err) {
+              results.innerHTML = `<div class="result-card error"><h4>Split Failed</h4><p>${err.message}</p></div>`;
+              Shell.toast('Split failed: ' + err.message, 'error');
+            }
+          };
+
+          el('clear-btn').onclick = () => { location.reload(); };
+        })();
+      } catch (e) {
+        console.error('Split PDF init failed:', e);
+      }
+    });
   </script>
 </body>
 </html>
