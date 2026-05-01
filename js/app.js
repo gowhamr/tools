@@ -690,10 +690,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const saved = origFile.size - blob.size;
     const savedStr = saved > 0 ? `· saved ${Utils.formatBytes(saved)}` : '';
     const color = FormatUtils.colorFor(extOut);
-    const previewHtml = kind === 'img' ? `<img src="${url}" class="preview-thumb" alt="preview" />` : '';
-    return `<div class="result-card success">
+    
+    let previewHtml = '';
+    if (kind === 'img') {
+      previewHtml = `<div class="preview-wrap"><img src="${url}" class="preview-thumb" alt="preview" /></div>`;
+    } else if (kind === 'pdf') {
+      previewHtml = `<div class="preview-wrap pdf-preview-placeholder">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+        <span>PDF Document</span>
+      </div>`;
+    }
+
+    return `<div class="result-card success-pop">
       <div class="result-header">
-        <h4>${Utils.escHtml(newName)}</h4>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="success-check">✓</div>
+          <h4>${Utils.escHtml(newName)}</h4>
+        </div>
         <span class="status-badge" style="background:${color}22;color:${color}">${verb.charAt(0).toUpperCase()+verb.slice(1)}</span>
       </div>
       ${previewHtml}
@@ -703,21 +716,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ${extraNote}
       </div>
       <div class="download-row">
-        <a class="btn btn-success btn-small" href="${url}" download="${Utils.escHtml(newName)}">&#11015; Download</a>
-        ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">&#128203; Copy</button>' : ''}
+        <a class="btn btn-primary btn-success-main" href="${url}" download="${Utils.escHtml(newName)}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Now
+        </a>
+        ${blob.type.startsWith('image/') ? '<button class="btn btn-ghost btn-small copy-clip-btn">Copy to Clipboard</button>' : ''}
       </div>
     </div>`;
   }
 
   function successCard(name, blob, metaStr, url, filename) {
-    return `<div class="result-card success">
+    return `<div class="result-card success-pop">
       <div class="result-header">
-        <h4>${Utils.escHtml(name)}</h4>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="success-check">✓</div>
+          <h4>${Utils.escHtml(name)}</h4>
+        </div>
         <span class="status-badge badge-success">Done</span>
       </div>
       <div class="result-meta"><span>${metaStr}</span><span>${Utils.formatBytes(blob.size)}</span></div>
       <div class="download-row">
-        <a class="btn btn-success btn-small" href="${url}" download="${Utils.escHtml(filename)}">&#11015; Download</a>
+        <a class="btn btn-primary btn-success-main" href="${url}" download="${Utils.escHtml(filename)}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Result
+        </a>
       </div>
     </div>`;
   }
@@ -733,7 +755,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function processingMsg(msg) {
-    return `<div class="processing-msg">${Utils.spinnerHTML()} ${Utils.escHtml(msg)}</div>`;
+    return `
+      <div class="processing-wrap">
+        <div class="processing-msg">${Utils.spinnerHTML()} ${Utils.escHtml(msg)}</div>
+        <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+      </div>`;
   }
 
   // ══════════════════════════════════════════════════════

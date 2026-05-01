@@ -2445,3 +2445,81 @@ input[type=range]:focus { outline: none; box-shadow: none; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ── UX Enhancement: Advanced Visual Feedback ── */
+.processing-wrap {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 12px 0;
+  animation: fadeSlideUp 0.3s var(--ease-expo) both;
+}
+.progress-bar-container {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--blue);
+  width: 30%; /* Start at some visible amount */
+  border-radius: 3px;
+  animation: progressPulse 2s ease-in-out infinite;
+}
+@keyframes progressPulse {
+  0% { width: 10%; opacity: 0.6; }
+  50% { width: 90%; opacity: 1; }
+  100% { width: 100%; opacity: 0.6; }
+}
+
+.success-pop {
+  animation: successPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  border-left: 4px solid var(--success) !important;
+}
+@keyframes successPop {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.success-check {
+  width: 20px; height: 20px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+  flex-shrink: 0;
+}
+
+.preview-wrap {
+  margin: 12px 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  display: flex; justify-content: center;
+}
+.pdf-preview-placeholder {
+  padding: 32px;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text-3);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn-success-main {
+  background: var(--success) !important;
+  color: #fff !important;
+  border: none !important;
+  font-weight: 700 !important;
+  padding: 12px 20px !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+.btn-success-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}

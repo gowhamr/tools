@@ -82,11 +82,11 @@
         </a>
         <a href="${base}tools/" class="dock-btn ${active === 'tools' ? 'active' : ''}">
           <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          <span class="dock-lbl">Tools</span>
+          <span class="dock-lbl">All Tools</span>
         </a>
         <a href="${base}pages/about.html" class="dock-btn">
           <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span class="dock-lbl">About</span>
+          <span class="dock-lbl">Help / Settings</span>
         </a>
       `;
 
