@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standard Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <style>
+    .calc-wrap { max-width: 360px; margin: 0 auto; }
+    .calc-display {
+      background: var(--text);
+      color: var(--surface);
+      padding: 24px 20px;
+      border-radius: var(--radius);
+      font-size: 2rem;
+      font-weight: 300;
+      text-align: right;
+      margin-bottom: 12px;
+      font-family: monospace;
+      min-height: 80px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      word-break: break-all;
+    }
+    .calc-sub {
+      font-size: 0.8rem;
+      color: var(--text-3);
+      margin-bottom: 6px;
+      min-height: 16px;
+      text-align: right;
+      font-family: monospace;
+    }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .calc-btn {
+      padding: 18px 0;
+      font-size: 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .calc-btn:hover { background: var(--blue-light); border-color: var(--blue); }
+    .calc-btn.op { color: var(--blue); background: var(--blue-light); }
+    .calc-btn.eq { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .calc-btn.eq:hover { background: var(--blue-dark); }
+    .calc-btn.clear { color: var(--error); }
+  </style>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Standard Calculator</p>
+        <p class="nav-subtitle">Basic arithmetic with keyboard support</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="calc-wrap">
+          <div class="calc-sub" id="bc-sub"></div>
+          <div class="calc-display" id="bc-display">0</div>
+          <div class="calc-grid">
+            <button class="calc-btn clear" data-k="AC">AC</button>
+            <button class="calc-btn clear" data-k="CE">CE</button>
+            <button class="calc-btn op" data-k="%">%</button>
+            <button class="calc-btn op" data-k="/">÷</button>
+            <button class="calc-btn" data-k="7">7</button>
+            <button class="calc-btn" data-k="8">8</button>
+            <button class="calc-btn" data-k="9">9</button>
+            <button class="calc-btn op" data-k="*">×</button>
+            <button class="calc-btn" data-k="4">4</button>
+            <button class="calc-btn" data-k="5">5</button>
+            <button class="calc-btn" data-k="6">6</button>
+            <button class="calc-btn op" data-k="-">−</button>
+            <button class="calc-btn" data-k="1">1</button>
+            <button class="calc-btn" data-k="2">2</button>
+            <button class="calc-btn" data-k="3">3</button>
+            <button class="calc-btn op" data-k="+">+</button>
+            <button class="calc-btn" data-k="±">±</button>
+            <button class="calc-btn" data-k="0">0</button>
+            <button class="calc-btn" data-k=".">.</button>
+            <button class="calc-btn eq" data-k="=">=</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>How to use</h3>
+        <p>Use the buttons or your keyboard: numbers, operators (+, -, *, /), Enter for =, Backspace for CE, and Escape for AC.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const display = document.getElementById('bc-display');
+      const sub = document.getElementById('bc-sub');
+      let current = '0', previous = null, op = null, resetNext = false;
+
+      const updateDisplay = () => {
+        display.textContent = current.length > 14 ? (+current).toExponential(6) : current;
+        sub.textContent = previous !== null ? `${previous} ${op === '*' ? '×' : op === '/' ? '÷' : op}` : '';
+      };
+
+      const calc = (a, b, o) => {
+        a = +a; b = +b;
+        switch (o) {
+          case '+': return a + b;
+          case '-': return a - b;
+          case '*': return a * b;
+          case '/': return b === 0 ? NaN : a / b;
+          case '%': return a % b;
+        }
+      };
+
+      const press = k => {
+        if (k === 'AC') { current = '0'; previous = null; op = null; }
+        else if (k === 'CE') { current = '0'; }
+        else if (k === '±') { current = (+current * -1).toString(); }
+        else if (k === '.') { if (!current.includes('.')) current += '.'; }
+        else if (/[0-9]/.test(k)) {
+          if (current === '0' || resetNext) { current = k; resetNext = false; }
+          else current += k;
+        }
+        else if (['+','-','*','/','%'].includes(k)) {
+          if (previous !== null && !resetNext) {
+            const r = calc(previous, current, op);
+            current = isFinite(r) ? (Math.round(r * 1e10) / 1e10).toString() : 'Error';
+          }
+          previous = current; op = k; resetNext = true;
+        }
+        else if (k === '=') {
+          if (previous !== null && op) {
+            const r = calc(previous, current, op);
+            current = isFinite(r) ? (Math.round(r * 1e10) / 1e10).toString() : 'Error';
+            previous = null; op = null; resetNext = true;
+          }
+        }
+        updateDisplay();
+      };
+
+      document.querySelectorAll('.calc-btn').forEach(b => {
+        b.onclick = () => press(b.dataset.k);
+      });
+
+      document.onkeydown = e => {
+        const map = { 'Enter': '=', '=': '=', 'Backspace': 'CE', 'Escape': 'AC' };
+        const k = map[e.key] || e.key;
+        if (/^[0-9+\-*/.%]$/.test(k) || ['=','AC','CE'].includes(k)) {
+          e.preventDefault(); press(k);
+        }
+      };
+      updateDisplay();
+    })();
+  </script>
+</body>
+</html>

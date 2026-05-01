@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compound Interest Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Compound Interest</p>
+        <p class="nav-subtitle">Calculate future value of a lump-sum investment</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Principal Amount (₹)</label>
+            <input type="number" class="workspace-input" id="ci-p" value="100000" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Annual Interest Rate (%)</label>
+            <input type="number" class="workspace-input" id="ci-r" value="8" step="0.1" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Time Period (Years)</label>
+            <input type="number" class="workspace-input" id="ci-t" value="5" min="0" step="0.5">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Compounding Frequency</label>
+            <select class="workspace-input" id="ci-n">
+              <option value="1">Annually</option>
+              <option value="2">Semi-Annually</option>
+              <option value="4" selected>Quarterly</option>
+              <option value="12">Monthly</option>
+              <option value="365">Daily</option>
+            </select>
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate</button>
+        </div>
+        <div class="results-area" id="ci-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About Compound Interest</h3>
+        <p>Compound interest is often called the eighth wonder of the world because interest earns interest. This calculator shows how a lump-sum investment grows when interest is reinvested at a chosen frequency.</p>
+        <h4>Formula used</h4>
+        <p><code>A = P × (1 + r / n)^(n × t)</code> — where P is principal, r is annual rate, n is compounding frequency, and t is years.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 2) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const inr = n => '₹' + fmt(n, 0);
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      el('calc-btn').onclick = () => {
+        const P = +el('ci-p').value;
+        const r = +el('ci-r').value / 100;
+        const t = +el('ci-t').value;
+        const n = +el('ci-n').value;
+        if (P <= 0 || t <= 0) return;
+        
+        const A = P * Math.pow(1 + r / n, n * t);
+        const interest = A - P;
+        
+        const res = el('ci-result');
+        res.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            ${metric('Principal', inr(P))}
+            ${metric('Interest Earned', inr(interest), 'accent')}
+            ${metric('Maturity Value', inr(A), 'accent')}
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

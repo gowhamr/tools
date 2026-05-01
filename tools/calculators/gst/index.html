@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GST Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">GST Calculator</p>
+        <p class="nav-subtitle">Add or remove GST from a base price</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="preset-chips" id="gst-toggle">
+          <button class="preset-chip active" data-mode="add">Add GST</button>
+          <button class="preset-chip" data-mode="remove">Remove GST</button>
+        </div>
+        <div class="fmt-grid" style="margin-top:20px">
+          <div class="fmt-field">
+            <label class="tool-label">Amount (₹)</label>
+            <input type="number" class="workspace-input" id="gst-amt" value="1000" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">GST Rate (%)</label>
+            <select class="workspace-input" id="gst-rate">
+              <option>0</option><option>5</option><option selected>12</option>
+              <option>18</option><option>28</option>
+            </select>
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate</button>
+        </div>
+        <div class="results-area" id="gst-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About GST</h3>
+        <p>Goods and Services Tax (GST) is India's unified indirect tax system. This calculator lets you add GST to a base price or extract the base price from a GST-inclusive amount.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 2) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const inr = n => '₹' + fmt(n, 0);
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      let gstMode = 'add';
+      const btns = document.querySelectorAll('#gst-toggle button');
+      btns.forEach(b => {
+        b.onclick = () => {
+          btns.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          gstMode = b.dataset.mode;
+        };
+      });
+
+      el('calc-btn').onclick = () => {
+        const amt = +el('gst-amt').value;
+        const rate = +el('gst-rate').value;
+        let base, gst, total;
+        if (gstMode === 'add') {
+          base = amt; gst = amt * rate / 100; total = base + gst;
+        } else {
+          total = amt; base = amt / (1 + rate / 100); gst = total - base;
+        }
+        
+        const res = el('gst-result');
+        res.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            ${metric('Base Amount', inr(base))}
+            ${metric('GST (' + rate + '%)', inr(gst), 'accent')}
+            ${metric('Total', inr(total), 'accent')}
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Date Calculator</p>
+        <p class="nav-subtitle">Duration between dates or add/subtract days</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="preset-chips" id="date-toggle">
+          <button class="preset-chip active" data-mode="diff">Duration Between</button>
+          <button class="preset-chip" data-mode="add">Add / Subtract Days</button>
+        </div>
+
+        <div id="date-diff-fields" class="fmt-grid" style="margin-top:20px">
+          <div class="fmt-field">
+            <label class="tool-label">Start Date</label>
+            <input type="date" class="workspace-input" id="date-start">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">End Date</label>
+            <input type="date" class="workspace-input" id="date-end">
+          </div>
+        </div>
+
+        <div id="date-add-fields" class="fmt-grid" style="margin-top:20px; display:none;">
+          <div class="fmt-field">
+            <label class="tool-label">Start Date</label>
+            <input type="date" class="workspace-input" id="date-base">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Days to Add (negative to subtract)</label>
+            <input type="number" class="workspace-input" id="date-days" value="30">
+          </div>
+        </div>
+
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate</button>
+        </div>
+        <div class="results-area" id="date-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the Date Calculator</h3>
+        <p>Find the number of days, weeks, months, or years between any two dates — or add/subtract a specific number of days from a start date.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 2) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      const today = new Date().toISOString().split('T')[0];
+      el('date-start').value = today;
+      el('date-end').value = today;
+      el('date-base').value = today;
+
+      let dateMode = 'diff';
+      const btns = document.querySelectorAll('#date-toggle button');
+      btns.forEach(b => {
+        b.onclick = () => {
+          btns.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          dateMode = b.dataset.mode;
+          el('date-diff-fields').style.display = dateMode === 'diff' ? 'grid' : 'none';
+          el('date-add-fields').style.display = dateMode === 'add' ? 'grid' : 'none';
+        };
+      });
+
+      el('calc-btn').onclick = () => {
+        const res = el('date-result');
+        if (dateMode === 'diff') {
+          const a = new Date(el('date-start').value);
+          const b = new Date(el('date-end').value);
+          if (isNaN(a) || isNaN(b)) return;
+          const days = Math.round((b - a) / (1000 * 60 * 60 * 24));
+          const abs = Math.abs(days);
+          res.innerHTML = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px;">
+              ${metric('Total Days', fmt(days, 0), 'accent')}
+              ${metric('Weeks', fmt(abs / 7, 1))}
+              ${metric('Months', fmt(abs / 30.44, 1))}
+              ${metric('Years', fmt(abs / 365.25, 1))}
+            </div>`;
+        } else {
+          const base = new Date(el('date-base').value);
+          const d = +el('date-days').value;
+          if (isNaN(base)) return;
+          const result = new Date(base.getTime() + d * 86400000);
+          const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+          res.innerHTML = `
+            <div style="display:grid; grid-template-columns: 1fr; gap:12px;">
+              ${metric('Result Date', result.toLocaleDateString('en-US', opts), 'accent')}
+            </div>`;
+        }
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

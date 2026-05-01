@@ -6,20 +6,155 @@
   <title>Calculators — KaruviLab</title>
   <link rel="stylesheet" href="../../css/style.css" />
   <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <style>
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      padding: 16px 0;
+    }
+    .calc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .calc-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .calc-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: background 0.3s;
+    }
+    .calc-card:hover .calc-card-icon { background: var(--blue); color: #fff; }
+    .calc-card-title { font-weight: 700; font-size: 1.05rem; }
+    .calc-card-desc { font-size: 0.85rem; color: var(--text-3); line-height: 1.5; }
+    
+    .cat-label { margin-top: 32px; margin-bottom: 12px; }
+    .cat-label:first-child { margin-top: 0; }
+  </style>
 </head>
 <body>
-  <div class="panel tool-panel active" id="panel-calculators">
+  <div class="panel tool-panel active">
     <div class="panel-nav">
       <div class="nav-head">
-        <p class="nav-title">Calculators</p>
-        <p class="nav-subtitle">17 powerful tools for daily use</p>
+        <p class="nav-title">Calculator Hub</p>
+        <p class="nav-subtitle">Powerful tools for finance, math, and daily use</p>
       </div>
     </div>
-    <div class="panel-scroll" id="calc-panel-scroll">
-      <div id="calc-embed-container">
-        <div class="calc-loading-state">
-          <div class="calc-spinner"></div>
-          <p class="calc-loading-text">Loading calculators&hellip;</p>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <p class="cat-label">Financial</p>
+        <div class="calc-grid">
+          <a href="sip/" class="calc-card">
+            <div class="calc-card-icon">📈</div>
+            <div class="calc-card-title">SIP Calculator</div>
+            <div class="calc-card-desc">Estimate returns on your Systematic Investment Plan.</div>
+          </a>
+          <a href="compound/" class="calc-card">
+            <div class="calc-card-icon">💹</div>
+            <div class="calc-card-title">Compound Interest</div>
+            <div class="calc-card-desc">Calculate future value with different compounding frequencies.</div>
+          </a>
+          <a href="loan/" class="calc-card">
+            <div class="calc-card-icon">🏦</div>
+            <div class="calc-card-title">Loan EMI</div>
+            <div class="calc-card-desc">Monthly installments and total interest for home/car loans.</div>
+          </a>
+          <a href="gst/" class="calc-card">
+            <div class="calc-card-icon">🧾</div>
+            <div class="calc-card-title">GST Calculator</div>
+            <div class="calc-card-desc">Add or remove GST at 5%, 12%, 18%, or 28% slabs.</div>
+          </a>
+          <a href="discount/" class="calc-card">
+            <div class="calc-card-icon">🏷️</div>
+            <div class="calc-card-title">Discount</div>
+            <div class="calc-card-desc">Find final price and savings after a percentage discount.</div>
+          </a>
+          <a href="currency/" class="calc-card">
+            <div class="calc-card-icon">💱</div>
+            <div class="calc-card-title">Currency Converter</div>
+            <div class="calc-card-desc">Live exchange rates for 30+ world currencies.</div>
+          </a>
+        </div>
+
+        <p class="cat-label">Date & Time</p>
+        <div class="calc-grid">
+          <a href="age/" class="calc-card">
+            <div class="calc-card-icon">🎂</div>
+            <div class="calc-card-title">Age Calculator</div>
+            <div class="calc-card-desc">Exact age in years, months, and days from DOB.</div>
+          </a>
+          <a href="date/" class="calc-card">
+            <div class="calc-card-icon">📅</div>
+            <div class="calc-card-title">Date Calculator</div>
+            <div class="calc-card-desc">Duration between dates or add/subtract days.</div>
+          </a>
+          <a href="time/" class="calc-card">
+            <div class="calc-card-icon">⏱️</div>
+            <div class="calc-card-title">Time Calculator</div>
+            <div class="calc-card-desc">Add or subtract hours, minutes, and seconds.</div>
+          </a>
+          <a href="world-clock/" class="calc-card">
+            <div class="calc-card-icon">🌍</div>
+            <div class="calc-card-title">World Clock</div>
+            <div class="calc-card-desc">Convert time across 48+ major global cities.</div>
+          </a>
+          <a href="utc-ist/" class="calc-card">
+            <div class="calc-card-icon">🕐</div>
+            <div class="calc-card-title">UTC ↔ IST</div>
+            <div class="calc-card-desc">Instant conversion between UTC and IST (+5:30).</div>
+          </a>
+        </div>
+
+        <p class="cat-label">Math & Units</p>
+        <div class="calc-grid">
+          <a href="standard/" class="calc-card">
+            <div class="calc-card-icon">🔢</div>
+            <div class="calc-card-title">Standard Calculator</div>
+            <div class="calc-card-desc">Basic four-function calculator with keyboard support.</div>
+          </a>
+          <a href="percent/" class="calc-card">
+            <div class="calc-card-icon">%</div>
+            <div class="calc-card-title">Percentage</div>
+            <div class="calc-card-desc">X% of Y, percentage change, and ratio tools.</div>
+          </a>
+          <a href="numeral/" class="calc-card">
+            <div class="calc-card-icon">⚙️</div>
+            <div class="calc-card-title">Numeral Converter</div>
+            <div class="calc-card-desc">Binary, Octal, Decimal, and Hexadecimal.</div>
+          </a>
+          <a href="storage/" class="calc-card">
+            <div class="calc-card-icon">💾</div>
+            <div class="calc-card-title">Data Storage</div>
+            <div class="calc-card-desc">Convert between Bytes, KB, MB, GB, and TB.</div>
+          </a>
+          <a href="temp/" class="calc-card">
+            <div class="calc-card-icon">🌡️</div>
+            <div class="calc-card-title">Temperature</div>
+            <div class="calc-card-desc">Celsius, Fahrenheit, and Kelvin conversion.</div>
+          </a>
+          <a href="speed/" class="calc-card">
+            <div class="calc-card-icon">🚗</div>
+            <div class="calc-card-title">Speed Converter</div>
+            <div class="calc-card-desc">Convert between km/h, mph, m/s, and knots.</div>
+          </a>
         </div>
       </div>
     </div>
@@ -28,7 +163,6 @@
   <script src="../../js/shell.js"></script>
   <script src="../../js/theme.js"></script>
   <script src="../../js/utils.js"></script>
-  <script src="../../js/format-utils.js"></script>
   <script src="../../js/app.js"></script>
 </body>
 </html>

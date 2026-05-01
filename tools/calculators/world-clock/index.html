@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Clock — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <style>
+    .mch-combo { position: relative; }
+    .mch-combo-list {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-top: 4px;
+      max-height: 220px; overflow-y: auto; z-index: 100;
+      box-shadow: var(--shadow-lg);
+      display: none;
+    }
+    .mch-combo-list.open { display: block; }
+    .mch-combo-item {
+      padding: 10px 12px; font-size: 0.9rem; cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .mch-combo-item:last-child { border-bottom: none; }
+    .mch-combo-item:hover, .mch-combo-item.highlight {
+      background: var(--blue-light); color: var(--blue);
+    }
+    .mch-combo-item small { color: var(--text-3); margin-left: 6px; font-size: 0.75rem; }
+    
+    .clock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.3s;
+    }
+    .clock-card:hover { border-color: var(--blue); }
+    .clock-time { font-family: monospace; font-size: 1.2rem; font-weight: 700; color: var(--blue); }
+    .clock-date { font-size: 0.8rem; color: var(--text-3); }
+  </style>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">World Clock</p>
+        <p class="nav-subtitle">Convert time across global cities</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Source City</label>
+            <div class="mch-combo">
+              <input type="text" class="workspace-input" id="wc-src-input" placeholder="Search city..." autocomplete="off">
+              <div class="mch-combo-list" id="wc-src-list"></div>
+            </div>
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Date</label>
+            <input type="date" class="workspace-input" id="wc-date">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Time (24h)</label>
+            <input type="time" class="workspace-input" id="wc-time" value="12:00">
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <label class="tool-label">Target Cities</label>
+            <div class="mch-combo" style="flex:1; max-width:250px; margin-left:16px;">
+              <input type="text" class="workspace-input" id="wc-add-input" placeholder="Add city..." autocomplete="off">
+              <div class="mch-combo-list" id="wc-add-list"></div>
+            </div>
+          </div>
+          <div id="wc-targets"></div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the Global Time Converter</h3>
+        <p>Convert time between major world cities. Daylight saving time (DST) is handled automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const cities = [
+        { name: 'Mumbai', country: 'India', tz: 'Asia/Kolkata' },
+        { name: 'New York', country: 'USA', tz: 'America/New_York' },
+        { name: 'London', country: 'UK', tz: 'Europe/London' },
+        { name: 'Tokyo', country: 'Japan', tz: 'Asia/Tokyo' },
+        { name: 'Sydney', country: 'Australia', tz: 'Australia/Sydney' },
+        { name: 'Dubai', country: 'UAE', tz: 'Asia/Dubai' },
+        { name: 'Singapore', country: 'Singapore', tz: 'Asia/Singapore' },
+        { name: 'Paris', country: 'France', tz: 'Europe/Paris' },
+        { name: 'Berlin', country: 'Germany', tz: 'Europe/Berlin' },
+        { name: 'Los Angeles', country: 'USA', tz: 'America/Los_Angeles' },
+        { name: 'Chicago', country: 'USA', tz: 'America/Chicago' },
+        { name: 'Toronto', country: 'Canada', tz: 'America/Toronto' },
+        { name: 'Hong Kong', country: 'China', tz: 'Asia/Hong_Kong' },
+        { name: 'Seoul', country: 'South Korea', tz: 'Asia/Seoul' },
+        { name: 'Moscow', country: 'Russia', tz: 'Europe/Moscow' },
+        { name: 'Istanbul', country: 'Turkey', tz: 'Europe/Istanbul' },
+      ];
+
+      function setupCombo(inputId, listId, onSelect) {
+        const input = el(inputId);
+        const list = el(listId);
+        let filtered = cities;
+        let highlight = 0;
+        const render = () => {
+          list.innerHTML = filtered.map((c, i) =>
+            `<div class="mch-combo-item ${i === highlight ? 'highlight' : ''}" data-idx="${i}">
+              ${c.name} <small>${c.country}</small>
+            </div>`).join('');
+        };
+        const filter = () => {
+          const q = input.value.toLowerCase().trim();
+          filtered = q ? cities.filter(c => c.name.toLowerCase().includes(q) || c.country.toLowerCase().includes(q)) : cities;
+          highlight = 0;
+          render();
+        };
+        input.onfocus = () => { filter(); list.classList.add('open'); };
+        input.oninput = () => { filter(); list.classList.add('open'); };
+        input.onblur = () => setTimeout(() => list.classList.remove('open'), 200);
+        list.onmousedown = e => {
+          const item = e.target.closest('.mch-combo-item');
+          if (item) onSelect(filtered[+item.dataset.idx]);
+        };
+      }
+
+      let wcSource = cities[0];
+      let wcTargets = [cities[1], cities[2], cities[3]];
+
+      setupCombo('wc-src-input', 'wc-src-list', (c) => {
+        wcSource = c;
+        el('wc-src-input').value = `${c.name}, ${c.country}`;
+        calculate();
+      });
+      setupCombo('wc-add-input', 'wc-add-list', (c) => {
+        if (!wcTargets.find(t => t.tz === c.tz && t.name === c.name)) wcTargets.push(c);
+        el('wc-add-input').value = '';
+        calculate();
+      });
+
+      const today = new Date().toISOString().split('T')[0];
+      el('wc-date').value = today;
+      el('wc-src-input').value = `${wcSource.name}, ${wcSource.country}`;
+
+      function getOffsetMinutes(date, tz) {
+        const utc = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+        const local = new Date(date.toLocaleString('en-US', { timeZone: tz }));
+        return (local - utc) / 60000;
+      }
+
+      function calculate() {
+        const dateStr = el('wc-date').value;
+        const timeStr = el('wc-time').value;
+        if (!dateStr || !timeStr || !wcSource) return;
+        
+        const [y, mo, d] = dateStr.split('-').map(Number);
+        const [hh, mm] = timeStr.split(':').map(Number);
+        const utcGuess = new Date(Date.UTC(y, mo - 1, d, hh, mm));
+        const srcOffset = getOffsetMinutes(utcGuess, wcSource.tz);
+        const sourceUTC = new Date(utcGuess.getTime() - srcOffset * 60000);
+        
+        const wrap = el('wc-targets');
+        wrap.innerHTML = '';
+        wcTargets.forEach((t, idx) => {
+          const timeFmt = sourceUTC.toLocaleTimeString('en-US', { timeZone: t.tz, hour: '2-digit', minute: '2-digit', hour12: true });
+          const dateFmt = sourceUTC.toLocaleDateString('en-US', { timeZone: t.tz, weekday: 'short', month: 'short', day: 'numeric' });
+          wrap.insertAdjacentHTML('beforeend', `
+            <div class="clock-card">
+              <div>
+                <div style="font-weight:700;">${t.name}</div>
+                <div style="font-size:0.75rem; color:var(--text-3);">${t.country}</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="clock-time">${timeFmt}</div>
+                <div class="clock-date">${dateFmt}</div>
+              </div>
+              <button class="fmt-btn" style="padding:4px 8px; margin-left:12px;" onclick="window.removeTarget(${idx})">&times;</button>
+            </div>
+          `);
+        });
+      }
+
+      window.removeTarget = (idx) => {
+        wcTargets.splice(idx, 1);
+        calculate();
+      };
+
+      el('wc-date').onchange = calculate;
+      el('wc-time').oninput = calculate;
+      calculate();
+    })();
+  </script>
+</body>
+</html>

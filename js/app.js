@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //  AUTO-INIT FOR STANDALONE PAGES
   // ══════════════════════════════════════════════════════
   const shellActive = window.SHELL_ACTIVE;
-  if (shellActive === 'calculators') maybeLoadCalculators();
   if (shellActive === 'markdown') maybeLoadMarkdown();
   if (shellActive === 'qrcode') maybeLoadQRCode();
 
@@ -16,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activePanel = 'home';
   const homePanel = document.getElementById('panel-home');
 
-  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','calculators','base64','regex','formatter','markdown','qrcode','history','texttools','hash','urlencode','moretools'];
+  const TOOL_PANELS = ['compressor','converter','creator','pdf','validator','base64','regex','formatter','markdown','qrcode','history','texttools','hash','urlencode','moretools'];
 
   function setDockActive(dockId) {
     document.querySelectorAll('.dock-btn[data-dock]').forEach(b => {
@@ -25,60 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Lazy loaders ──
-  let calcLoaded = false;
-  function maybeLoadCalculators() {
-    if (calcLoaded) return;
-    calcLoaded = true;
-    const container = document.getElementById('calc-embed-container');
-    if (!container) return;
-
-    const base = window.KARUVI_BASE || '/';
-    const fetchUrl = base + 'pages/calculators.html';
-    console.log('[Karuvi] Loading calculators from:', fetchUrl);
-    
-    // Timeout fetch
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    fetch(fetchUrl, { signal: controller.signal })
-      .then(r => {
-        clearTimeout(timeoutId);
-        if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
-        return r.text();
-      })
-      .then(html => {
-        console.log('[Karuvi] Calculators HTML fetched, length:', html.length);
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const mchRoot = doc.getElementById('mch-root');
-        if (!mchRoot) {
-          console.error('[Karuvi] #mch-root not found in fetched HTML');
-          throw new Error('Component structure missing');
-        }
-
-        // Inject HTML
-        container.innerHTML = mchRoot.outerHTML;
-
-        // Re-execute scripts
-        const scripts = doc.querySelectorAll('script');
-        scripts.forEach(s => {
-          if (!s.src && !s.type.includes('json')) {
-            const live = document.createElement('script');
-            live.textContent = s.textContent;
-            document.body.appendChild(live);
-          }
-        });
-        console.log('[Karuvi] Calculators initialized');
-      })
-      .catch(err => {
-        console.error('[Karuvi] Failed to load calculators:', err);
-        if (container) container.innerHTML =
-          '<div style="padding:40px 20px;text-align:center;">' +
-          '<p style="font-size:1.1rem;color:var(--text);margin-bottom:12px;">Oops! Calculators could not be loaded.</p>' +
-          '<p style="font-size:.84rem;color:var(--text-3);margin-bottom:20px;">Error: ' + err.message + '</p>' +
-          '<a href="' + base + 'pages/calculators.html" class="btn btn-primary">Open Standalone Page</a></div>';
-      });
-  }
-
   function maybeLoadMarkdown() {
     if (typeof window.mdInit === 'function') window.mdInit();
   }

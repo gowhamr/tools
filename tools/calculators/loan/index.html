@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan EMI Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Loan EMI Calculator</p>
+        <p class="nav-subtitle">Calculate monthly installments and total interest</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Loan Amount (₹)</label>
+            <input type="number" class="workspace-input" id="loan-amt" value="1000000" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Annual Interest Rate (%)</label>
+            <input type="number" class="workspace-input" id="loan-rate" value="9" step="0.01" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Loan Tenure (Years)</label>
+            <input type="number" class="workspace-input" id="loan-years" value="20" min="1">
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate EMI</button>
+        </div>
+        <div class="results-area" id="loan-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the EMI Calculator</h3>
+        <p>EMI (Equated Monthly Installment) is the fixed amount you pay every month toward a loan, covering both principal and interest. This calculator works for home loans, car loans, personal loans, and education loans.</p>
+        <h4>Formula used</h4>
+        <p><code>EMI = [P × r × (1 + r)^n] / [(1 + r)^n − 1]</code> — where P is principal, r is monthly interest rate, and n is tenure in months.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 2) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const inr = n => '₹' + fmt(n, 0);
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      el('calc-btn').onclick = () => {
+        const P = +el('loan-amt').value;
+        const r = +el('loan-rate').value / 100 / 12;
+        const n = +el('loan-years').value * 12;
+        if (P <= 0 || n <= 0) return;
+        
+        const emi = r === 0 ? P / n : (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        const total = emi * n;
+        const interest = total - P;
+        
+        const res = el('loan-result');
+        res.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            ${metric('Monthly EMI', inr(emi), 'accent')}
+            ${metric('Total Interest', inr(interest))}
+            ${metric('Total Payment', inr(total), 'accent')}
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

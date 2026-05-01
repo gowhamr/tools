@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator — KaruviLab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-head">
+        <p class="nav-title">Age Calculator</p>
+        <p class="nav-subtitle">Exact age in years, months, and days</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Date of Birth</label>
+            <input type="date" class="workspace-input" id="age-dob">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Calculate As Of</label>
+            <input type="date" class="workspace-input" id="age-as">
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate Age</button>
+        </div>
+        <div class="results-area" id="age-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the Age Calculator</h3>
+        <p>Calculate exact age in years, months, and days from any date of birth. Also shows total days lived, total months, and total weeks.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../js/shell.js"></script>
+  <script src="../../../js/theme.js"></script>
+  <script src="../../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 0) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      const today = new Date().toISOString().split('T')[0];
+      el('age-as').value = today;
+      el('age-dob').value = '1995-01-01';
+
+      el('calc-btn').onclick = () => {
+        const dob = new Date(el('age-dob').value);
+        const asof = new Date(el('age-as').value);
+        if (isNaN(dob) || isNaN(asof) || dob > asof) {
+          alert('Please enter valid dates.'); return;
+        }
+        
+        let years = asof.getFullYear() - dob.getFullYear();
+        let months = asof.getMonth() - dob.getMonth();
+        let days = asof.getDate() - dob.getDate();
+        if (days < 0) {
+          months--;
+          const prev = new Date(asof.getFullYear(), asof.getMonth(), 0);
+          days += prev.getDate();
+        }
+        if (months < 0) { years--; months += 12; }
+        const totalDays = Math.floor((asof - dob) / (1000 * 60 * 60 * 24));
+        const totalMonths = years * 12 + months;
+        
+        const res = el('age-result');
+        res.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            ${metric('Exact Age', `${years} yr ${months} mo ${days} d`, 'accent')}
+            ${metric('Total Months', fmt(totalMonths))}
+            ${metric('Total Days', fmt(totalDays))}
+            ${metric('Total Weeks', fmt(totalDays / 7, 1))}
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>
