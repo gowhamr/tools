@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Split PDF Online - Extract PDF Pages Free - KaruviLab</title>
+  <meta name="description" content="Split your PDF files into individual pages or extract specific ranges instantly. Secure, private, and local processing in your browser." />
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'pdf';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <h1 class="nav-title">Split PDF</h1>
+        <p class="nav-subtitle">Extract pages or split into multiple files</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">PDF Tools</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">Split PDF</span>
+        </nav>
+
+        <h1 style="font-size:1.8rem; font-weight:900; margin-bottom:12px;">Split PDF</h1>
+        <p style="color:var(--text-3); margin-bottom:32px; max-width:600px;">Separate PDF pages or extract specific sections with ease. No file uploads needed—everything happens right in your browser.</p>
+
+        <div class="upload-zone upload-zone-hero" id="split-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="3" y1="15" x2="21" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload PDF</p>
+          <p class="upload-sub"><label for="split-input">Select file</label> or drag here</p>
+          <input type="file" id="split-input" accept=".pdf" />
+        </div>
+
+        <div id="file-info" style="display:none; margin-top:16px;" class="result-card">
+           <div style="display:flex; justify-content:space-between; align-items:center;">
+             <strong id="pdf-name">filename.pdf</strong>
+             <span class="status-badge" id="pdf-pages">0 pages</span>
+           </div>
+        </div>
+
+        <div id="split-settings" style="display:none; margin-top:20px;">
+           <label class="tool-label">Split Mode</label>
+           <div class="preset-chips" id="split-mode-toggle">
+              <button class="preset-chip active" data-mode="all">Individual Pages</button>
+              <button class="preset-chip" data-mode="range">Custom Range</button>
+           </div>
+           
+           <div id="range-input-wrap" style="display:none; margin-top:16px;">
+              <label class="tool-label">Enter Ranges (e.g. 1-3, 5, 8-10)</label>
+              <input type="text" class="workspace-input" id="split-range" placeholder="1-3, 5">
+           </div>
+
+           <div class="fmt-actions" style="margin-top:24px;">
+             <button class="fmt-btn fmt-btn-primary" id="split-btn">✂ Split PDF Now</button>
+             <button class="fmt-btn" id="clear-btn">Clear</button>
+           </div>
+        </div>
+
+        <div id="split-results" class="results-area"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>How to Split PDF</h3>
+        <p><strong>Individual Pages:</strong> Every page in your PDF will be saved as a separate file.<br>
+           <strong>Custom Range:</strong> Extract specific pages or groups. Use commas to separate different parts.</p>
+        <h4>Performance Note</h4>
+        <p>For very large PDFs, splitting might take a few seconds as your browser re-renders the structure locally.</p>
+      </div>
+
+      <div class="tool-section faq-section" style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 32px;">
+        <h3 style="margin-bottom: 20px;">Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 8px; color: var(--text-1);">Can I extract multiple non-consecutive pages?</h4>
+          <p style="font-size: 0.9rem; color: var(--text-3); line-height: 1.5;">Yes. You can use ranges like "1-3, 5, 8-10" to extract specific pages and groups into separate files.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 8px; color: var(--text-1);">What is 'Individual Pages' mode?</h4>
+          <p style="font-size: 0.9rem; color: var(--text-3); line-height: 1.5;">This mode takes every single page of your PDF and saves it as its own separate PDF document.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 8px; color: var(--text-1);">Is the split process secure?</h4>
+          <p style="font-size: 0.9rem; color: var(--text-3); line-height: 1.5;">Absolutely. Your PDF is processed locally. We never see, store, or transmit your data.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/pdf-tools.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      let selectedFile = null;
+      let mode = 'all';
+
+      const updateFileUI = async (file) => {
+        const check = Utils.validateFile(file, ['pdf'], 50);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
+        selectedFile = file;
+        el('pdf-name').textContent = file.name;
+        el('file-info').style.display = 'block';
+        el('split-settings').style.display = 'block';
+        
+        // Get page count
+        try {
+          const ab = await Utils.readAsArrayBuffer(file);
+          const pdfDoc = await PDFLib.PDFDocument.load(ab);
+          el('pdf-pages').textContent = pdfDoc.getPageCount() + ' pages';
+        } catch(e) { el('pdf-pages').textContent = 'Unknown pages'; }
+      };
+
+      el('split-input').onchange = () => { if(el('split-input').files[0]) updateFileUI(el('split-input').files[0]); };
+      el('split-drop').onclick = () => el('split-input').click();
+      el('split-drop').ondragover = e => { e.preventDefault(); el('split-drop').classList.add('drag-over'); };
+      el('split-drop').ondragleave = () => el('split-drop').classList.remove('drag-over');
+      el('split-drop').ondrop = e => { e.preventDefault(); el('split-drop').classList.remove('drag-over'); if(e.dataTransfer.files[0]) updateFileUI(e.dataTransfer.files[0]); };
+
+      document.querySelectorAll('#split-mode-toggle button').forEach(b => {
+        b.onclick = () => {
+          document.querySelectorAll('#split-mode-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          mode = b.dataset.mode;
+          el('range-input-wrap').style.display = mode === 'range' ? 'block' : 'none';
+        };
+      });
+
+      el('split-btn').onclick = async () => {
+        if (!selectedFile) {
+          Shell.toast('Please upload a PDF file first.', 'warn');
+          return;
+        }
+        const results = el('split-results');
+        const range = mode === 'all' ? 'all' : el('split-range').value;
+        
+        if (mode === 'range' && !range.trim()) {
+          Shell.toast('Please enter a page range.', 'warn');
+          el('split-range').focus();
+          return;
+        }
+
+        results.innerHTML = `<div class="processing-wrap">
+          <div class="processing-msg">${Utils.spinnerHTML()} Splitting PDF...</div>
+          <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+        </div>`;
+        
+        try {
+          const blobs = await PdfTools.splitPdf(selectedFile, range);
+          
+          if (blobs.length === 0) {
+            Shell.toast('No pages were extracted. Check your range.', 'warn');
+            results.innerHTML = '';
+            return;
+          }
+
+          results.innerHTML = `<p style="font-size:0.8rem; font-weight:700; margin-bottom:12px;">${blobs.length} files generated:</p>`;
+          blobs.forEach((blob, i) => {
+            const url = URL.createObjectURL(blob);
+            const name = `${selectedFile.name.replace('.pdf','')}_part_${i+1}.pdf`;
+            results.insertAdjacentHTML('beforeend', `
+              <div class="result-card success-pop" style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                   <div style="font-size:0.85rem; font-weight:600;">${name}</div>
+                   <a class="btn btn-primary btn-small" style="padding:6px 12px; font-size:0.7rem;" href="${url}" download="${name}">Download</a>
+                </div>
+              </div>
+            `);
+          });
+          Shell.toast(`Successfully split into ${blobs.length} files.`, 'success');
+        } catch (err) {
+          results.innerHTML = `<div class="result-card error"><h4>Split Failed</h4><p>${err.message}</p></div>`;
+          Shell.toast('Split failed: ' + err.message, 'error');
+        }
+      };
+
+      el('clear-btn').onclick = () => { location.reload(); };
+    })();
+  </script>
+</body>
+</html>

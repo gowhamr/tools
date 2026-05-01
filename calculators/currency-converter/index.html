@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Use our free online Currency Converter to get accurate results quickly. Simple, fast, and easy to use tool by KaruviLab.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Currency Converter — Free Online Tool — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">Currency Converter</span>
+        </nav>
+        <h1 class="nav-title">Currency Converter</h1>
+        <p class="nav-subtitle">Live exchange rates for 30+ world currencies</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Amount</label>
+            <input type="number" class="workspace-input" id="cur-amt" value="100" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">From</label>
+            <select class="workspace-input" id="cur-from"></select>
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">To</label>
+            <select class="workspace-input" id="cur-to"></select>
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Convert</button>
+          <button class="fmt-btn" id="swap-btn">⇄ Swap</button>
+        </div>
+        <div class="results-area" id="cur-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the Currency Converter</h3>
+        <p>Live rates with smart caching. Results are stored locally for 1 hour to give you instant conversions and reduce API load.</p>
+        <p>We use primary and backup API sources to ensure high availability of exchange rates.</p>
+      </div>
+
+
+      <div class="tool-section info-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">How often are exchange rates updated?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Exchange rates are typically updated daily to provide accurate conversions.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">Can I convert multiple currencies?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Yes, you can convert between a wide range of global currencies.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const currencies = ['USD','EUR','GBP','INR','JPY','CNY','AUD','CAD','CHF','SGD','AED','HKD','NZD','ZAR','BRL','MXN','KRW','THB','MYR','SEK','NOK','DKK','RUB','TRY','IDR','PHP','VND','SAR','QAR','KWD'];
+      const curFrom = el('cur-from'), curTo = el('cur-to');
+      
+      currencies.forEach(c => {
+        curFrom.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`);
+        curTo.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`);
+      });
+      curFrom.value = 'USD'; curTo.value = 'INR';
+
+      el('swap-btn').onclick = () => {
+        const f = curFrom.value; curFrom.value = curTo.value; curTo.value = f;
+      };
+
+      const MCH_CACHE_KEY = 'mch_fx_cache_v1';
+      const MCH_CACHE_TTL_MS = 60 * 60 * 1000;
+      const MCH_STALE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+      function mchReadCache() { try { const r = localStorage.getItem(MCH_CACHE_KEY); return r ? JSON.parse(r) : {}; } catch(e){return {};} }
+      function mchWriteCache(c) { try { localStorage.setItem(MCH_CACHE_KEY, JSON.stringify(c)); } catch(e){} }
+      function mchGetCached(base) {
+        const c = mchReadCache(); const e = c[base]; if (!e) return null;
+        const age = Date.now() - e.fetchedAt;
+        if (age < MCH_CACHE_TTL_MS) return { ...e, freshness: 'fresh', ageMs: age };
+        if (age < MCH_STALE_TTL_MS) return { ...e, freshness: 'stale', ageMs: age };
+        return null;
+      }
+
+      async function mchFetchRates(base) {
+        try {
+          const r = await fetch(`https://open.er-api.com/v6/latest/${base}`);
+          const d = await r.json();
+          if (d && d.rates && d.result === 'success') return { rates: d.rates, source: 'exchangerate-api.com', updated: d.time_last_update_utc };
+        } catch(e){}
+        try {
+          const r = await fetch(`https://api.frankfurter.app/latest?from=${base}`);
+          const d = await r.json();
+          if (d && d.rates) return { rates: { ...d.rates, [base]: 1 }, source: 'frankfurter.app (ECB)', updated: d.date };
+        } catch(e){}
+        return null;
+      }
+
+      el('calc-btn').onclick = async () => {
+        const amt = +el('cur-amt').value;
+        const from = curFrom.value, to = curTo.value;
+        const res = el('cur-result');
+        res.innerHTML = 'Converting...';
+        res.style.display = 'block';
+
+        if (from === to) {
+          render(amt, 1, { freshness: 'fresh', source: 'identity' });
+          return;
+        }
+
+        let data = mchGetCached(from);
+        if (!data || data.freshness !== 'fresh' || !data.rates[to]) {
+          const fresh = await mchFetchRates(from);
+          if (fresh) {
+            const cache = mchReadCache();
+            cache[from] = { rates: fresh.rates, source: fresh.source, fetchedAt: Date.now(), updated: fresh.updated };
+            mchWriteCache(cache);
+            data = { ...cache[from], freshness: 'fresh' };
+          }
+        }
+
+        if (data && data.rates[to]) {
+          render(amt, data.rates[to], data);
+        } else {
+          res.innerHTML = 'Failed to fetch exchange rates. Please try again later.';
+        }
+      };
+
+      function render(amt, rate, meta) {
+        const res = el('cur-result');
+        const converted = amt * rate;
+        res.innerHTML = `
+          <div class="result-card">
+            <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">Converted Amount</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--blue)">${converted.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} ${Utils.escHtml(curTo.value)}</div>
+            <div style="font-size:0.8rem; color:var(--text-3); margin-top:8px;">1 ${Utils.escHtml(curFrom.value)} = ${rate.toFixed(4)} ${Utils.escHtml(curTo.value)}</div>
+            <div style="font-size:0.7rem; color:var(--text-3); margin-top:12px; border-top:1px solid var(--border); padding-top:8px;">
+              Source: ${Utils.escHtml(meta.source)} (${Utils.escHtml(meta.freshness)})
+            </div>
+          </div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

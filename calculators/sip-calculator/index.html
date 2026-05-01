@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Use our free online SIP Calculator to get accurate results quickly. Simple, fast, and easy to use tool by KaruviLab.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIP Calculator — Free Online Tool — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <style>
+    /* Premium Design System Extensions */
+    :root {
+      --premium-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      --success-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+
+    .pro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .pro-grid { 
+        grid-template-columns: 1fr; 
+        gap: 24px; 
+      }
+    }
+
+    /* Result Card Premium Feel */
+    .res-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 20px;
+      overflow: hidden;
+    }
+    .res-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: var(--premium-gradient);
+    }
+
+    .res-header { text-align: center; margin-bottom: 32px; }
+    .res-label-main { font-size: 0.8rem; color: var(--text-3); text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .res-value-main { font-size: 2.5rem; font-weight: 900; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.02em; }
+
+    /* Donut Chart */
+    .chart-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 32px;
+    }
+    .donut-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .donut-base { fill: transparent; stroke: var(--blue-light); stroke-width: 12; }
+    .donut-segment { fill: transparent; stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 0.8s var(--ease-spring); }
+    .donut-invested { stroke: var(--blue); }
+    .donut-gains { stroke: var(--success); }
+    
+    .chart-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .chart-center-val { font-size: 1.2rem; font-weight: 800; color: var(--text); }
+    .chart-center-lbl { font-size: 0.65rem; color: var(--text-3); font-weight: 600; }
+
+    /* Metric Grid */
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+    .metric-item { padding: 16px; background: var(--bg-input); border-radius: var(--radius); border: 1px solid transparent; transition: all 0.2s; }
+    .metric-item:hover { border-color: var(--border); background: var(--surface); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .metric-label { font-size: 0.7rem; color: var(--text-3); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+    .metric-value { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .metric-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Input Styling */
+    .input-section { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border); }
+    .input-group { margin-bottom: 24px; }
+    .input-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .input-title { font-size: 0.9rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .input-val-badge { background: var(--blue-light); color: var(--blue); font-weight: 800; font-size: 0.85rem; padding: 4px 10px; border-radius: 8px; }
+    
+    .slider-pro {
+      width: 100%; height: 6px; background: var(--border); border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    .slider-pro::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; background: #fff; border: 2px solid var(--blue); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.2s;
+    }
+    .slider-pro::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 0 6px var(--blue-glow); }
+
+    /* CTA Section */
+    .cta-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+
+    /* Breakdown Table */
+    .breakdown-section { margin-top: 40px; }
+    .table-container { 
+      max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease-expo); 
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .table-container.open { max-height: 2000px; margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 12px 16px; background: var(--bg-input); color: var(--text-3); font-weight: 700; text-transform: uppercase; font-size: 0.7rem; }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border-2); color: var(--text-2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-input); }
+
+    /* Tooltip */
+    .info-icon { width: 14px; height: 14px; color: var(--text-4); cursor: help; }
+
+    @media (max-width: 600px) {
+      .res-card { padding: 24px; position: static; }
+      .res-value-main { font-size: 2rem; }
+      .chart-container { width: 160px; height: 160px; }
+      .metrics-grid { gap: 12px; }
+      .cta-bar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">SIP Calculator</span>
+        </nav>
+        <h1 class="nav-title">SIP Calculator</h1>
+        <p class="nav-subtitle">High-precision wealth projections with inflation adjustment</p>
+      </div>
+    </div>
+    
+    <div class="panel-scroll">
+      <div class="pro-grid">
+        
+        <!-- Left Column: Inputs -->
+        <div class="tool-section">
+          <div class="input-section">
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Monthly Investment</div>
+                <div class="input-val-badge" id="val-sip">₹10,000</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-sip" min="500" max="100000" step="500" value="10000">
+            </div>
+
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Expected Return (p.a)</div>
+                <div class="input-val-badge" id="val-rate">12%</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-rate" min="1" max="30" step="0.5" value="12">
+            </div>
+
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Time Period (Years)</div>
+                <div class="input-val-badge" id="val-years">10Y</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-years" min="1" max="40" step="1" value="10">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="input-group">
+                <div class="input-header">
+                  <div class="input-title">
+                    Step-up (p.a)
+                    <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  </div>
+                  <div class="input-val-badge" id="val-stepup">0%</div>
+                </div>
+                <input type="range" class="slider-pro" id="in-stepup" min="0" max="25" step="1" value="0">
+              </div>
+              <div class="input-group">
+                <div class="input-header">
+                  <div class="input-title">Lumpsum (Initial)</div>
+                </div>
+                <input type="number" class="workspace-input" id="in-lumpsum" value="0" placeholder="₹0">
+              </div>
+            </div>
+
+            <div class="cta-bar">
+              <button class="btn btn-primary" id="btn-copy">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy Summary
+              </button>
+              <button class="btn btn-secondary" id="btn-toggle-table">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/></svg>
+                Breakdown
+              </button>
+            </div>
+          </div>
+
+          <div class="tool-section info-section" style="padding-left:0; padding-right:0">
+            <h3>Compound Interest Power</h3>
+            <p>A 10% annual step-up in your SIP can increase your final corpus by up to 50% over long periods. Start early, step up often.</p>
+          </div>
+        </div>
+
+        <!-- Right Column: Premium Results -->
+        <div class="res-card">
+          <div class="res-header">
+            <div class="res-label-main">Total Future Value</div>
+            <div class="res-value-main" id="out-total">₹0</div>
+          </div>
+
+          <div class="chart-container">
+            <svg class="donut-svg" viewBox="0 0 100 100">
+              <circle class="donut-base" cx="50" cy="50" r="40" />
+              <circle id="donut-invested" class="donut-segment donut-invested" cx="50" cy="50" r="40" />
+              <circle id="donut-gains" class="donut-segment donut-gains" cx="50" cy="50" r="40" />
+            </svg>
+            <div class="chart-center">
+              <div class="chart-center-val" id="out-yield">0%</div>
+              <div class="chart-center-lbl">Returns</div>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-label"><span class="metric-dot" style="background:var(--blue)"></span> Invested</div>
+              <div class="metric-value" id="out-invested">₹0</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label"><span class="metric-dot" style="background:var(--success)"></span> Est. Gains</div>
+              <div class="metric-value" style="color:var(--success)" id="out-gains">₹0</div>
+            </div>
+            <div class="metric-item" style="grid-column: span 2;">
+              <div class="metric-label">
+                Inflation Adjusted (6%)
+                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              </div>
+              <div class="metric-value" style="color:var(--text-3)" id="out-inflation">₹0</div>
+            </div>
+          </div>
+
+          <div id="status-box" style="display:none; text-align:center; padding:12px; background:var(--blue-light); color:var(--blue); border-radius:12px; font-size:0.8rem; font-weight:700;"></div>
+        </div>
+
+      </div>
+
+      <!-- Table Section -->
+      <div class="breakdown-section" id="breakdown-wrap">
+        <div class="input-title">Yearly Growth Projections</div>
+        <div class="table-container" id="table-scroll">
+          <table id="res-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Invested</th>
+                <th>Interest</th>
+                <th>Total Value</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="tool-section info-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">What is SIP?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">A Systematic Investment Plan (SIP) is a method of investing a fixed amount regularly in mutual funds.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">What is the benefit of SIP?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">SIP allows for rupee cost averaging and the power of compounding over the long term.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n) => Math.round(n).toLocaleString('en-IN');
+      const inr = n => '₹' + fmt(n);
+
+      const sliders = ['sip', 'rate', 'years', 'stepup'];
+      const inputs = ['lumpsum'];
+
+      function calculate() {
+        const monthlySipBase = +el('in-sip').value;
+        const annualRate = +el('in-rate').value / 100;
+        const years = +el('in-years').value;
+        const stepUpPct = +el('in-stepup').value / 100;
+        const initialLumpsum = +el('in-lumpsum').value || 0;
+        
+        const monthlyRate = annualRate / 12;
+        const totalMonths = years * 12;
+        const inflationRate = 0.06;
+
+        // UI Updates
+        el('val-sip').textContent = inr(monthlySipBase);
+        el('val-rate').textContent = el('in-rate').value + '%';
+        el('val-years').textContent = years + 'Y';
+        el('val-stepup').textContent = el('in-stepup').value + '%';
+
+        let totalValue = initialLumpsum;
+        let totalInvested = initialLumpsum;
+        let currentSip = monthlySipBase;
+        
+        const yearlyData = [];
+        let runningValue = initialLumpsum;
+        let runningInvested = initialLumpsum;
+
+        for (let y = 1; y <= years; y++) {
+          let yearlyInvested = 0;
+          let startValue = runningValue;
+          
+          for (let m = 1; m <= 12; m++) {
+            runningValue = (runningValue + currentSip) * (1 + monthlyRate);
+            runningInvested += currentSip;
+            yearlyInvested += currentSip;
+          }
+          
+          yearlyData.push({
+            year: y,
+            invested: runningInvested,
+            interest: runningValue - runningInvested,
+            total: runningValue
+          });
+          
+          currentSip *= (1 + stepUpPct);
+        }
+
+        totalValue = runningValue;
+        totalInvested = runningInvested;
+        const totalGains = totalValue - totalInvested;
+        const yieldPct = (totalGains / totalInvested) * 100;
+        const inflationAdjusted = totalValue / Math.pow(1 + inflationRate, years);
+
+        // Update Text
+        el('out-total').textContent = inr(totalValue);
+        el('out-invested').textContent = inr(totalInvested);
+        el('out-gains').textContent = inr(totalGains);
+        el('out-inflation').textContent = inr(inflationAdjusted);
+        el('out-yield').textContent = Math.round(yieldPct) + '%';
+
+        // Update Chart
+        const investedRatio = totalInvested / totalValue;
+        const circumference = 2 * Math.PI * 40;
+        
+        const gainsSeg = el('donut-gains');
+        const invSeg = el('donut-invested');
+        
+        // Total ring represents 100%
+        // Invested part starts from top
+        invSeg.style.strokeDasharray = `${circumference * investedRatio} ${circumference}`;
+        invSeg.style.strokeDashoffset = 0;
+        
+        // Gains part starts after Invested part
+        gainsSeg.style.strokeDasharray = `${circumference * (1 - investedRatio)} ${circumference}`;
+        gainsSeg.style.strokeDashoffset = -(circumference * investedRatio);
+
+        // Update Table
+        const tbody = el('res-table').querySelector('tbody');
+        tbody.innerHTML = yearlyData.map(d => `
+          <tr>
+            <td>Year ${d.year}</td>
+            <td>${inr(d.invested)}</td>
+            <td style="color:var(--success)">+${inr(d.interest)}</td>
+            <td style="font-weight:700">${inr(d.total)}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Event Listeners
+      sliders.forEach(id => {
+        el('in-' + id).addEventListener('input', calculate);
+      });
+      el('in-lumpsum').addEventListener('input', calculate);
+
+      el('btn-toggle-table').onclick = () => {
+        el('table-scroll').classList.toggle('open');
+      };
+
+      el('btn-copy').onclick = () => {
+        const text = `SIP Investment Summary\n------------------\nMonthly: ${inr(el('in-sip').value)}\nPeriod: ${el('in-years').value} Years\nRate: ${el('in-rate').value}%\n\nTotal Invested: ${el('out-invested').textContent}\nEst. Gains: ${el('out-gains').textContent}\nTotal Value: ${el('out-total').textContent}\n\nGenerated via KaruviLab`;
+        
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+          const status = el('status-box');
+          status.textContent = 'Summary copied to clipboard!';
+          status.style.display = 'block';
+          setTimeout(() => status.style.display = 'none', 3000);
+        }
+      };
+
+      calculate();
+    })();
+  </script>
+</body>
+</html>

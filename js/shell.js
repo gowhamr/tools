@@ -66,9 +66,9 @@
           <nav class="ts-desktop-nav" aria-label="Main navigation">
             <a href="${base}" class="ts-nav-link ${active === 'home' ? 'active' : ''}">Home</a>
             <a href="${base}tools/compress/" class="ts-nav-link ${active === 'compress' ? 'active' : ''}">Compress</a>
-            <a href="${base}tools/pdf/" class="ts-nav-link ${active === 'pdf' ? 'active' : ''}">PDF</a>
+            <a href="${base}pdf-tools/" class="ts-nav-link ${active === 'pdf' ? 'active' : ''}">PDF</a>
             <a href="${base}tools/validate/" class="ts-nav-link ${active === 'validate' ? 'active' : ''}">Validate</a>
-            <a href="${base}tools/calculators/" class="ts-nav-link ${active === 'calculators' ? 'active' : ''}">Calculators</a>
+            <a href="${base}calculators/" class="ts-nav-link ${active === 'calculators' ? 'active' : ''}">Calculators</a>
           </nav>
         </div>
         <div style="display:flex;align-items:center;gap:8px">

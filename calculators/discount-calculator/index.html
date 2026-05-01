@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Use our free online Discount Calculator to get accurate results quickly. Simple, fast, and easy to use tool by KaruviLab.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discount Calculator — Free Online Tool — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">Discount Calculator</span>
+        </nav>
+        <h1 class="nav-title">Discount Calculator</h1>
+        <p class="nav-subtitle">Find final price and savings after a discount</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="fmt-grid">
+          <div class="fmt-field">
+            <label class="tool-label">Original Price (₹)</label>
+            <input type="number" class="workspace-input" id="disc-p" value="2500" min="0">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label">Discount (%)</label>
+            <input type="number" class="workspace-input" id="disc-r" value="20" min="0" max="100">
+          </div>
+        </div>
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate</button>
+        </div>
+        <div class="results-area" id="disc-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About the Discount Calculator</h3>
+        <p>Quickly find the final price after a percentage discount and the exact amount you save. Useful during sales, festival offers, or when comparing deals.</p>
+        <h4>Formula used</h4>
+        <p><code>Final Price = Original Price × (1 − Discount / 100)</code></p>
+      </div>
+
+
+      <div class="tool-section info-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">How do I calculate a discount?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">To calculate a discount, multiply the original price by the discount rate and subtract that from the original price.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">What is 'Savings' in the calculator?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Savings represents the amount of money you save after the discount is applied.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n, d = 2) => n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+      const inr = n => '₹' + fmt(n, 0);
+      const metric = (label, value, cls='') => `
+        <div class="result-card" style="margin-bottom:12px">
+          <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">${label}</div>
+          <div style="font-size:1.5rem; font-weight:800; color:${cls==='accent'?'var(--blue)':'var(--text)'}">${value}</div>
+        </div>`;
+
+      el('calc-btn').onclick = () => {
+        const pVal = el('disc-p').value;
+        const rVal = el('disc-r').value;
+        
+        if (!pVal || isNaN(+pVal) || +pVal <= 0) {
+          Shell.toast('Please enter a valid original price.', 'warn');
+          el('disc-p').focus();
+          return;
+        }
+        if (!rVal || isNaN(+rVal) || +rVal < 0 || +rVal > 100) {
+          Shell.toast('Please enter a discount between 0 and 100.', 'warn');
+          el('disc-r').focus();
+          return;
+        }
+
+        const p = +pVal;
+        const r = +rVal;
+        
+        const saved = p * r / 100;
+        const final = p - saved;
+        
+        const res = el('disc-result');
+        res.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            ${metric('Original Price', inr(p))}
+            ${metric('You Save', inr(saved), 'accent')}
+            ${metric('Final Price', inr(final), 'accent')}
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

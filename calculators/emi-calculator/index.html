@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Use our free online EMI Calculator to get accurate results quickly. Simple, fast, and easy to use tool by KaruviLab.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMI Calculator — Free Online Tool — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <style>
+    /* Premium Design Tokens */
+    :root {
+      --premium-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      --accent-gradient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    }
+
+    .pro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .pro-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    /* Result Card Premium Layout */
+    .res-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 20px;
+      overflow: hidden;
+    }
+    .res-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: var(--premium-gradient);
+    }
+
+    .res-header { text-align: center; margin-bottom: 32px; }
+    .res-label-main { font-size: 0.8rem; color: var(--text-3); text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .res-value-main { font-size: 2.5rem; font-weight: 900; color: var(--blue); letter-spacing: -0.02em; }
+
+    /* Donut Chart Styling */
+    .chart-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 32px;
+    }
+    .donut-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .donut-base { fill: transparent; stroke: var(--blue-light); stroke-width: 12; }
+    .donut-segment { fill: transparent; stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 0.8s var(--ease-spring), stroke-dashoffset 0.8s var(--ease-spring); }
+    .donut-principal { stroke: var(--blue); }
+    .donut-interest { stroke: var(--warn); }
+    
+    .chart-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .chart-center-val { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .chart-center-lbl { font-size: 0.6rem; color: var(--text-3); font-weight: 600; text-transform: uppercase; }
+
+    /* Metric Visuals */
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .metric-item { padding: 16px; background: var(--bg-input); border-radius: var(--radius); border: 1px solid transparent; transition: all 0.2s; }
+    .metric-item:hover { border-color: var(--border); background: var(--surface); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .metric-label { font-size: 0.7rem; color: var(--text-3); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .metric-value { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .metric-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Input UX */
+    .input-section { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border); }
+    .input-group { margin-bottom: 28px; }
+    .input-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .input-title { font-size: 0.9rem; font-weight: 800; color: var(--text); }
+    .input-val-badge { background: var(--blue-light); color: var(--blue); font-weight: 800; font-size: 0.85rem; padding: 4px 10px; border-radius: 8px; }
+    
+    .slider-pro {
+      width: 100%; height: 6px; background: var(--border); border-radius: 3px; outline: none; -webkit-appearance: none;
+    }
+    .slider-pro::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; background: #fff; border: 2px solid var(--blue); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.2s;
+    }
+    .slider-pro::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 0 6px var(--blue-glow); }
+
+    .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+
+    /* Amortization Schedule Table */
+    .schedule-section { margin-top: 40px; }
+    .table-container { 
+      max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease-expo); 
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .table-container.open { max-height: 2000px; margin-top: 16px; border-bottom: 4px solid var(--blue); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 12px 16px; background: var(--bg-input); color: var(--text-3); font-weight: 700; text-transform: uppercase; font-size: 0.7rem; }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border-2); color: var(--text-2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-input); }
+
+    @media (max-width: 600px) {
+      .res-card { padding: 24px; position: static; }
+      .res-value-main { font-size: 1.8rem; }
+      .metrics-grid { gap: 12px; }
+      .cta-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">EMI Calculator</span>
+        </nav>
+        <h1 class="nav-title">EMI Calculator</h1>
+        <p class="nav-subtitle">Calculate Equated Monthly Installments for loans</p>
+      </div>
+    </div>
+    
+    <div class="panel-scroll">
+      <div class="pro-grid">
+        
+        <!-- Input Panel -->
+        <div class="tool-section">
+          <div class="input-section">
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Loan Amount</div>
+                <div class="input-val-badge" id="val-amt">₹10,00,000</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-amt" min="50000" max="10000000" step="50000" value="1000000">
+            </div>
+
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Interest Rate (p.a)</div>
+                <div class="input-val-badge" id="val-rate">9.5%</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-rate" min="1" max="25" step="0.1" value="9.5">
+            </div>
+
+            <div class="input-group">
+              <div class="input-header">
+                <div class="input-title">Tenure (Years)</div>
+                <div class="input-val-badge" id="val-years">20Y</div>
+              </div>
+              <input type="range" class="slider-pro" id="in-years" min="1" max="30" step="1" value="20">
+            </div>
+
+            <div class="cta-row">
+              <button class="btn btn-primary" id="btn-copy">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy Details
+              </button>
+              <button class="btn btn-secondary" id="btn-toggle-table">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/></svg>
+                Schedule
+              </button>
+            </div>
+          </div>
+
+          <div class="tool-section info-section" style="padding-left:0; padding-right:0">
+            <h3>Understanding EMI</h3>
+            <p>Your EMI consists of both principal and interest components. In the initial years, the interest component is higher, while toward the end of the tenure, the principal repayment dominates.</p>
+          </div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="res-card">
+          <div class="res-header">
+            <div class="res-label-main">Monthly EMI</div>
+            <div class="res-value-main" id="out-emi">₹0</div>
+          </div>
+
+          <div class="chart-container">
+            <svg class="donut-svg" viewBox="0 0 100 100">
+              <circle class="donut-base" cx="50" cy="50" r="40" />
+              <circle id="donut-principal" class="donut-segment donut-principal" cx="50" cy="50" r="40" />
+              <circle id="donut-interest" class="donut-segment donut-interest" cx="50" cy="50" r="40" />
+            </svg>
+            <div class="chart-center">
+              <div class="chart-center-val" id="out-interest-ratio">0%</div>
+              <div class="chart-center-lbl">Interest</div>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-label"><span class="metric-dot" style="background:var(--blue)"></span> Principal</div>
+              <div class="metric-value" id="out-principal">₹0</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label"><span class="metric-dot" style="background:var(--warn)"></span> Total Interest</div>
+              <div class="metric-value" style="color:var(--warn)" id="out-interest">₹0</div>
+            </div>
+            <div class="metric-item" style="grid-column: span 2;">
+              <div class="metric-label">Total Amount Payable</div>
+              <div class="metric-value" style="color:var(--text-3)" id="out-total">₹0</div>
+            </div>
+          </div>
+
+          <div id="status-box" style="display:none; text-align:center; padding:12px; background:var(--blue-light); color:var(--blue); border-radius:12px; font-size:0.8rem; font-weight:700;"></div>
+        </div>
+
+      </div>
+
+      <!-- Schedule Table -->
+      <div class="schedule-section">
+        <div class="input-title">Amortization Schedule (Yearly)</div>
+        <div class="table-container" id="table-scroll">
+          <table id="res-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Principal Paid</th>
+                <th>Interest Paid</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="tool-section info-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">What is EMI?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Equated Monthly Installment (EMI) is a fixed payment amount made by a borrower to a lender at a specified date each calendar month.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">How is loan EMI calculated?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">EMI is calculated using the formula: [P x R x (1+R)^N]/[(1+R)^N-1], where P is principal, R is monthly interest rate, and N is number of months.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const fmt = (n) => Math.round(n).toLocaleString('en-IN');
+      const inr = n => '₹' + fmt(n);
+
+      const sliders = ['amt', 'rate', 'years'];
+
+      function calculate() {
+        const P = +el('in-amt').value;
+        const annualRate = +el('in-rate').value;
+        const r = annualRate / 12 / 100;
+        const years = +el('in-years').value;
+        const n = years * 12;
+
+        // UI Updates
+        el('val-amt').textContent = inr(P);
+        el('val-rate').textContent = annualRate + '%';
+        el('val-years').textContent = years + 'Y';
+
+        const emi = r === 0 ? P / n : (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        const totalPayable = emi * n;
+        const totalInterest = totalPayable - P;
+        const interestRatio = totalInterest / totalPayable;
+
+        // Update Text
+        el('out-emi').textContent = inr(emi);
+        el('out-principal').textContent = inr(P);
+        el('out-interest').textContent = inr(totalInterest);
+        el('out-total').textContent = inr(totalPayable);
+        el('out-interest-ratio').textContent = Math.round(interestRatio * 100) + '%';
+
+        // Update Donut
+        const circumference = 2 * Math.PI * 40;
+        const pSeg = el('donut-principal');
+        const iSeg = el('donut-interest');
+        
+        const pRatio = P / totalPayable;
+        pSeg.style.strokeDasharray = `${circumference * pRatio} ${circumference}`;
+        pSeg.style.strokeDashoffset = 0;
+        
+        iSeg.style.strokeDasharray = `${circumference * (1 - pRatio)} ${circumference}`;
+        iSeg.style.strokeDashoffset = -(circumference * pRatio);
+
+        // Yearly Schedule
+        const tbody = el('res-table').querySelector('tbody');
+        let balance = P;
+        const yearlyData = [];
+        
+        for (let y = 1; y <= years; y++) {
+          let yInterest = 0;
+          let yPrincipal = 0;
+          for (let m = 1; m <= 12; m++) {
+            const interest = balance * r;
+            const principal = emi - interest;
+            yInterest += interest;
+            yPrincipal += principal;
+            balance -= principal;
+          }
+          yearlyData.push(`
+            <tr>
+              <td>Year ${y}</td>
+              <td>${inr(yPrincipal)}</td>
+              <td style="color:var(--warn)">${inr(yInterest)}</td>
+              <td style="font-weight:700">${inr(Math.max(0, balance))}</td>
+            </tr>
+          `);
+        }
+        tbody.innerHTML = yearlyData.join('');
+      }
+
+      sliders.forEach(id => {
+        el('in-' + id).addEventListener('input', calculate);
+      });
+
+      el('btn-toggle-table').onclick = () => {
+        el('table-scroll').classList.toggle('open');
+      };
+
+      el('btn-copy').onclick = () => {
+        const text = `Loan EMI Details\n------------------\nPrincipal: ${inr(el('in-amt').value)}\nRate: ${el('in-rate').value}%\nTenure: ${el('in-years').value} Years\n\nMonthly EMI: ${el('out-emi').textContent}\nTotal Interest: ${el('out-interest').textContent}\nTotal Payable: ${el('out-total').textContent}\n\nGenerated via KaruviLab`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+          const status = el('status-box');
+          status.textContent = 'Details copied to clipboard!';
+          status.style.display = 'block';
+          setTimeout(() => status.style.display = 'none', 3000);
+        }
+      };
+
+      calculate();
+    })();
+  </script>
+</body>
+</html>

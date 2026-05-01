@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Use our free online Percentage Calculator to get accurate results quickly. Simple, fast, and easy to use tool by KaruviLab.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Percentage Calculator — Free Online Tool — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <nav class="breadcrumb-nav" style="margin-bottom:24px; font-size:0.85rem; color:var(--text-3);">
+          <a href="../../" style="color:inherit; text-decoration:none;">Home</a> &nbsp;&rsaquo;&nbsp; 
+          <a href="../" style="color:inherit; text-decoration:none;">Calculators</a> &nbsp;&rsaquo;&nbsp; 
+          <span style="color:var(--text-1); font-weight:600;">Percentage Calculator</span>
+        </nav>
+        <h1 class="nav-title">Percentage Calculator</h1>
+        <p class="nav-subtitle">X% of Y, percentage change, and ratio tools</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="preset-chips" id="pct-toggle">
+          <button class="preset-chip active" data-mode="1">X% of Y</button>
+          <button class="preset-chip" data-mode="2">X is what % of Y</button>
+          <button class="preset-chip" data-mode="3">% Change</button>
+        </div>
+
+        <div class="fmt-grid" style="margin-top:20px">
+          <div class="fmt-field">
+            <label class="tool-label" id="pct-lbl-a">X (%)</label>
+            <input type="number" class="workspace-input" id="pct-a" value="25">
+          </div>
+          <div class="fmt-field">
+            <label class="tool-label" id="pct-lbl-b">Y</label>
+            <input type="number" class="workspace-input" id="pct-b" value="200">
+          </div>
+        </div>
+
+        <div class="fmt-actions">
+          <button class="fmt-btn fmt-btn-primary" id="calc-btn">Calculate</button>
+        </div>
+        <div class="results-area" id="pct-result" style="display:none; margin-top: 24px;"></div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About Percentage Calculations</h3>
+        <p>This tool covers the three most common percentage use cases: finding a portion, finding a percentage ratio, and finding growth/decline.</p>
+      </div>
+
+
+      <div class="tool-section info-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">How do I find a percentage of a number?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Multiply the number by the percentage and divide by 100.</p>
+        </div>
+        <div class="faq-item" style="margin-bottom:20px;">
+          <h4 style="margin-bottom:8px; color:var(--text-1);">Can it calculate percentage change?</h4>
+          <p style="color:var(--text-2); font-size:0.9rem;">Yes, it can calculate the percentage increase or decrease between two values.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      let pctMode = '1';
+      const pctLabels = { '1': ['X (%)', 'Y'], '2': ['X', 'Y'], '3': ['Old Value', 'New Value'] };
+      
+      const btns = document.querySelectorAll('#pct-toggle button');
+      btns.forEach(b => {
+        b.onclick = () => {
+          btns.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          pctMode = b.dataset.mode;
+          el('pct-lbl-a').textContent = pctLabels[pctMode][0];
+          el('pct-lbl-b').textContent = pctLabels[pctMode][1];
+        };
+      });
+
+      el('calc-btn').onclick = () => {
+        const a = +el('pct-a').value, b = +el('pct-b').value;
+        const res = el('pct-result');
+        let out, label;
+        
+        if (pctMode === '1') {
+          out = (a * b / 100).toLocaleString();
+          label = `${a}% of ${b}`;
+        } else if (pctMode === '2') {
+          out = ((a / b) * 100).toFixed(2) + '%';
+          label = `${a} as % of ${b}`;
+        } else {
+          out = (((b - a) / a) * 100).toFixed(2) + '%';
+          label = `Change from ${a} to ${b}`;
+        }
+        
+        res.innerHTML = `
+          <div class="result-card">
+            <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:8px;">${label}</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--blue)">${out}</div>
+          </div>`;
+        res.style.display = 'block';
+      };
+    })();
+  </script>
+</body>
+</html>

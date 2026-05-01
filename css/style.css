@@ -539,12 +539,12 @@ body.app-shell {
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 32px;
 }
 @media (min-width: 641px) {
   .cat-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 }
@@ -556,7 +556,7 @@ body.app-shell {
 }
 @media (min-width: 1441px) {
   .cat-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 24px;
   }
 }
@@ -620,6 +620,26 @@ body.app-shell {
 
 /* Scrollable content area inside tool panel */
 .panel-scroll { padding: var(--space-6) var(--space-4) var(--space-10); }
+
+/* ── Navigation Components ── */
+.breadcrumb-nav {
+  margin-bottom: 24px;
+  font-size: 0.82rem;
+  color: var(--text-3);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.breadcrumb-nav a {
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.breadcrumb-nav a:hover { color: var(--blue); }
+.breadcrumb-nav .current { color: var(--text-1); font-weight: 700; }
+.breadcrumb-sep { opacity: 0.5; padding: 0 4px; }
 
 /* ════════════════════════════════════════════════════
    DOCK

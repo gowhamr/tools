@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'compressor': 'compress',
       'converter': 'convert',
       'creator': 'create',
-      'pdf': 'pdf',
+      'pdf': 'pdf-tools',
       'validator': 'validate',
       'calculators': 'calculators',
       'base64': 'base64',
@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
       'split-copy': 'split-copy'
     };
     if (panelMap[panelId]) {
-      window.location.href = `/tools/${panelMap[panelId]}/`;
+      const path = panelMap[panelId].includes('-') || panelMap[panelId] === 'calculators' 
+        ? `/${panelMap[panelId]}/` 
+        : `/tools/${panelMap[panelId]}/`;
+      window.location.href = path;
     }
   }
 
