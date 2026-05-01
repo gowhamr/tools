@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIP Calculator Pro — KaruviLab</title>
+  <title>SIP Calculator — KaruviLab</title>
   <link rel="stylesheet" href="../../../css/style.css">
   <script>window.SHELL_ACTIVE = 'calculators';</script>
   <style>
@@ -15,7 +15,12 @@
       align-items: start;
     }
     @media (max-width: 900px) {
-      .pro-grid { grid-template-columns: 1fr; gap: 24px; }
+      .pro-grid { 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+        display: flex;
+        flex-direction: column-reverse; /* Put results first for better mobile hierarchy */
+      }
     }
 
     /* Result Aesthetics */
@@ -25,10 +30,17 @@
       border-radius: var(--radius);
       padding: 24px;
       box-shadow: var(--shadow-sm);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+      position: sticky;
+      top: 20px;
+    }
+    .res-highlight:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--blue);
     }
     .res-label { font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px; }
-    .res-value { font-size: 1.75rem; font-weight: 800; color: var(--blue); margin-bottom: 20px; }
-    .res-value.accent { color: var(--success); }
+    .res-value { font-size: 1.85rem; font-weight: 800; color: var(--blue); margin-bottom: 20px; transition: color 0.3s; }
 
     /* Split Visualization */
     .res-viz { margin-top: 16px; margin-bottom: 24px; }
@@ -39,7 +51,7 @@
       display: flex;
       overflow: hidden;
     }
-    .viz-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .viz-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
     .viz-invested { background: var(--blue); }
     .viz-gains { background: #10B981; }
     .viz-legend {
@@ -63,66 +75,49 @@
     }
     .input-group-title:first-child { margin-top: 0; }
     
-    .range-wrap { margin-top: 8px; }
-    input[type=range] { width: 100%; margin-top: 8px; cursor: pointer; }
+    .range-wrap { margin-top: 12px; }
+    input[type=range] { 
+      width: 100%; 
+      margin-top: 8px; 
+      cursor: pointer;
+      accent-color: var(--blue);
+    }
+
+    /* Interactive Feedback */
+    .workspace-input, .fmt-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .workspace-input:focus {
+      transform: scale(1.01);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px var(--blue-light);
+    }
+    .fmt-btn:active {
+      transform: scale(0.96);
+    }
+    
+    /* Mobile thumb reach / Ergonomics */
+    @media (max-width: 600px) {
+      .panel-scroll { padding: 16px 16px 80px; } /* Extra bottom padding */
+      .res-highlight { padding: 20px; position: static; }
+      .res-value { font-size: 1.6rem; }
+      .fmt-field { margin-bottom: 16px; }
+      .input-group-title { margin-top: 16px; }
+    }
   </style>
 </head>
 <body>
   <div class="panel tool-panel active">
     <div class="panel-nav">
       <div class="nav-head">
-        <p class="nav-title">SIP Calculator Pro</p>
-        <p class="nav-subtitle">Systematic Investment Plan with Step-up & Inflation</p>
+        <p class="nav-title">SIP Calculator</p>
+        <p class="nav-subtitle">Smart planning for your wealth goals</p>
       </div>
     </div>
     <div class="panel-scroll">
       <div class="pro-grid">
         
-        <!-- Left: Inputs -->
-        <div class="tool-section">
-          <div class="input-group-title">Base Investment</div>
-          <div class="fmt-grid" style="grid-template-columns: 1fr;">
-            <div class="fmt-field">
-              <label class="tool-label">Monthly SIP Amount (₹)</label>
-              <input type="number" class="workspace-input" id="sip-amt" value="10000" min="500" step="500">
-              <div class="range-wrap"><input type="range" id="sip-amt-range" min="500" max="100000" step="500" value="10000"></div>
-            </div>
-            <div class="fmt-field">
-              <label class="tool-label">Lumpsum / Initial Investment (₹)</label>
-              <input type="number" class="workspace-input" id="sip-lumpsum" value="0" min="0" step="1000">
-            </div>
-          </div>
-
-          <div class="input-group-title">Growth & Tenure</div>
-          <div class="fmt-grid">
-            <div class="fmt-field">
-              <label class="tool-label">Expected Return (%)</label>
-              <input type="number" class="workspace-input" id="sip-rate" value="12" step="0.5" min="1" max="30">
-              <div class="range-wrap"><input type="range" id="sip-rate-range" min="1" max="30" step="0.5" value="12"></div>
-            </div>
-            <div class="fmt-field">
-              <label class="tool-label">Time Period (Years)</label>
-              <input type="number" class="workspace-input" id="sip-years" value="10" min="1" max="40">
-              <div class="range-wrap"><input type="range" id="sip-years-range" min="1" max="40" value="10"></div>
-            </div>
-          </div>
-
-          <div class="input-group-title">Advanced Options</div>
-          <div class="fmt-grid">
-            <div class="fmt-field">
-              <label class="tool-label">Annual Step-up (%)</label>
-              <input type="number" class="workspace-input" id="sip-stepup" value="0" min="0" max="50">
-              <p style="font-size:0.7rem; color:var(--text-3); margin-top:4px;">Increase SIP amount yearly</p>
-            </div>
-            <div class="fmt-field">
-              <label class="tool-label">Inflation Rate (%)</label>
-              <input type="number" class="workspace-input" id="sip-inflation" value="6" min="0" max="15">
-              <p style="font-size:0.7rem; color:var(--text-3); margin-top:4px;">Adjust for future purchasing power</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Results -->
+        <!-- Right: Results (Promoted in Hierarchy) -->
         <div class="res-highlight">
           <div class="res-label">Total Estimated Value</div>
           <div class="res-value" id="out-total">₹0</div>
@@ -133,7 +128,7 @@
               <div id="viz-gains-bar" class="viz-fill viz-gains" style="width: 50%;"></div>
             </div>
             <div class="viz-legend">
-              <div class="legend-item"><span class="dot viz-invested"></span> Total Invested</div>
+              <div class="legend-item"><span class="dot viz-invested"></span> Invested</div>
               <div class="legend-item"><span class="dot viz-gains"></span> Est. Returns</div>
             </div>
           </div>
@@ -149,20 +144,60 @@
             </div>
           </div>
 
-          <div style="margin-top: 32px; padding-top: 24px; border-top: 1px dashed var(--border);">
-            <div class="res-label">Inflation Adjusted Value</div>
+          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border);">
+            <div class="res-label">Inflation Adjusted (6%)</div>
             <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-3);" id="out-inflation">₹0</div>
-            <p style="font-size: 0.75rem; color: var(--text-3); margin-top: 4px;">Value in today's money</p>
+            <p style="font-size: 0.72rem; color: var(--text-3); margin-top: 4px;">Wealth in today's purchasing power</p>
+          </div>
+        </div>
+
+        <!-- Left: Inputs -->
+        <div class="tool-section">
+          <div class="input-group-title">Monthly Goal</div>
+          <div class="fmt-grid" style="grid-template-columns: 1fr;">
+            <div class="fmt-field">
+              <label class="tool-label">Investment Amount (₹)</label>
+              <input type="number" class="workspace-input" id="sip-amt" value="10000" min="500" step="500">
+              <div class="range-wrap"><input type="range" id="sip-amt-range" min="500" max="100000" step="500" value="10000"></div>
+            </div>
+          </div>
+
+          <div class="input-group-title">Growth & Time</div>
+          <div class="fmt-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="fmt-field">
+              <label class="tool-label">Return (%)</label>
+              <input type="number" class="workspace-input" id="sip-rate" value="12" step="0.5" min="1" max="30">
+              <div class="range-wrap"><input type="range" id="sip-rate-range" min="1" max="30" step="0.5" value="12"></div>
+            </div>
+            <div class="fmt-field">
+              <label class="tool-label">Years</label>
+              <input type="number" class="workspace-input" id="sip-years" value="10" min="1" max="40">
+              <div class="range-wrap"><input type="range" id="sip-years-range" min="1" max="40" value="10"></div>
+            </div>
+          </div>
+
+          <div class="input-group-title">Step-up & Lumpsum</div>
+          <div class="fmt-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="fmt-field">
+              <label class="tool-label">Step-up (%)</label>
+              <input type="number" class="workspace-input" id="sip-stepup" value="0" min="0" max="50">
+            </div>
+            <div class="fmt-field">
+              <label class="tool-label">Initial (₹)</label>
+              <input type="number" class="workspace-input" id="sip-lumpsum" value="0" min="0" step="1000">
+            </div>
+          </div>
+          
+          <div style="margin-top: 24px;">
+            <button class="fmt-btn fmt-btn-primary" style="width: 100%; padding: 14px;" id="calc-btn">Recalculate</button>
           </div>
         </div>
 
       </div>
 
       <div class="tool-section info-section" style="margin-top: 48px;">
-        <h3>Why use Step-up SIP?</h3>
-        <p>A <strong>Step-up SIP</strong> allows you to increase your investment amount periodically (usually yearly) as your income grows. Even a small 5-10% annual increase can significantly boost your final corpus due to the power of compounding.</p>
-        <h4>The Real Value (Inflation)</h4>
-        <p>While ₹1 Crore sounds like a lot, inflation reduces its purchasing power over time. If inflation is 6%, ₹1 Crore today will only buy what ₹31 Lakhs buys in 20 years. This calculator helps you see that "Real Value".</p>
+        <h3>Pro Tips</h3>
+        <p>A <strong>Step-up SIP</strong> (increasing your investment by 10% each year) can nearly double your final corpus compared to a flat SIP. This calculator accounts for that compounding power automatically.</p>
       </div>
     </div>
   </div>
@@ -177,7 +212,7 @@
       const inr = n => '₹' + fmt(n);
 
       const inputs = [
-        'sip-amt', 'sip-lumpsum', 'sip-rate', 'sip-years', 'sip-stepup', 'sip-inflation',
+        'sip-amt', 'sip-lumpsum', 'sip-rate', 'sip-years', 'sip-stepup',
         'sip-amt-range', 'sip-rate-range', 'sip-years-range'
       ];
 
@@ -187,7 +222,7 @@
         const annualRate = +el('sip-rate').value / 100;
         const years = +el('sip-years').value;
         const stepUpPct = +el('sip-stepup').value / 100;
-        const inflationRate = +el('sip-inflation').value / 100;
+        const inflationRate = 0.06; // Fixed 6% for pro display
 
         const monthlyRate = annualRate / 12;
         const totalMonths = years * 12;
@@ -195,42 +230,33 @@
         let totalValue = lumpsum * Math.pow(1 + monthlyRate, totalMonths);
         let totalInvested = lumpsum;
         
-        // SIP Calculation with Step-up
         let currentSip = monthlySip;
         for (let year = 1; years >= year; year++) {
-          const monthsInYear = 12;
-          // Calculate for 12 months of this year
-          for (let month = 1; monthsInYear >= month; month++) {
+          for (let month = 1; 12 >= month; month++) {
             const monthsRemaining = totalMonths - ((year - 1) * 12 + month) + 1;
             totalValue += currentSip * Math.pow(1 + monthlyRate, monthsRemaining);
             totalInvested += currentSip;
           }
-          // Apply step-up for next year
           currentSip *= (1 + stepUpPct);
         }
 
         const estGains = totalValue - totalInvested;
         const inflationAdjusted = totalValue / Math.pow(1 + inflationRate, years);
 
-        // Update UI
         el('out-total').textContent = inr(totalValue);
         el('out-invested').textContent = inr(totalInvested);
         el('out-gains').textContent = inr(estGains);
         el('out-inflation').textContent = inr(inflationAdjusted);
 
-        // Viz
         const investedRatio = (totalInvested / totalValue) * 100;
         el('viz-invested-bar').style.width = investedRatio + '%';
         el('viz-gains-bar').style.width = (100 - investedRatio) + '%';
       }
 
-      // Bind events
       inputs.forEach(id => {
         const input = el(id);
         if (!input) return;
-        
         input.addEventListener('input', (e) => {
-          // Sync range and number
           if (id.includes('-range')) {
             const baseId = id.replace('-range', '');
             el(baseId).value = e.target.value;
@@ -241,6 +267,7 @@
         });
       });
 
+      el('calc-btn').addEventListener('click', calculate);
       calculate();
     })();
   </script>
