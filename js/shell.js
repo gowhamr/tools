@@ -160,21 +160,25 @@
 
     setupErrorHandling() {
       window.addEventListener('error', (e) => {
-        if (e.filename && (e.filename.includes('/js/') || e.filename.includes('tool'))) {
-          console.error('KaruviLab Tool Error:', e.message);
-          const scroll = document.querySelector('.panel-scroll');
-          if (scroll && !scroll.querySelector('.tool-error-fallback')) {
-            const err = document.createElement('div');
-            err.className = 'tool-error-fallback';
-            err.style.cssText = 'padding:40px 20px;text-align:center;color:var(--text-3);';
-            err.innerHTML = `
-              <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-              <p style="font-weight:600;margin-bottom:8px">Oops! This tool encountered an error.</p>
-              <p style="font-size:.85rem;margin-bottom:20px">Please try refreshing the page or contact support if the issue persists.</p>
-              <button onclick="location.reload()" class="fmt-btn" style="display:inline-flex">Refresh Page</button>
-            `;
-            scroll.prepend(err);
-          }
+        // Catch errors from tool JS files and inline scripts (no filename for inline)
+        const fromToolFile = e.filename && (e.filename.includes('/js/') || e.filename.includes('tool'));
+        const fromInline = !e.filename;
+        if (!fromToolFile && !fromInline) return;
+
+        console.error('KaruviLab Tool Error:', e.message, e.filename || '(inline)');
+        const scroll = document.querySelector('.panel-scroll');
+        if (scroll && !scroll.querySelector('.tool-error-fallback')) {
+          const isCalc = window.SHELL_ACTIVE === 'calculators';
+          const err = document.createElement('div');
+          err.className = 'tool-error-fallback';
+          err.style.cssText = 'padding:40px 20px;text-align:center;color:var(--text-3);';
+          err.innerHTML = `
+            <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+            <p style="font-weight:600;margin-bottom:8px">${isCalc ? 'Calculator failed to load. Please refresh.' : 'Oops! This tool encountered an error.'}</p>
+            <p style="font-size:.85rem;margin-bottom:20px">Please try refreshing the page or contact support if the issue persists.</p>
+            <button onclick="location.reload()" class="fmt-btn" style="display:inline-flex">Refresh Page</button>
+          `;
+          scroll.prepend(err);
         }
       });
     },
