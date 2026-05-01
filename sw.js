@@ -1,4 +1,4 @@
-const CACHE_NAME = 'karuvilab-v13';
+const CACHE_NAME = 'karuvilab-v14';
 const ASSETS = [
   './',
   './index.html',

@@ -1773,7 +1773,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
     align-items: center;
     gap: 0;
   }
-  .panel-nav .nav-back { display: none; }
+  .panel-nav .nav-back { display: flex; }
   .panel-nav .nav-head { padding: 0; }
   .panel-nav .nav-title { font-size: 1.75rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
   .panel-nav .nav-subtitle { font-size: .95rem; color: var(--text-3); margin-top: 4px; font-weight: 450; }

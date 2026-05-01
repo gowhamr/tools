@@ -18,13 +18,16 @@
     },
 
     goHome() {
-      window.location.href = window.KARUVI_BASE;
+      const b = window.KARUVI_BASE || '/';
+      // If we're already at a depth > 0 within tools, maybe we want to go back to tools/?
+      // But Shell.goHome should consistently go to the root base.
+      window.location.href = b;
     },
 
     render() {
       const active = window.SHELL_ACTIVE || 'home';
       document.body.classList.add('app-shell');
-      const base = window.KARUVI_BASE;
+      const base = window.KARUVI_BASE || '/';
 
       // SVG Sprite
       const sprite = document.createElement('div');
