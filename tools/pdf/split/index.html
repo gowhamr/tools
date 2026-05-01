@@ -84,6 +84,11 @@
       let mode = 'all';
 
       const updateFileUI = async (file) => {
+        const check = Utils.validateFile(file, ['pdf'], 50);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
         selectedFile = file;
         el('pdf-name').textContent = file.name;
         el('file-info').style.display = 'block';

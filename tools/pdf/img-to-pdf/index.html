@@ -108,8 +108,18 @@
       window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
 
       const handleFiles = (newFiles) => {
-        files = [...files, ...Array.from(newFiles).filter(f => f.type.startsWith('image/'))];
-        updateUI();
+        let addedCount = 0;
+        const ALL_IMG = ['jpg','jpeg','png','webp','avif','tiff','tif','bmp','heic','heif'];
+        Array.from(newFiles).forEach(f => {
+          const check = Utils.validateFile(f, ALL_IMG, 20);
+          if (check.valid) {
+            files.push(f);
+            addedCount++;
+          } else {
+            Shell.toast(`${f.name}: ${check.error}`, 'error');
+          }
+        });
+        if (addedCount > 0) updateUI();
       };
 
       dropZone.onclick = () => input.click();

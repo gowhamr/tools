@@ -132,7 +132,7 @@ function mdInit() {
       const auto = (typeof hljs !== 'undefined') ? hljs.highlightAuto(safeCode).value : safeCode;
       return `<pre data-lang="${safeLang}"><code class="hljs">${auto}</code></pre>`;
     };
-    marked.setOptions({ renderer, gfm: true, breaks: true });
+    marked.setOptions({ renderer, gfm: true, breaks: true, sanitize: true });
     if (typeof mermaid !== 'undefined') {
       mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
     }
@@ -432,8 +432,9 @@ function mdHandleDrop(e) {
 function mdHandleFileInput(e) { if (e.target.files.length > 0) mdProcessFile(e.target.files[0]); }
 
 function mdProcessFile(file) {
-  if (!file.name.match(/\.(md|markdown)$/i)) {
-    mdShowSnackbar('Only .md files supported.', 'error');
+  const check = Utils.validateFile(file, ['md', 'markdown'], 5);
+  if (!check.valid) {
+    Shell.toast(check.error, 'error');
     return;
   }
   const reader = new FileReader();
@@ -442,9 +443,9 @@ function mdProcessFile(file) {
     mdRenderUploadPreview(mdLastUploadMd);
     document.getElementById('md-file-name').textContent = file.name;
     document.getElementById('md-file-info').classList.remove('hidden');
-    mdShowSnackbar(`"${file.name}" loaded.`, 'info');
+    Shell.toast(`"${file.name}" loaded.`, 'success');
   };
-  reader.onerror = () => mdShowSnackbar('Failed to read file.', 'error');
+  reader.onerror = () => Shell.toast('Failed to read file.', 'error');
   reader.readAsText(file);
 }
 

@@ -133,10 +133,10 @@
         res.innerHTML = `
           <div class="result-card">
             <div style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase; font-weight:700;">Converted Amount</div>
-            <div style="font-size:1.8rem; font-weight:800; color:var(--blue)">${converted.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} ${curTo.value}</div>
-            <div style="font-size:0.8rem; color:var(--text-3); margin-top:8px;">1 ${curFrom.value} = ${rate.toFixed(4)} ${curTo.value}</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--blue)">${converted.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} ${Utils.escHtml(curTo.value)}</div>
+            <div style="font-size:0.8rem; color:var(--text-3); margin-top:8px;">1 ${Utils.escHtml(curFrom.value)} = ${rate.toFixed(4)} ${Utils.escHtml(curTo.value)}</div>
             <div style="font-size:0.7rem; color:var(--text-3); margin-top:12px; border-top:1px solid var(--border); padding-top:8px;">
-              Source: ${meta.source} (${meta.freshness})
+              Source: ${Utils.escHtml(meta.source)} (${Utils.escHtml(meta.freshness)})
             </div>
           </div>`;
       }

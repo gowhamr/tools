@@ -181,7 +181,35 @@ const Utils = (() => {
     };
   }
 
+  /**
+   * Validate a file for allowed types and max size.
+   * @param {File} file 
+   * @param {string[]} allowedExtensions (e.g. ['jpg', 'png', 'pdf'])
+   * @param {number} maxMB 
+   * @returns {{valid: boolean, error: string}}
+   */
+  function validateFile(file, allowedExtensions = [], maxMB = 20) {
+    if (!file) return { valid: false, error: 'No file selected.' };
+    
+    // Check size
+    const maxSize = maxMB * 1024 * 1024;
+    if (file.size > maxSize) {
+      return { valid: false, error: `File is too large (max ${maxMB}MB).` };
+    }
+
+    // Check extension
+    if (allowedExtensions.length > 0) {
+      const ext = getExt(file.name);
+      if (!allowedExtensions.includes(ext)) {
+        return { valid: false, error: `Invalid file type. Allowed: ${allowedExtensions.join(', ')}` };
+      }
+    }
+
+    return { valid: true };
+  }
+
   return { formatBytes, safeName, hasSpecialChars, readAsDataURL, readAsArrayBuffer,
            loadImage, downloadBlob, drawResized, canvasToBlob, mimeFromExt, extFromMime,
-           supportsFormat, replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars, debounce };
+           supportsFormat, replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars, debounce,
+           validateFile };
 })();

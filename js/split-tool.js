@@ -133,6 +133,11 @@
 
     handleFiles(files) {
       const file = files[0];
+      const check = Utils.validateFile(file, ['txt', 'js', 'json', 'html', 'css', 'md'], 5);
+      if (!check.valid) {
+        Shell.toast(check.error, 'error');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         this.els.input.value = e.target.result;

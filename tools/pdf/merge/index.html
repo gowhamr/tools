@@ -86,8 +86,17 @@
       window.removeFile = (i) => { files.splice(i, 1); updateUI(); };
 
       const handleFiles = (newFiles) => {
-        files = [...files, ...Array.from(newFiles).filter(f => f.type === 'application/pdf')];
-        updateUI();
+        let addedCount = 0;
+        Array.from(newFiles).forEach(f => {
+          const check = Utils.validateFile(f, ['pdf'], 50);
+          if (check.valid) {
+            files.push(f);
+            addedCount++;
+          } else {
+            Shell.toast(`${f.name}: ${check.error}`, 'error');
+          }
+        });
+        if (addedCount > 0) updateUI();
       };
 
       dropZone.onclick = () => input.click();

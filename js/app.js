@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════
   //  DROP ZONE FACTORY
   // ══════════════════════════════════════════════════════
-  function setupDropZone(zoneId, inputId, fileListId, onFilesAdded) {
+  function setupDropZone(zoneId, inputId, fileListId, onFilesAdded, allowedExts = []) {
     const zone  = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
     const files = [];
@@ -172,9 +172,20 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('change', () => { addFiles(Array.from(input.files)); input.value = ''; });
 
     function addFiles(newFiles) {
-      newFiles.forEach(f => files.push(f));
-      if (fileListId) renderFileList(fileListId, files, () => onFilesAdded(files));
-      onFilesAdded(files);
+      let addedCount = 0;
+      newFiles.forEach(f => {
+        const check = Utils.validateFile(f, allowedExts);
+        if (check.valid) {
+          files.push(f);
+          addedCount++;
+        } else {
+          Shell.toast(`${f.name}: ${check.error}`, 'error');
+        }
+      });
+      if (addedCount > 0) {
+        if (fileListId) renderFileList(fileListId, files, () => onFilesAdded(files));
+        onFilesAdded(files);
+      }
     }
     return files;
   }
@@ -295,7 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (compressBtn) compressBtn.disabled = compressorFiles.length === 0;
   }
 
-  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => { syncCompressBtn(); });
+  const ALL_IMG = ['jpg','jpeg','png','webp','avif','tiff','tif','bmp','heic','heif'];
+  const ALL_FILE = [...ALL_IMG, 'pdf'];
+
+  const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => { syncCompressBtn(); }, ALL_FILE);
   document.getElementById('compressor-drop')?.addEventListener('drop',    () => setTimeout(runCompressor, 120));
   document.getElementById('compressor-input')?.addEventListener('change', () => setTimeout(runCompressor, 120));
   compressBtn?.addEventListener('click', runCompressor);
@@ -343,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════════════════════
   const converterFiles = setupDropZone('converter-drop','converter-input','converter-file-list', files => {
     document.getElementById('convert-btn').disabled = files.length === 0;
-  });
+  }, ALL_FILE);
 
   const fmtNoteEl = document.getElementById('modern-fmt-note');
   document.getElementById('convert-to-format')?.addEventListener('change', function () {
@@ -556,6 +570,11 @@ document.addEventListener('DOMContentLoaded', () => {
   async function runValidator(file) {
     if (!file) {
       Shell.toast('Please select a file to validate.', 'warn');
+      return;
+    }
+    const preCheck = Utils.validateFile(file, Validator.ALLOWED_FORMATS, 50);
+    if (!preCheck.valid) {
+      Shell.toast(preCheck.error, 'error');
       return;
     }
     validatorFile = file;
