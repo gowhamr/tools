@@ -9,9 +9,15 @@
   <style>
     .calc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       padding: 16px 0;
+    }
+    @media (min-width: 640px) {
+      .calc-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    }
+    @media (min-width: 768px) {
+      .calc-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
     }
     .calc-card {
       background: var(--surface);

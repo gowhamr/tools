@@ -1602,7 +1602,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
    TABLET  ≥ 768px
    ════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  .cat-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cat-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .cat-btn-desc { display: block; }
   .home-hero-title { font-size: 2.2rem; }
   .home-hero-banner { padding: 40px 28px 36px; }
