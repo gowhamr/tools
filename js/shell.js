@@ -11,17 +11,22 @@
 
   const shell = {
     init() {
-      this.render();
+      if (!document.body.classList.contains('app-shell')) {
+        this.render();
+      }
       this.setupTheme();
       this.setupEffects();
       this.setupErrorHandling();
     },
 
     goHome() {
-      const b = window.KARUVI_BASE || '/';
-      // If we're already at a depth > 0 within tools, maybe we want to go back to tools/?
-      // But Shell.goHome should consistently go to the root base.
-      window.location.href = b;
+      try {
+        const b = window.KARUVI_BASE || '/';
+        window.location.href = b;
+      } catch (e) {
+        console.error('Navigation error:', e);
+        window.location.href = '/';
+      }
     },
 
     render() {
@@ -46,9 +51,9 @@
       const header = document.createElement('header');
       header.className = 'top-stripe';
       header.setAttribute('role', 'banner');
-      header.innerHTML = `
+      header.innerHTML = \`
         <div class="ts-brand">
-          <a href="${base}" class="ts-logo-link" style="text-decoration:none">
+          <a href="\${base}" class="ts-logo-link" style="text-decoration:none">
             <div class="ts-logo" style="background: #6366F1; border-radius: 9px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10 2v7.31"/><path d="M14 9.31V2"/><path d="M8.5 2h7"/><path d="M14 9.31L20.39 21H3.61L10 9.31"/>
@@ -60,11 +65,11 @@
             <span class="ts-tagline">Fast &middot; Private &middot; No uploads</span>
           </div>
           <nav class="ts-desktop-nav" aria-label="Main navigation">
-            <a href="${base}" class="ts-nav-link ${active === 'home' ? 'active' : ''}">Home</a>
-            <a href="${base}tools/compress/" class="ts-nav-link ${active === 'compress' ? 'active' : ''}">Compress</a>
-            <a href="${base}tools/pdf/" class="ts-nav-link ${active === 'pdf' ? 'active' : ''}">PDF</a>
-            <a href="${base}tools/validate/" class="ts-nav-link ${active === 'validate' ? 'active' : ''}">Validate</a>
-            <a href="${base}tools/calculators/" class="ts-nav-link ${active === 'calculators' ? 'active' : ''}">Calculators</a>
+            <a href="\${base}" class="ts-nav-link \${active === 'home' ? 'active' : ''}">Home</a>
+            <a href="\${base}tools/compress/" class="ts-nav-link \${active === 'compress' ? 'active' : ''}">Compress</a>
+            <a href="\${base}tools/pdf/" class="ts-nav-link \${active === 'pdf' ? 'active' : ''}">PDF</a>
+            <a href="\${base}tools/validate/" class="ts-nav-link \${active === 'validate' ? 'active' : ''}">Validate</a>
+            <a href="\${base}tools/calculators/" class="ts-nav-link \${active === 'calculators' ? 'active' : ''}">Calculators</a>
           </nav>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
@@ -77,25 +82,25 @@
             PRIVATE
           </span>
         </div>
-      `;
+      \`;
 
       // Create Bottom Nav (Dock)
       const dock = document.createElement('nav');
       dock.className = 'dock';
-      dock.innerHTML = `
-        <a href="${base}" class="dock-btn ${active === 'home' ? 'active' : ''}">
+      dock.innerHTML = \`
+        <a href="\${base}" class="dock-btn \${active === 'home' ? 'active' : ''}">
           <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
           <span class="dock-lbl">Home</span>
         </a>
-        <a href="${base}tools/" class="dock-btn ${active === 'tools' ? 'active' : ''}">
+        <a href="\${base}tools/" class="dock-btn \${active === 'tools' ? 'active' : ''}">
           <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           <span class="dock-lbl">All Tools</span>
         </a>
-        <a href="${base}pages/about.html" class="dock-btn">
+        <a href="\${base}pages/about.html" class="dock-btn">
           <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           <span class="dock-lbl">Help / Settings</span>
         </a>
-      `;
+      \`;
 
       document.body.prepend(header);
       document.body.appendChild(dock);
@@ -163,12 +168,12 @@
             const err = document.createElement('div');
             err.className = 'tool-error-fallback';
             err.style.cssText = 'padding:40px 20px;text-align:center;color:var(--text-3);';
-            err.innerHTML = `
+            err.innerHTML = \`
               <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
               <p style="font-weight:600;margin-bottom:8px">Oops! This tool encountered an error.</p>
               <p style="font-size:.85rem;margin-bottom:20px">Please try refreshing the page or contact support if the issue persists.</p>
               <button onclick="location.reload()" class="fmt-btn" style="display:inline-flex">Refresh Page</button>
-            `;
+            \`;
             scroll.prepend(err);
           }
         }
