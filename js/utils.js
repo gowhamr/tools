@@ -166,7 +166,22 @@ const Utils = (() => {
     </div>`;
   }
 
+  /**
+   * Debounce a function call
+   */
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
   return { formatBytes, safeName, hasSpecialChars, readAsDataURL, readAsArrayBuffer,
            loadImage, downloadBlob, drawResized, canvasToBlob, mimeFromExt, extFromMime,
-           supportsFormat, replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars };
+           supportsFormat, replaceExt, getExt, createResultCard, escHtml, spinnerHTML, sizeBars, debounce };
 })();

@@ -3,46 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Split & Copy Text — KaruviLab</title>
+  <title>Split & Copy Tool — KaruviLab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <script>window.SHELL_ACTIVE = 'split-copy';</script>
+  <style>
+    .split-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    @media (max-width: 600px) {
+      .split-controls { grid-template-columns: 1fr; }
+    }
+    .method-params {
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: var(--radius);
+      margin-top: 12px;
+      border: 1px dashed var(--border);
+    }
+    .custom-parts-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .parts-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .parts-btn:hover { background: var(--blue-light); }
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--surface);
+      margin-bottom: 12px;
+    }
+    .drop-zone.active {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .drop-zone p { color: var(--text-3); font-size: 0.9rem; }
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .copy-status {
+      font-size: 0.8rem;
+      color: var(--success);
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .copy-status.show { opacity: 1; }
+    .sticky-actions {
+      position: sticky;
+      bottom: 0;
+      background: var(--surface);
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      z-index: 10;
+    }
+    .warning-banner {
+      background: #FFFBEB;
+      border: 1px solid #FEF3C7;
+      color: #92400E;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .fmt-pre {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      max-height: 200px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  </style>
 </head>
 <body>
   <div class="panel tool-panel active">
     <div class="panel-nav">
       <div class="nav-head">
-        <p class="nav-title">Split & Copy Text</p>
-        <p class="nav-subtitle">Break large text for mobile clipboard</p>
+        <p class="nav-title">Split & Copy Tool</p>
+        <p class="nav-subtitle">Break large content for easy mobile clipboard usage</p>
       </div>
     </div>
+    
     <div class="panel-scroll">
       <div class="tool-section">
-        <label class="tool-label">Input Text</label>
-        <textarea class="tool-textarea" id="split-input" rows="8" placeholder="Paste large text here..."></textarea>
-      </div>
-      <div class="options-row">
-        <div class="opt-label">
-          <span class="tool-label">Split By</span>
-          <select id="split-delimiter">
-            <option value="line">Line Break</option>
-            <option value="comma">Comma</option>
-            <option value="space">Space</option>
-            <option value="custom">Custom</option>
-          </select>
+        <div class="warning-banner" id="large-content-warning">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Large content detected, splitting recommended.
         </div>
-        <input type="text" id="split-custom-delim" class="workspace-input" style="display:none; margin-top:10px;" placeholder="Enter custom delimiter...">
+
+        <div class="drop-zone" id="drop-zone">
+          <p>Drag & drop file or click to upload (.txt, .js, .json, .html, .css)</p>
+          <input type="file" id="file-input" hidden accept=".txt,.js,.json,.html,.css">
+        </div>
+
+        <label class="tool-label">Paste Text or Code</label>
+        <textarea class="tool-textarea" id="split-input" rows="10" placeholder="Paste your large text here..."></textarea>
+        <div style="text-align: right; margin-top: 4px;">
+           <span id="total-char-count" style="font-size: 0.8rem; color: var(--text-3);">0 characters</span>
+        </div>
       </div>
-      <div class="fmt-actions" style="margin-top:16px">
-        <button class="fmt-btn fmt-btn-primary" id="split-btn">Split Text</button>
-        <button class="fmt-btn" id="join-btn" disabled>Join Back</button>
-        <button class="fmt-btn" id="copy-all-btn" disabled>Copy All</button>
+
+      <div class="tool-section">
+        <label class="tool-label">Splitting Method</label>
+        <div class="split-controls">
+          <select id="split-method" class="workspace-input">
+            <option value="equal">Equal Parts</option>
+            <option value="chars">Character Limit</option>
+            <option value="delim">Delimiter Split</option>
+            <option value="custom">Custom Parts Count</option>
+          </select>
+          
+          <div id="method-params-container">
+            <!-- Dynamic params based on method -->
+            <div id="params-equal" class="method-params">
+              <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Number of parts</label>
+              <input type="number" id="parts-count" class="workspace-input" value="2" min="2" max="100">
+            </div>
+            
+            <div id="params-chars" class="method-params" style="display:none">
+              <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Max characters per part</label>
+              <input type="number" id="max-chars" class="workspace-input" value="1000" min="10">
+            </div>
+            
+            <div id="params-delim" class="method-params" style="display:none">
+              <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Delimiter</label>
+              <select id="split-delimiter" class="workspace-input">
+                <option value="line">Line Break</option>
+                <option value="comma">Comma (,)</option>
+                <option value="space">Space</option>
+                <option value="custom">Custom String</option>
+              </select>
+              <input type="text" id="custom-delim" class="workspace-input" style="display:none; margin-top:8px;" placeholder="e.g. ---">
+            </div>
+            
+            <div id="params-custom" class="method-params" style="display:none">
+              <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Adjust number of parts</label>
+              <div class="custom-parts-ctrl">
+                <button class="parts-btn" id="parts-minus">-</button>
+                <input type="number" id="custom-parts-count" class="workspace-input" value="2" min="1" style="text-align:center; width: 60px;">
+                <button class="parts-btn" id="parts-plus">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="tool-section" style="margin-top:20px">
-        <label class="tool-label" id="split-part-count">0 parts</label>
+
+      <div class="fmt-actions" style="margin-top: 24px;">
+        <button class="fmt-btn fmt-btn-primary" id="split-btn">Split Content</button>
+        <button class="fmt-btn" id="clear-btn">Clear All</button>
+      </div>
+
+      <div class="tool-section" id="results-section" style="margin-top: 32px; display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+          <div>
+            <label class="tool-label" id="parts-summary">0 parts generated</label>
+          </div>
+          <div class="fmt-actions" style="margin: 0;">
+             <button class="fmt-btn fmt-btn-secondary" id="download-btn" style="font-size: 0.8rem; padding: 6px 12px;">Download .txt</button>
+          </div>
+        </div>
         <div id="split-results" class="results-area"></div>
       </div>
     </div>
+
+    <div class="sticky-actions" id="sticky-actions" style="display: none;">
+       <button class="fmt-btn fmt-btn-primary" id="copy-all-seq-btn" style="flex: 1;">Copy All (Sequential)</button>
+    </div>
   </div>
+
   <script src="../../js/shell.js"></script>
   <script src="../../js/theme.js"></script>
   <script src="../../js/utils.js"></script>
