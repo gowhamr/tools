@@ -76,10 +76,17 @@
   <script src="../../../js/utils.js"></script>
   <script src="../../../js/format-utils.js"></script>
   <script src="../../../js/pdf-tools.js"></script>
+  <noscript>
+    <div class="error-message" style="padding:16px;margin:16px;background:#fee2e2;border-radius:8px;color:#b91c1c;text-align:center;font-weight:600">
+      This tool requires JavaScript. Please enable JavaScript.
+    </div>
+  </noscript>
   <script>
     (function() {
       const el = id => document.getElementById(id);
       let selectedFile = null;
+      let isProcessing = false;
+      let abortCtrl = null;
 
       const updateUI = (file) => {
         selectedFile = file;
@@ -98,21 +105,38 @@
 
       el('compress-quality').oninput = () => { el('quality-val').textContent = Math.round(el('compress-quality').value * 100) + '%'; };
 
+      window.addEventListener('pagehide', () => abortCtrl?.abort());
+
       el('compress-btn').onclick = async () => {
-        if (!selectedFile) return;
+        if (!selectedFile || isProcessing) return;
+
+        // Abort any previous run
+        abortCtrl?.abort();
+        abortCtrl = new AbortController();
+        const { signal } = abortCtrl;
+
+        isProcessing = true;
+        el('compress-btn').disabled = true;
+        el('compress-btn').innerHTML = Utils.spinnerHTML() + ' Compressing…';
+
         const results = el('compress-result');
         results.innerHTML = `<div class="processing-wrap">
           <div class="processing-msg" id="proc-msg">${Utils.spinnerHTML()} Shrinking PDF...</div>
           <div class="progress-bar-container"><div class="progress-bar-fill" id="proc-fill"></div></div>
         </div>`;
-        
+
         try {
           const q = parseFloat(el('compress-quality').value);
           const blob = await PdfTools.compressPdf(selectedFile, q, (p, t) => {
-             const pct = Math.round((p/t)*100);
-             el('proc-msg').innerHTML = `${Utils.spinnerHTML()} Processing page ${p} of ${t}...`;
-             el('proc-fill').style.width = pct + '%';
-          });
+            const pct = Math.round((p/t)*100);
+            const msgEl = document.getElementById('proc-msg');
+            const fillEl = document.getElementById('proc-fill');
+            if (msgEl) msgEl.innerHTML = `${Utils.spinnerHTML()} Processing page ${p} of ${t}...`;
+            if (fillEl) fillEl.style.width = pct + '%';
+          }, signal);
+
+          if (signal.aborted) return;
+
           const url = URL.createObjectURL(blob);
           const name = `${selectedFile.name.replace('.pdf','')}_compressed.pdf`;
           results.innerHTML = `
@@ -140,11 +164,16 @@
               </div>
             </div>`;
         } catch (err) {
+          if (err.name === 'AbortError') return;
           results.innerHTML = `<div class="result-card error"><h4>Compression Failed</h4><p>${err.message}</p></div>`;
+        } finally {
+          isProcessing = false;
+          el('compress-btn').innerHTML = '🗜 Compress Now';
+          el('compress-btn').disabled = !selectedFile;
         }
       };
 
-      el('clear-btn').onclick = () => { location.reload(); };
+      el('clear-btn').onclick = () => { abortCtrl?.abort(); location.reload(); };
     })();
   </script>
 </body>

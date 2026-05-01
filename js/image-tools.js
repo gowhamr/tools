@@ -28,11 +28,17 @@ const ImageTools = (() => {
   /**
    * Compress an image file.
    * Preserves PNG lossless; uses JPEG (or WebP/AVIF) for lossy types.
+   * @param {File} file
+   * @param {object} opts
+   * @param {AbortSignal} [opts.signal]
    */
   async function compress(file, opts = {}) {
     const targetKB = opts.targetKB || 100;
     const maxWidth = opts.maxWidth  || 1000;
+    const signal   = opts.signal   || null;
     const srcExt   = Utils.getExt(file.name);
+
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
     const src = await FormatUtils.loadAny(file);
     let canvas = FormatUtils.drawElement(src, maxWidth, null);
@@ -45,16 +51,19 @@ const ImageTools = (() => {
 
     let quality = 0.85;
     let blob = await Utils.canvasToBlob(canvas, mime, quality);
-    
+
     let iterations = 0;
     // PNG is lossless, quality loop is useless
     if (!lossless) {
       while (blob.size > targetKB * 1024 && quality > 0.1 && iterations < 12) {
+        if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
         quality = Math.max(0.1, quality - 0.08);
         blob = await Utils.canvasToBlob(canvas, mime, quality);
         iterations++;
       }
     }
+
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
     if (blob.size > targetKB * 1024) {
       const scale = Math.sqrt((targetKB * 1024) / blob.size);

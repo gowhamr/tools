@@ -2,6 +2,8 @@
 
 const PDFJS_WORKER_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+const MAX_PDF_SIZE_MB = 100;
+
 const PdfTools = (() => {
 
   /** Wait for jsPDF / pdf-lib to be available */
@@ -25,15 +27,17 @@ const PdfTools = (() => {
    * @param {File[]} files
    * @param {string} pageSize – 'a4'|'letter'|'fit'
    * @param {string} orientation – 'portrait'|'landscape'
+   * @param {AbortSignal} [signal]
    * @returns {Promise<Blob>}
    */
-  async function imagesToPdf(files, pageSize = 'a4', orientation = 'portrait') {
+  async function imagesToPdf(files, pageSize = 'a4', orientation = 'portrait', signal = null) {
     const JsPDF = jsPDF();
     if (!JsPDF) throw new Error('jsPDF library not loaded');
 
     let doc = null;
 
     for (let i = 0; i < files.length; i++) {
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       const file = files[i];
       const dataUrl = await Utils.readAsDataURL(file);
       const img = await Utils.loadImage(dataUrl);
@@ -78,14 +82,16 @@ const PdfTools = (() => {
   /**
    * Merge multiple PDF Blobs/Files into one using pdf-lib.
    * @param {(File|Blob)[]} pdfs
+   * @param {AbortSignal} [signal]
    * @returns {Promise<Blob>}
    */
-  async function mergePdfs(pdfs) {
+  async function mergePdfs(pdfs, signal = null) {
     const lib = pdfLib();
     if (!lib) throw new Error('pdf-lib library not loaded');
 
     const merged = await lib.PDFDocument.create();
     for (const pdf of pdfs) {
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       const ab = await Utils.readAsArrayBuffer(pdf);
       const doc = await lib.PDFDocument.load(ab, { ignoreEncryption: true });
       const pages = await merged.copyPages(doc, doc.getPageIndices());
@@ -101,9 +107,14 @@ const PdfTools = (() => {
    * @param {File} file
    * @param {number} imageQuality – 0–1
    * @param {Function} onProgress – (pageNum, total)
+   * @param {AbortSignal} [signal]
    * @returns {Promise<Blob>}
    */
-  async function compressPdf(file, imageQuality = 0.6, onProgress = null) {
+  async function compressPdf(file, imageQuality = 0.6, onProgress = null, signal = null) {
+    if (file.size > MAX_PDF_SIZE_MB * 1024 * 1024) {
+      throw new Error(`File too large. Please use a PDF under ${MAX_PDF_SIZE_MB} MB.`);
+    }
+
     const JsPDF = jsPDF();
     if (!JsPDF) throw new Error('jsPDF not loaded');
 
@@ -119,6 +130,7 @@ const PdfTools = (() => {
 
     try {
       for (let i = 1; i <= total; i++) {
+        if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
         if (onProgress) onProgress(i, total);
         const page = await pdfDoc.getPage(i);
         const viewport = page.getViewport({ scale: 1.5 }); // moderate resolution
@@ -181,16 +193,17 @@ const PdfTools = (() => {
    * Split a PDF into individual pages or ranges.
    * @param {File|Blob} pdf
    * @param {string} range – e.g. "1-3, 5, 8-10"
+   * @param {AbortSignal} [signal]
    * @returns {Promise<Blob[]>}
    */
-  async function splitPdf(pdf, range = 'all') {
+  async function splitPdf(pdf, range = 'all', signal = null) {
     const lib = pdfLib();
     if (!lib) throw new Error('pdf-lib library not loaded');
 
     const ab = await Utils.readAsArrayBuffer(pdf);
     const srcDoc = await lib.PDFDocument.load(ab, { ignoreEncryption: true });
     const pageCount = srcDoc.getPageCount();
-    
+
     let pagesToExtract = [];
     if (range === 'all') {
       pagesToExtract = Array.from({ length: pageCount }, (_, i) => [i]);
@@ -212,6 +225,7 @@ const PdfTools = (() => {
 
     const results = [];
     for (const indices of pagesToExtract) {
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
       const newDoc = await lib.PDFDocument.create();
       const copiedPages = await newDoc.copyPages(srcDoc, indices);
       copiedPages.forEach(p => newDoc.addPage(p));
