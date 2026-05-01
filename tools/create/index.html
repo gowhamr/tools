@@ -3,125 +3,364 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create / Resize Image — KaruviLab</title>
+  <title>Professional Image Resizer & Creator — KaruviLab</title>
+  <meta name="description" content="Resize images to exact pixel dimensions for passport photos, signatures, or banners. 100% private local processing with live preview." />
   <link rel="stylesheet" href="../../css/style.css" />
   <script>window.SHELL_ACTIVE = 'create';</script>
+  <style>
+    .creator-layout { display: flex; flex-direction: column; gap: 20px; }
+    
+    .preset-group { margin-bottom: 20px; }
+    .preset-label { font-size: 0.7rem; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+    .preset-grid-mini { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    @media (min-width: 600px) { .preset-grid-mini { grid-template-columns: repeat(4, 1fr); } }
+    
+    .preset-btn-mini {
+      padding: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); cursor: pointer; text-align: left;
+      transition: all 0.2s; display: flex; flex-direction: column; gap: 2px;
+    }
+    .preset-btn-mini:hover { border-color: var(--blue); background: var(--blue-light); }
+    .preset-btn-mini.active { border-color: var(--blue); background: var(--blue-light); box-shadow: 0 0 0 3px var(--blue-glow); }
+    .preset-btn-mini strong { display: block; font-size: 0.8rem; color: var(--text); }
+    .preset-btn-mini span { font-size: 0.65rem; color: var(--text-3); font-weight: 500; }
+    .preset-btn-mini.active strong { color: var(--blue); }
+
+    .preview-card {
+      background: var(--bg-input); border: 1px dashed var(--border); border-radius: var(--radius-lg);
+      padding: 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; position: relative; overflow: hidden;
+    }
+    #creator-canvas {
+      max-width: 100%; max-height: 450px; box-shadow: var(--shadow-lg);
+      border-radius: 4px; background: #fff; display: none;
+    }
+    .preview-info {
+      margin-top: 16px; display: flex; gap: 12px; align-items: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--text-3);
+    }
+    .info-tag { background: var(--blue-light); color: var(--blue); padding: 2px 8px; border-radius: 99px; }
+
+    .upload-prominent {
+      padding: 40px 20px; border: 2px dashed var(--border); border-radius: var(--radius-xl);
+      background: var(--bg-input); cursor: pointer; transition: all 0.3s; text-align: center;
+    }
+    .upload-prominent:hover { border-color: var(--blue); background: var(--blue-light); }
+    .upload-prominent svg { color: var(--blue); margin-bottom: 12px; }
+    
+    .controls-card {
+      background: var(--surface); border-radius: var(--radius-xl); padding: 20px;
+      border: 1px solid var(--border-2); box-shadow: var(--shadow-sm);
+    }
+    
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    @media (max-width: 500px) { .settings-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
-<body>
-  <div class="panel tool-panel active" id="panel-creator">
+<body class="app-shell">
+  <div class="panel tool-panel active has-split">
     <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
       <div class="nav-head">
-        <p class="nav-title">Create / Resize</p>
-        <p class="nav-subtitle">Passport photos &amp; custom sizes</p>
+        <h1 class="nav-title">Image Resizer & Creator</h1>
+        <p class="nav-subtitle">Resize, crop, and export images to exact dimensions</p>
       </div>
     </div>
+    
     <div class="panel-scroll">
+      
+      <!-- Split Layout: Desktop Left (Main Content) -->
       <div class="panel-upload-group">
-        <div class="preset-chips">
-          <button class="preset-chip preset-btn" data-w="200" data-h="230" data-label="Passport Photo">
-            <span class="preset-chip-name">Passport</span>
-            <span class="preset-chip-desc">200×230</span>
-          </button>
-          <button class="preset-chip preset-btn" data-w="140" data-h="60" data-label="Signature">
-            <span class="preset-chip-name">Signature</span>
-            <span class="preset-chip-desc">140×60</span>
-          </button>
-          <button class="preset-chip preset-btn" data-w="200" data-h="200" data-label="Thumb Impression">
-            <span class="preset-chip-name">Thumb</span>
-            <span class="preset-chip-desc">200×200</span>
-          </button>
-          <button class="preset-chip preset-btn" data-w="1000" data-h="700" data-label="ID Proof">
-            <span class="preset-chip-name">ID Proof</span>
-            <span class="preset-chip-desc">1000×700</span>
-          </button>
+        
+        <!-- Step 1: Upload (Dynamic Visibility) -->
+        <div id="upload-section">
+          <div class="upload-prominent" id="creator-drop">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <h3 class="upload-main">Click to Upload Image</h3>
+            <p class="upload-sub">or drag and drop your photo here</p>
+            <input type="file" id="creator-input" accept="image/*" hidden />
+          </div>
+          
+          <div id="file-ready-bar" class="file-item" style="display:none; margin-top:16px">
+             <div class="file-icon">🖼️</div>
+             <div class="file-info">
+               <div class="file-name" id="ready-filename">image.jpg</div>
+               <div class="file-meta" id="ready-meta">0 KB</div>
+             </div>
+             <button class="remove-btn" id="clear-file">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+             </button>
+          </div>
         </div>
 
-        <div class="settings-card">
-          <p class="settings-card-title">Dimensions &amp; Style</p>
-          <div class="dim-quick-wrap settings-row">
-            <input type="text" id="create-dim-quick" placeholder="e.g. 578x385 or 1920x1080" class="dim-quick-input" />
-            <button class="dim-apply-btn" id="create-dim-apply">Apply</button>
+        <div class="tool-section" style="margin-top: 24px;">
+          <span class="preset-label">Quick Presets</span>
+          <div class="preset-group">
+            <span class="preset-label" style="font-size:0.6rem; opacity:0.6">Documents</span>
+            <div class="preset-grid-mini">
+              <button class="preset-btn-mini active" data-w="350" data-h="450"><strong>Passport</strong><span>350 x 450 px</span></button>
+              <button class="preset-btn-mini" data-w="140" data-h="60"><strong>Signature</strong><span>140 x 60 px</span></button>
+              <button class="preset-btn-mini" data-w="1000" data-h="700"><strong>ID Card</strong><span>1000 x 700 px</span></button>
+              <button class="preset-btn-mini" data-w="1200" data-h="630"><strong>Banner</strong><span>1200 x 630 px</span></button>
+            </div>
           </div>
+          <div class="preset-group">
+            <span class="preset-label" style="font-size:0.6rem; opacity:0.6">Social Media</span>
+            <div class="preset-grid-mini">
+              <button class="preset-btn-mini" data-w="1080" data-h="1080"><strong>Insta Post</strong><span>1080 x 1080</span></button>
+              <button class="preset-btn-mini" data-w="1080" data-h="1920"><strong>Insta Story</strong><span>1080 x 1920</span></button>
+              <button class="preset-btn-mini" data-w="1200" data-h="628"><strong>FB Link</strong><span>1200 x 628</span></button>
+              <button class="preset-btn-mini" data-w="1500" data-h="500"><strong>Twitter</strong><span>1500 x 500</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Layout: Desktop Right (Settings) -->
+      <div class="panel-settings-group">
+        <div class="controls-card">
+          <span class="preset-label">Custom Dimensions</span>
           <div class="dim-fields-row">
             <div class="dim-field">
               <span class="dim-field-label">Width</span>
               <div class="input-with-unit">
-                <input type="number" id="create-width" value="200" min="1" max="10000" />
+                <input type="number" id="create-width" value="350" min="1" max="10000" />
                 <span class="unit">px</span>
               </div>
             </div>
-            <label class="dim-lock-btn">
+            <label class="dim-lock-btn" title="Lock Aspect Ratio">
               <input type="checkbox" id="create-lock-ratio" checked />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             </label>
             <div class="dim-field">
               <span class="dim-field-label">Height</span>
               <div class="input-with-unit">
-                <input type="number" id="create-height" value="230" min="1" max="10000" />
+                <input type="number" id="create-height" value="450" min="1" max="10000" />
                 <span class="unit">px</span>
               </div>
             </div>
           </div>
-          <div class="settings-row">
-            <span class="settings-label">Background</span>
-            <select id="create-bg">
-              <option value="#ffffff">White</option>
-              <option value="#f5f5f5">Light Gray</option>
-              <option value="#fffde7">Light Yellow</option>
-              <option value="#e8f5e9">Light Green</option>
-            </select>
+
+          <div class="settings-grid">
+            <div>
+              <label class="tool-label">Fit Mode</label>
+              <select id="create-fit" class="workspace-input">
+                <option value="contain">Contain (Fit inside)</option>
+                <option value="cover">Cover (Fill & Crop)</option>
+                <option value="stretch">Stretch (Fill Canvas)</option>
+              </select>
+            </div>
+            <div>
+              <label class="tool-label">Background</label>
+              <select id="create-bg" class="workspace-input">
+                <option value="#ffffff">White</option>
+                <option value="#000000">Black</option>
+                <option value="#f1f5f9">Light Gray</option>
+                <option value="transparent">Transparent</option>
+              </select>
+            </div>
           </div>
-          <div class="settings-row">
-            <span class="settings-label">Output format</span>
-            <select id="create-format">
-              <option value="jpeg">JPG</option>
-              <option value="png">PNG</option>
-              <option value="gif">GIF</option>
-              <option value="bmp">BMP</option>
-              <option value="tiff">TIFF</option>
-              <option value="webp">WebP</option>
-              <option value="avif">AVIF</option>
-            </select>
+
+          <div class="settings-grid" style="margin-top:0">
+            <div>
+              <label class="tool-label">Format</label>
+              <select id="create-format" class="workspace-input">
+                <option value="jpeg">JPG (Best for photos)</option>
+                <option value="png">PNG (Best for icons)</option>
+                <option value="webp">WebP (Modern)</option>
+              </select>
+            </div>
+            <div>
+              <label class="tool-label">Quality <span id="quality-val" class="quality-pct">90%</span></label>
+              <input type="range" id="create-quality" min="10" max="100" value="90" />
+            </div>
           </div>
         </div>
 
-        <div class="upload-zone upload-zone-sm" id="creator-drop">
-          <div class="upload-icon-wrap-sm">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-            </svg>
-          </div>
-          <div class="upload-sm-text">
-            <p class="upload-sm-title">Upload Image to Resize <span class="upload-sm-optional">(optional)</span></p>
-            <p class="upload-or"><label for="creator-input">Tap to browse</label> or drag here</p>
-          </div>
-          <input type="file" id="creator-input" accept=".jpg,.jpeg,.jfif,.png,.gif,.webp,.avif,.tiff,.tif,.bmp,.heic,.heif" />
+        <div class="panel-cta-bar">
+          <button class="panel-cta-btn" id="create-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Image
+          </button>
         </div>
-
-        <div class="creator-preview-card" id="creator-preview-wrap">
-          <canvas id="creator-canvas" style="display:none;max-width:100%;border-radius:8px"></canvas>
-          <p class="preview-hint" id="creator-preview-hint">Preview will appear here</p>
-        </div>
-
-        <div id="creator-result" class="results-area"></div>
       </div>
-    </div>
-    <div class="panel-cta-bar" style="position:static;padding:0">
-      <button class="panel-cta-btn" id="create-btn" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-        </svg>
-        Create / Resize
-      </button>
+
+      <!-- Preview Section (Visible always, below upload on mobile) -->
+      <div class="panel-files-group">
+        <span class="preset-label">Live Preview</span>
+        <div class="preview-card">
+          <p class="preview-hint" id="preview-hint">Live preview will appear here</p>
+          <canvas id="creator-canvas"></canvas>
+          <div class="preview-info" id="preview-info-box" style="display:none">
+            <span id="preview-dim-text">350 x 450 px</span>
+            <span class="info-tag" id="preview-size-text">~0 KB</span>
+          </div>
+        </div>
+        <div id="creator-result" style="margin-top:16px"></div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="../../js/shell.js"></script>
   <script src="../../js/theme.js"></script>
   <script src="../../js/utils.js"></script>
   <script src="../../js/format-utils.js"></script>
   <script src="../../js/image-tools.js"></script>
-  <script src="../../js/app.js"></script>
+  <script>
+    (function() {
+      const el = id => document.getElementById(id);
+      const canvas = el('creator-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      let currentFile = null;
+      let targetAspect = 350/450;
+      let isUpdating = false;
+
+      const updatePreview = Utils.debounce(async () => {
+        if (isUpdating) return;
+        isUpdating = true;
+        
+        const w = parseInt(el('create-width').value) || 350;
+        const h = parseInt(el('create-height').value) || 450;
+        const bg = el('create-bg').value;
+        const format = el('create-format').value;
+        const fit = el('create-fit').value;
+        const quality = parseInt(el('create-quality').value) / 100;
+        
+        el('preview-dim-text').textContent = `${w} x ${h} px`;
+        el('quality-val').textContent = `${Math.round(quality * 100)}%`;
+
+        const { blob, canvas: c } = await ImageTools.create({
+          width: w, height: h, bg: bg === 'transparent' ? 'rgba(0,0,0,0)' : bg,
+          format, srcFile: currentFile, fit, quality
+        });
+
+        canvas.width = c.width; canvas.height = c.height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(c, 0, 0);
+        
+        canvas.style.display = 'block';
+        el('preview-hint').style.display = 'none';
+        el('preview-info-box').style.display = 'flex';
+        el('preview-size-text').textContent = Utils.formatBytes(blob.size);
+        
+        isUpdating = false;
+      }, 150);
+
+      // File Handling
+      const handleFile = (f) => {
+        if (!f || !f.type.startsWith('image/')) return;
+        currentFile = f;
+        el('upload-section').querySelector('.upload-prominent').style.display = 'none';
+        el('file-ready-bar').style.display = 'flex';
+        el('ready-filename').textContent = f.name;
+        el('ready-meta').textContent = Utils.formatBytes(f.size);
+        
+        // When a file is uploaded, we might want to adopt its aspect ratio if it's the first one
+        // or if we are in a "resizer" mindset. For now, let's keep target dimensions.
+        updatePreview();
+      };
+
+      el('clear-file').onclick = (e) => {
+        e.stopPropagation();
+        currentFile = null;
+        el('upload-section').querySelector('.upload-prominent').style.display = 'block';
+        el('file-ready-bar').style.display = 'none';
+        el('creator-input').value = '';
+        updatePreview();
+      };
+
+      el('creator-drop').onclick = () => el('creator-input').click();
+      el('creator-input').onchange = () => handleFile(el('creator-input').files[0]);
+      
+      const zone = el('creator-drop');
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+      zone.ondragleave = () => zone.classList.remove('drag-over');
+      zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); };
+
+      // Presets
+      document.querySelectorAll('.preset-btn-mini').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.preset-btn-mini').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const w = parseInt(btn.dataset.w), h = parseInt(btn.dataset.h);
+          el('create-width').value = w;
+          el('create-height').value = h;
+          targetAspect = w / h;
+          updatePreview();
+        };
+      });
+
+      // Dimension Inputs
+      const onWidthInput = () => {
+        const w = parseInt(el('create-width').value);
+        if (el('create-lock-ratio').checked && w) {
+          el('create-height').value = Math.round(w / targetAspect);
+        }
+        updatePreview();
+      };
+      
+      const onHeightInput = () => {
+        const h = parseInt(el('create-height').value);
+        if (el('create-lock-ratio').checked && h) {
+          el('create-width').value = Math.round(h * targetAspect);
+        }
+        updatePreview();
+      };
+
+      el('create-width').oninput = onWidthInput;
+      el('create-height').oninput = onHeightInput;
+      
+      el('create-lock-ratio').onchange = () => {
+        if (el('create-lock-ratio').checked) {
+          const w = parseInt(el('create-width').value);
+          const h = parseInt(el('create-height').value);
+          if (w && h) targetAspect = w / h;
+        }
+      };
+
+      // Other Settings
+      ['create-fit', 'create-bg', 'create-format', 'create-quality'].forEach(id => {
+        el(id).oninput = updatePreview;
+        el(id).onchange = updatePreview;
+      });
+
+      // Export
+      el('create-btn').onclick = async () => {
+        const w = parseInt(el('create-width').value);
+        const h = parseInt(el('create-height').value);
+        const format = el('create-format').value;
+        const bg = el('create-bg').value;
+        const quality = parseInt(el('create-quality').value) / 100;
+        const fit = el('create-fit').value;
+        
+        const { blob, fmtKey } = await ImageTools.create({
+          width: w, height: h, bg: bg === 'transparent' ? 'rgba(0,0,0,0)' : bg,
+          format, srcFile: currentFile, fit, quality
+        });
+
+        const ext = fmtKey === 'jpeg' ? 'jpg' : fmtKey;
+        const base = currentFile ? Utils.safeName(currentFile.name).split('.')[0] : 'karuvilab';
+        const filename = `${base}_${w}x${h}.${ext}`;
+        
+        Utils.downloadBlob(blob, filename);
+        
+        el('creator-result').innerHTML = `
+          <div class="result-card success">
+            <div class="result-header">
+              <h4>Image Exported</h4>
+              <span class="status-badge badge-success">READY</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-3)">File: ${filename} (${Utils.formatBytes(blob.size)})</p>
+          </div>`;
+        setTimeout(() => el('creator-result').innerHTML = '', 4000);
+      };
+
+      updatePreview();
+    })();
+  </script>
 </body>
 </html>

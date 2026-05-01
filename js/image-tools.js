@@ -89,26 +89,48 @@ const ImageTools = (() => {
 
   /**
    * Create a new image with a solid background, optionally compositing a source image.
+   * Modes: 
+   * - contain: whole image visible, may have bars
+   * - cover: fills canvas, may crop
+   * - stretch: ignores aspect ratio
    */
   async function create(opts) {
-    const { width, height, bg = '#ffffff', format = 'jpeg', srcFile = null, lockRatio = true } = opts;
+    const { width, height, bg = '#ffffff', format = 'jpeg', srcFile = null, fit = 'contain', quality = 0.9 } = opts;
 
     const canvas = document.createElement('canvas');
     canvas.width = width; canvas.height = height;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, width, height);
+    
+    if (bg === 'transparent' || bg === 'rgba(0,0,0,0)') {
+      ctx.clearRect(0, 0, width, height);
+    } else {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+    }
 
     if (srcFile) {
       const src = await FormatUtils.loadAny(srcFile);
       const sw0 = src.naturalWidth  ?? src.width;
       const sh0 = src.naturalHeight ?? src.height;
-      let sw = sw0, sh = sh0;
-      if (lockRatio) {
+      
+      let dw, dh, dx, dy;
+
+      if (fit === 'stretch') {
+        dw = width; dh = height;
+        dx = 0; dy = 0;
+      } else if (fit === 'cover') {
+        const ratio = Math.max(width / sw0, height / sh0);
+        dw = sw0 * ratio; dh = sh0 * ratio;
+        dx = (width - dw) / 2;
+        dy = (height - dh) / 2;
+      } else { // contain
         const ratio = Math.min(width / sw0, height / sh0);
-        sw = Math.round(sw0 * ratio); sh = Math.round(sh0 * ratio);
-      } else { sw = width; sh = height; }
-      ctx.drawImage(src, Math.round((width - sw) / 2), Math.round((height - sh) / 2), sw, sh);
+        dw = sw0 * ratio; dh = sh0 * ratio;
+        dx = (width - dw) / 2;
+        dy = (height - dh) / 2;
+      }
+      
+      ctx.drawImage(src, Math.round(dx), Math.round(dy), Math.round(dw), Math.round(dh));
     }
 
     if (format === 'bmp') {
@@ -118,7 +140,7 @@ const ImageTools = (() => {
       return { blob: FormatUtils.encodeTiff(canvas), canvas, fmtKey: 'tiff', fallback: false };
     }
     const { mime, fallback, fmtKey } = await resolveMime(format);
-    const blob = await Utils.canvasToBlob(canvas, mime, 0.9);
+    const blob = await Utils.canvasToBlob(canvas, mime, quality);
     return { blob, canvas, mime, fallback, fmtKey };
   }
 
