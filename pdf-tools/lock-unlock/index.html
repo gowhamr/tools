@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lock & Unlock PDF — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'lock-unlock';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-lock">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Lock & Unlock PDF</p>
+        <p class="nav-subtitle">Manage PDF passwords and security</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="upload-zone upload-zone-hero" id="lock-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <p class="upload-main">Select PDF File</p>
+          <p class="upload-sub"><label for="lock-input">Tap to select</label> or drag here</p>
+          <p class="upload-formats">PDF documents only</p>
+          <input type="file" id="lock-input" accept=".pdf" />
+        </div>
+      </div>
+
+      <div class="panel-settings-group" id="lock-settings" style="display:none">
+        <div class="settings-card">
+          <p class="settings-card-title">Security Settings</p>
+          <div id="status-locked" style="display:none">
+            <p class="fmt-note" style="margin-bottom:15px;color:var(--text-main)">This PDF is <strong>Password Protected</strong>. Enter the password to remove protection.</p>
+            <div class="settings-row">
+              <span class="settings-label">Password</span>
+              <input type="password" id="unlock-pass" placeholder="Enter PDF password" />
+            </div>
+          </div>
+          <div id="status-unlocked" style="display:none">
+            <p class="fmt-note" style="margin-bottom:15px;color:var(--text-main)">This PDF is <strong>not protected</strong>. (Note: Only password removal is currently supported locally).</p>
+            <!-- Lock functionality placeholder if needed, but pdf-lib doesn't support setting passwords -->
+          </div>
+        </div>
+
+        <div class="panel-cta-bar" style="position:static;padding:0;margin-top:20px">
+          <button class="panel-cta-btn" id="lock-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            </svg>
+            Unlock PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-files-group">
+        <div id="lock-file-list" class="file-list"></div>
+        <div id="lock-results" class="results-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/pdf-tools.js"></script>
+  <script src="../../js/app.js"></script>
+
+  <script>
+    (function() {
+      const dropZone = document.getElementById('lock-drop');
+      const fileInput = document.getElementById('lock-input');
+      const settingsArea = document.getElementById('lock-settings');
+      const applyBtn = document.getElementById('lock-btn');
+      const fileList = document.getElementById('lock-file-list');
+      const resultsArea = document.getElementById('lock-results');
+      const statusLocked = document.getElementById('status-locked');
+      const statusUnlocked = document.getElementById('status-unlocked');
+      const passInput = document.getElementById('unlock-pass');
+
+      let currentFile = null;
+
+      async function handleFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+          Shell.toast('Please select a valid PDF file');
+          return;
+        }
+        currentFile = file;
+        
+        fileList.innerHTML = '';
+        fileList.appendChild(FormatUtils.createFileCard(file, () => {
+          currentFile = null;
+          settingsArea.style.display = 'none';
+          fileList.innerHTML = '';
+          resultsArea.innerHTML = '';
+        }));
+
+        // Check if locked
+        try {
+          const ab = await Utils.readAsArrayBuffer(file);
+          await Shell.waitForLibs(['PDFLib']);
+          const lib = window.PDFLib;
+          
+          try {
+            await lib.PDFDocument.load(ab);
+            // If success, it's unlocked
+            statusLocked.style.display = 'none';
+            statusUnlocked.style.display = 'block';
+            applyBtn.disabled = true;
+            applyBtn.innerText = 'Already Unlocked';
+          } catch (err) {
+            if (err.message.includes('encrypted') || err.message.includes('password')) {
+              statusLocked.style.display = 'block';
+              statusUnlocked.style.display = 'none';
+              applyBtn.disabled = false;
+              applyBtn.innerText = 'Unlock PDF';
+            } else {
+              throw err;
+            }
+          }
+          settingsArea.style.display = 'block';
+        } catch (err) {
+          console.error(err);
+          Shell.toast('Error reading PDF');
+        }
+      }
+
+      Utils.setupDropZone(dropZone, fileInput, (files) => handleFile(files[0]));
+
+      applyBtn.onclick = async () => {
+        if (!currentFile) return;
+
+        applyBtn.disabled = true;
+        applyBtn.innerHTML = 'Unlocking...';
+
+        try {
+          const password = passInput.value;
+          const ab = await Utils.readAsArrayBuffer(currentFile);
+          const lib = window.PDFLib;
+          
+          const pdfDoc = await lib.PDFDocument.load(ab, { 
+            password,
+            ignoreEncryption: false 
+          });
+
+          const pdfBytes = await pdfDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const outName = currentFile.name.replace(/\.pdf$/i, '') + '_unlocked.pdf';
+          
+          resultsArea.innerHTML = '';
+          resultsArea.appendChild(FormatUtils.createResultCard(outName, blob));
+          Shell.toast('Success! PDF unlocked.');
+        } catch (err) {
+          console.error(err);
+          Shell.toast('Incorrect password or error unlocking');
+        } finally {
+          applyBtn.disabled = false;
+          applyBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            </svg>
+            Unlock PDF
+          `;
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JWT Decoder — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body class="app-shell">
+  <noscript>
+    <div style="padding: 20px; text-align: center; background: #fee2e2; color: #b91c1c;">
+      This tool requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
+
+  <div class="panel tool-panel active" id="panel-jwt-decoder">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">JWT Decoder</p>
+        <p class="nav-subtitle">Decode JSON Web Tokens locally</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="tool-section">
+          <label class="tool-label">Encoded JWT</label>
+          <textarea class="tool-textarea" id="jwt-input" placeholder="Paste your JWT here..." rows="6" spellcheck="false"></textarea>
+        </div>
+
+        <div class="tool-section">
+          <div class="tool-output-wrap" style="margin-bottom: 20px;">
+            <div class="tool-output-header">
+              <span class="tool-output-label">Header</span>
+              <button class="tool-copy-btn" id="jwt-copy-header">Copy</button>
+            </div>
+            <pre class="tool-textarea tool-output" id="jwt-header-output" style="min-height: 80px; overflow: auto; padding: 12px; font-size: 0.9rem; white-space: pre-wrap; word-break: break-all;"></pre>
+          </div>
+
+          <div class="tool-output-wrap">
+            <div class="tool-output-header">
+              <span class="tool-output-label">Payload</span>
+              <button class="tool-copy-btn" id="jwt-copy-payload">Copy</button>
+            </div>
+            <pre class="tool-textarea tool-output" id="jwt-payload-output" style="min-height: 200px; overflow: auto; padding: 12px; font-size: 0.9rem; white-space: pre-wrap; word-break: break-all;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Security</p>
+          <p style="font-size: 0.85rem; color: var(--text-3); line-height: 1.5;">Decoding happens entirely in your browser. Your token is never transmitted over the network.</p>
+        </div>
+        <p class="tool-error" id="jwt-error" hidden style="margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/security-tools.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      const input = el('jwt-input');
+      const headerOut = el('jwt-header');
+      const payloadOut = el('jwt-payload');
+
+      function update() {
+        const token = input.value.trim();
+        if (!token) {
+          headerOut.textContent = '';
+          payloadOut.textContent = '';
+          return;
+        }
+
+        const decoded = SecurityTools.decodeJWT(token);
+        if (decoded.valid) {
+          headerOut.textContent = JSON.stringify(decoded.header, null, 2);
+          payloadOut.textContent = JSON.stringify(decoded.payload, null, 2);
+          headerOut.style.color = 'inherit';
+          payloadOut.style.color = 'inherit';
+        } else {
+          headerOut.textContent = 'Invalid JWT';
+          headerOut.style.color = 'var(--error)';
+          payloadOut.textContent = '';
+        }
+      }
+
+      input.oninput = update;
+
+      document.querySelectorAll('.tool-copy-btn').forEach(btn => {
+        btn.onclick = () => {
+          const target = el(btn.dataset.copy);
+          if (target && target.textContent) {
+            navigator.clipboard.writeText(target.textContent).then(() => {
+              Shell.toast('JSON copied!', 'success');
+            });
+          }
+        };
+      });
+    });
+  </script>
+</body>
+</html>

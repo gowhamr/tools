@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIP Calculator — Free Online Tool — KaruviLab</title>
   <link rel="stylesheet" href="../../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>window.SHELL_ACTIVE = 'calculators';</script>
   <style>
     /* Premium Design System Extensions */
@@ -47,22 +48,18 @@
     .res-label-main { font-size: 0.8rem; color: var(--text-3); text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 8px; }
     .res-value-main { font-size: 2.5rem; font-weight: 900; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.02em; }
 
-    /* Donut Chart */
+    /* Chart Container */
     .chart-container {
       position: relative;
-      width: 200px;
-      height: 200px;
+      width: 220px;
+      height: 220px;
       margin: 0 auto 32px;
     }
-    .donut-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-    .donut-base { fill: transparent; stroke: var(--blue-light); stroke-width: 12; }
-    .donut-segment { fill: transparent; stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 0.8s var(--ease-spring); }
-    .donut-invested { stroke: var(--blue); }
-    .donut-gains { stroke: var(--success); }
     
     .chart-center {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center;
+      pointer-events: none;
     }
     .chart-center-val { font-size: 1.2rem; font-weight: 800; color: var(--text); }
     .chart-center-lbl { font-size: 0.65rem; color: var(--text-3); font-weight: 600; }
@@ -112,7 +109,7 @@
     @media (max-width: 600px) {
       .res-card { padding: 24px; position: static; }
       .res-value-main { font-size: 2rem; }
-      .chart-container { width: 160px; height: 160px; }
+      .chart-container { width: 180px; height: 180px; }
       .metrics-grid { gap: 12px; }
       .cta-bar { grid-template-columns: 1fr; }
     }
@@ -215,11 +212,7 @@
           </div>
 
           <div class="chart-container">
-            <svg class="donut-svg" viewBox="0 0 100 100">
-              <circle class="donut-base" cx="50" cy="50" r="40" />
-              <circle id="donut-invested" class="donut-segment donut-invested" cx="50" cy="50" r="40" />
-              <circle id="donut-gains" class="donut-segment donut-gains" cx="50" cy="50" r="40" />
-            </svg>
+            <canvas id="sip-chart"></canvas>
             <div class="chart-center">
               <div class="chart-center-val" id="out-yield">0%</div>
               <div class="chart-center-lbl">Returns</div>
@@ -228,12 +221,12 @@
 
           <div class="metrics-grid">
             <div class="metric-item">
-              <div class="metric-label"><span class="metric-dot" style="background:var(--blue)"></span> Invested</div>
+              <div class="metric-label"><span class="metric-dot" style="background:#6366f1"></span> Invested</div>
               <div class="metric-value" id="out-invested">₹0</div>
             </div>
             <div class="metric-item">
-              <div class="metric-label"><span class="metric-dot" style="background:var(--success)"></span> Est. Gains</div>
-              <div class="metric-value" style="color:var(--success)" id="out-gains">₹0</div>
+              <div class="metric-label"><span class="metric-dot" style="background:#10b981"></span> Est. Gains</div>
+              <div class="metric-value" style="color:#10b981" id="out-gains">₹0</div>
             </div>
             <div class="metric-item" style="grid-column: span 2;">
               <div class="metric-label">
@@ -296,6 +289,45 @@
 
       const sliders = ['sip', 'rate', 'years', 'stepup'];
       const inputs = ['lumpsum'];
+
+      let sipChart;
+
+      function updateChart(invested, gains) {
+        const ctx = el('sip-chart').getContext('2d');
+        if (sipChart) {
+          sipChart.data.datasets[0].data = [invested, gains];
+          sipChart.update();
+        } else {
+          sipChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Invested', 'Gains'],
+              datasets: [{
+                data: [invested, gains],
+                backgroundColor: ['#6366f1', '#10b981'],
+                borderWidth: 0,
+                hoverOffset: 4
+              }]
+            },
+            options: {
+              cutout: '80%',
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  enabled: true,
+                  callbacks: {
+                    label: function(context) {
+                      return context.label + ': ' + inr(context.raw);
+                    }
+                  }
+                }
+              },
+              maintainAspectRatio: false,
+              animation: { duration: 800, easing: 'easeOutQuart' }
+            }
+          });
+        }
+      }
 
       function calculate() {
         let monthlySipBase = +el('in-sip').value;
@@ -366,20 +398,7 @@
         el('out-yield').textContent = Math.round(yieldPct) + '%';
 
         // Update Chart
-        const investedRatio = totalInvested / totalValue;
-        const circumference = 2 * Math.PI * 40;
-        
-        const gainsSeg = el('donut-gains');
-        const invSeg = el('donut-invested');
-        
-        // Total ring represents 100%
-        // Invested part starts from top
-        invSeg.style.strokeDasharray = `${circumference * investedRatio} ${circumference}`;
-        invSeg.style.strokeDashoffset = 0;
-        
-        // Gains part starts after Invested part
-        gainsSeg.style.strokeDasharray = `${circumference * (1 - investedRatio)} ${circumference}`;
-        gainsSeg.style.strokeDashoffset = -(circumference * investedRatio);
+        updateChart(totalInvested, totalGains);
 
         // Update Table
         const tbody = el('res-table').querySelector('tbody');
@@ -387,7 +406,7 @@
           <tr>
             <td>Year ${d.year}</td>
             <td>${inr(d.invested)}</td>
-            <td style="color:var(--success)">+${inr(d.interest)}</td>
+            <td style="color:#10b981">+${inr(d.interest)}</td>
             <td style="font-weight:700">${inr(d.total)}</td>
           </tr>
         `).join('');
@@ -419,6 +438,7 @@
     })();
   
     } catch (e) {
+      console.error(e);
       var s = document.querySelector('.panel-scroll');
       if (s && !s.querySelector('.calc-error')) {
         var d = document.createElement('div');

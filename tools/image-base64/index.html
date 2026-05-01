@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to Base64 Converter — KaruviLab</title>
+  <meta name="description" content="Convert any image to a Base64 string or Data URL instantly. Fast, private, and works offline.">
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Image to Base64</p>
+        <p class="nav-subtitle">Convert images to string representations</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+          <p class="upload-main">Click or Drag Image</p>
+          <p class="upload-sub">Supports PNG, JPG, WEBP, GIF</p>
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+
+        <div id="settings-area" style="display:none; margin-top:20px;">
+          <div class="settings-card">
+            <p class="settings-card-title">Options</p>
+            <div class="settings-row">
+              <span class="settings-label">Output Format</span>
+              <select id="output-mode">
+                <option value="data-url">Data URL (img src)</option>
+                <option value="raw">Raw Base64</option>
+                <option value="css">CSS Background</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="qr-preview-card" style="margin-top:20px; padding:16px;">
+            <p style="font-size:0.8rem; font-weight:600; color:var(--text-3); margin-bottom:12px;">Preview</p>
+            <div id="preview-container" style="display:flex; justify-content:center; align-items:center; min-height:100px; background:var(--bg-2); border-radius:8px; overflow:hidden;">
+              <img id="image-preview" style="max-width:100%; max-height:200px; display:block;" />
+            </div>
+          </div>
+
+          <div class="settings-card" style="margin-top:20px;">
+            <p class="settings-card-title">Base64 String</p>
+            <textarea id="output-text" class="tool-textarea" rows="8" readonly style="font-family:monospace; font-size:0.75rem; word-break:break-all;"></textarea>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="fmt-btn fmt-btn-primary" id="copy-btn" style="flex:1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                Copy String
+              </button>
+              <button class="fmt-btn" id="clear-btn">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>About Image to Base64</h3>
+        <p>Base64 encoding is a way to represent binary data (like images) in an ASCII string format. This allows you to embed images directly into HTML or CSS without needing external files.</p>
+        <h4>When to use?</h4>
+        <p>Use it for small icons or low-resolution images to reduce HTTP requests. Avoid it for large images as it increases the file size by about 33%.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      const zone = el('upload-zone'), input = el('file-input'), settings = el('settings-area');
+      const preview = el('image-preview'), output = el('output-text'), mode = el('output-mode');
+      const copyBtn = el('copy-btn'), clearBtn = el('clear-btn');
+
+      let currentDataUrl = '';
+      let currentMime = '';
+
+      function handleFile(file) {
+        const check = Utils.validateFile(file, ['jpg', 'jpeg', 'png', 'webp', 'gif'], 5);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentDataUrl = e.target.result;
+          currentMime = file.type;
+          preview.src = currentDataUrl;
+          settings.style.display = 'block';
+          updateOutput();
+          Shell.toast('Image converted!', 'success');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateOutput() {
+        if (!currentDataUrl) return;
+        const val = mode.value;
+        const base64 = currentDataUrl.split(',')[1];
+
+        if (val === 'data-url') {
+          output.value = currentDataUrl;
+        } else if (val === 'raw') {
+          output.value = base64;
+        } else if (val === 'css') {
+          output.value = `background-image: url("${currentDataUrl}");`;
+        }
+      }
+
+      zone.onclick = () => input.click();
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+      zone.ondragleave = () => zone.classList.remove('drag-over');
+      zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+      input.onchange = () => { if(input.files[0]) handleFile(input.files[0]); input.value = ''; };
+
+      mode.onchange = updateOutput;
+
+      copyBtn.onclick = () => {
+        if (!output.value) return;
+        navigator.clipboard.writeText(output.value).then(() => {
+          Shell.toast('Copied to clipboard', 'success');
+        }).catch(() => {
+          output.select();
+          Shell.toast('Please copy manually', 'warn');
+        });
+      };
+
+      clearBtn.onclick = () => {
+        currentDataUrl = '';
+        currentMime = '';
+        preview.src = '';
+        output.value = '';
+        settings.style.display = 'none';
+      };
+    });
+  </script>
+</body>
+</html>

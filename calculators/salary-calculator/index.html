@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salary Calculator (India) — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'calculators';</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="app-shell">
+  <noscript>
+    <div style="padding: 20px; text-align: center; background: #fee2e2; color: #b91c1c;">
+      This tool requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
+
+  <div class="panel tool-panel active" id="panel-salary-calc">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Salary Calculator</p>
+        <p class="nav-subtitle">Calculate take-home pay and tax (FY 2024-25)</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="settings-grid" style="display: grid; gap: 20px; padding-bottom: 20px;">
+          <div class="setting-item">
+            <label class="tool-label">Annual CTC (₹)</label>
+            <input type="number" id="sal-ctc" class="tool-textarea" style="height:48px; font-size:1.1rem" value="1200000" step="10000">
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px">
+            <div class="setting-item">
+              <label class="tool-label">EPF (Monthly %)</label>
+              <input type="number" id="sal-epf" class="tool-textarea" style="height:48px" value="12">
+            </div>
+            <div class="setting-item">
+              <label class="tool-label">Prof. Tax (Monthly)</label>
+              <input type="number" id="sal-pt" class="tool-textarea" style="height:48px" value="200">
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <label class="tool-label">Annual HRA (Exemption)</label>
+            <input type="number" id="sal-hra" class="tool-textarea" style="height:48px" value="0">
+          </div>
+        </div>
+
+        <div class="tool-section" id="sal-results" style="background: var(--bg-2); border-radius: 12px; padding: 20px; border: 1px solid var(--bg-3);">
+          <div style="display:flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 24px;">
+            <p style="color:var(--text-3); font-size: 0.9rem; margin-bottom: 4px;">Monthly In-hand (New Regime)</p>
+            <p id="res-inhand" style="font-size: 2rem; font-weight: 800; color: var(--blue)">₹ 0</p>
+          </div>
+
+          <div style="max-width: 250px; margin: 0 auto 24px;">
+            <canvas id="sal-chart"></canvas>
+          </div>
+
+          <div style="display: grid; gap: 12px;">
+            <div style="display:flex; justify-content: space-between; font-size: 0.95rem;">
+              <span style="color:var(--text-2)">Annual Income Tax</span>
+              <span id="res-tax" style="font-weight: 600;">₹ 0</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; font-size: 0.95rem;">
+              <span style="color:var(--text-2)">Total Deductions</span>
+              <span id="res-deductions" style="font-weight: 600;">₹ 0</span>
+            </div>
+            <hr style="border:0; border-top:1px dashed var(--bg-3); margin: 4px 0;">
+            <div style="display:flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-3)">
+              <span>Old Regime Tax (Est.)</span>
+              <span id="res-tax-old">₹ 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Disclaimer</p>
+          <p style="font-size: 0.85rem; color: var(--text-3); line-height: 1.5;">This is a simplified calculation for FY 2024-25 (AY 2025-26). It includes standard deduction of ₹50,000. Actual tax may vary based on specific exemptions and deductions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      let chart = null;
+
+      function calculateTax(income, regime = 'new') {
+        let tax = 0;
+        if (regime === 'new') {
+          // FY 2024-25 New Regime (simplified)
+          if (income <= 300000) tax = 0;
+          else if (income <= 600000) tax = (income - 300000) * 0.05;
+          else if (income <= 900000) tax = 15000 + (income - 600000) * 0.10;
+          else if (income <= 1200000) tax = 45000 + (income - 900000) * 0.15;
+          else if (income <= 1500000) tax = 90000 + (income - 1200000) * 0.20;
+          else tax = 150000 + (income - 1500000) * 0.30;
+          
+          if (income <= 700000) tax = 0; // Rebate
+        } else {
+          // Simplified Old Regime
+          const taxable = Math.max(0, income - 50000 - 150000); // Standard + 80C
+          if (taxable <= 250000) tax = 0;
+          else if (taxable <= 500000) tax = (taxable - 250000) * 0.05;
+          else if (taxable <= 1000000) tax = 12500 + (taxable - 500000) * 0.20;
+          else tax = 112500 + (taxable - 1000000) * 0.30;
+          
+          if (taxable <= 500000) tax = 0; // Rebate
+        }
+        return tax * 1.04; // Cess
+      }
+
+      function update() {
+        const ctc = +el('in-ctc').value;
+        const epf = +el('in-epf').value || (ctc * 0.12 * 0.4); // Assuming 40% basic
+        const pt = +el('in-pt').value || 2400;
+        const hra = +el('in-hra').value || 0;
+
+        const taxNew = calculateTax(ctc, 'new');
+        const taxOld = calculateTax(ctc - hra, 'old');
+        const tax = taxNew; // Use new regime by default
+
+        const totalDeductions = epf + pt + tax;
+        const netAnnual = ctc - totalDeductions;
+        const netMonthly = netAnnual / 12;
+
+        el('out-monthly').textContent = '₹' + Math.round(netMonthly).toLocaleString('en-IN');
+        el('out-tax-new').textContent = '₹' + Math.round(taxNew).toLocaleString('en-IN');
+        el('out-tax-old').textContent = '₹' + Math.round(taxOld).toLocaleString('en-IN');
+        
+        const regimeMsg = taxNew < taxOld ? 'New Regime is better for you.' : 'Old Regime is better for you.';
+        el('regime-compare').textContent = regimeMsg;
+
+        updateChart(netAnnual, tax, epf + pt);
+      }
+
+      function updateChart(inHand, tax, deductions) {
+        const ctx = el('salary-chart').getContext('2d');
+        if (chart) chart.destroy();
+        
+        chart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['In-hand', 'Income Tax', 'Deductions (EPF/PT)'],
+            datasets: [{
+              data: [inHand, tax, deductions],
+              backgroundColor: ['#6366f1', '#f43f5e', '#fbbf24'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            cutout: '70%'
+          }
+        });
+      }
+
+      ['in-ctc', 'in-epf', 'in-pt', 'in-hra'].forEach(id => {
+        el(id).addEventListener('input', update);
+      });
+
+      update();
+    });
+  </script>
+</body>
+</html>

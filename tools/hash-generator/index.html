@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hash Generator — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body class="app-shell">
+  <noscript>
+    <div style="padding: 20px; text-align: center; background: #fee2e2; color: #b91c1c;">
+      This tool requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
+
+  <div class="panel tool-panel active" id="panel-hash-gen">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Hash Generator</p>
+        <p class="nav-subtitle">Generate SHA-256, SHA-512 and MD5 hashes</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="tool-section">
+          <label class="tool-label">Input Text</label>
+          <textarea class="tool-textarea" id="hash-input" placeholder="Enter text to hash..." rows="6"></textarea>
+        </div>
+
+        <div class="tool-section">
+          <div class="tool-output-wrap" style="margin-bottom: 16px;">
+            <div class="tool-output-header">
+              <span class="tool-output-label">SHA-256</span>
+              <button class="tool-copy-btn" data-copy="hash-sha256">Copy</button>
+            </div>
+            <textarea class="tool-textarea tool-output" id="hash-sha256" rows="2" readonly placeholder="Waiting for input..."></textarea>
+          </div>
+
+          <div class="tool-output-wrap" style="margin-bottom: 16px;">
+            <div class="tool-output-header">
+              <span class="tool-output-label">SHA-512</span>
+              <button class="tool-copy-btn" data-copy="hash-sha512">Copy</button>
+            </div>
+            <textarea class="tool-textarea tool-output" id="hash-sha512" rows="3" readonly placeholder="Waiting for input..."></textarea>
+          </div>
+
+          <div class="tool-output-wrap">
+            <div class="tool-output-header">
+              <span class="tool-output-label">MD5</span>
+              <button class="tool-copy-btn" data-copy="hash-md5">Copy</button>
+            </div>
+            <textarea class="tool-textarea tool-output" id="hash-md5" rows="1" readonly placeholder="Waiting for input..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Information</p>
+          <p style="font-size: 0.85rem; color: var(--text-3); line-height: 1.5;">Hasing is performed entirely in your browser. SHA hashes use the Web Crypto API, while MD5 uses a lightweight local implementation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/security-tools.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      const input = el('hash-input');
+
+      async function update() {
+        const text = input.value;
+        if (!text) {
+          el('hash-sha256').value = '';
+          el('hash-sha512').value = '';
+          el('hash-md5').value = '';
+          return;
+        }
+
+        try {
+          el('hash-sha256').value = await SecurityTools.hashText(text, 'SHA-256');
+          el('hash-sha512').value = await SecurityTools.hashText(text, 'SHA-512');
+          if (typeof md5 !== 'undefined') {
+            el('hash-md5').value = md5(text);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      input.oninput = Utils.debounce(update, 200);
+
+      document.querySelectorAll('.tool-copy-btn').forEach(btn => {
+        btn.onclick = () => {
+          const target = el(btn.dataset.copy);
+          if (target && target.value) {
+            navigator.clipboard.writeText(target.value).then(() => {
+              Shell.toast('Hash copied!', 'success');
+            });
+          }
+        };
+      });
+    });
+  </script>
+</body>
+</html>

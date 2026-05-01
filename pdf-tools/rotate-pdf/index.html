@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotate PDF — KaruviLab</title>
+  <meta name="description" content="Rotate PDF pages 90, 180 or 270 degrees. Works entirely in your browser.">
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'pdf';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Rotate PDF</p>
+        <p class="nav-subtitle">Change page orientation</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload PDF to Rotate</p>
+          <p class="upload-sub">Single PDF file</p>
+          <input type="file" id="file-input" accept=".pdf" hidden />
+        </div>
+
+        <div id="rotate-area" style="display:none; margin-top:24px;">
+          <div class="settings-card">
+            <p class="settings-card-title">Rotation Options</p>
+            <div class="settings-row" style="flex-direction:column; align-items:flex-start; border:none; padding:0;">
+               <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; width:100%;">
+                 <button class="fmt-btn angle-btn" data-angle="90">90° Right</button>
+                 <button class="fmt-btn angle-btn" data-angle="180">180° Flip</button>
+                 <button class="fmt-btn angle-btn" data-angle="270">90° Left</button>
+               </div>
+            </div>
+            <div class="settings-row" style="margin-top:16px;">
+              <span class="settings-label">Apply to</span>
+              <select id="apply-to">
+                <option value="all">All Pages</option>
+                <option value="odd">Odd Pages Only</option>
+                <option value="even">Even Pages Only</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="panel-cta-btn" id="rotate-btn" style="width:100%; margin-top:20px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Rotate & Download
+          </button>
+          
+          <div id="file-info" style="margin-top:16px; padding:12px; background:var(--bg-2); border-radius:8px; display:flex; align-items:center; gap:12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div style="flex:1; min-width:0;">
+              <p id="pdf-name" style="font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></p>
+              <p id="pdf-meta" style="font-size:0.75rem; color:var(--text-3);"></p>
+            </div>
+            <button id="clear-btn" style="background:none; border:none; color:var(--text-3); cursor:pointer; font-size:1.2rem;">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>How to rotate PDF</h3>
+        <p>1. Upload your PDF document.<br>
+           2. Choose the rotation angle (90&deg;, 180&deg;, or 270&deg;).<br>
+           3. Select if you want to rotate all pages or just specific ones.<br>
+           4. Click "Rotate & Download" to get your modified file.</p>
+        <h4>Local Processing</h4>
+        <p>Your PDF never leaves your device. All rotation operations happen in your browser's memory using <code>pdf-lib</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ready = await Shell.waitForLibs(['PDFLib'], 'Rotate PDF');
+      if (!ready) return;
+
+      const el = id => document.getElementById(id);
+      const zone = el('upload-zone'), input = el('file-input'), area = el('rotate-area');
+      const rotateBtn = el('rotate-btn'), clearBtn = el('clear-btn');
+      const nameEl = el('pdf-name'), metaEl = el('pdf-meta'), applySelect = el('apply-to');
+      
+      let currentFile = null;
+      let selectedAngle = 90;
+
+      // Handle angle buttons
+      document.querySelectorAll('.angle-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.angle-btn').forEach(b => b.classList.remove('fmt-btn-primary'));
+          btn.classList.add('fmt-btn-primary');
+          selectedAngle = parseInt(btn.dataset.angle);
+        };
+      });
+      // Set default
+      document.querySelector('.angle-btn[data-angle="90"]').classList.add('fmt-btn-primary');
+
+      async function handleFile(file) {
+        const check = Utils.validateFile(file, ['pdf'], 100);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
+
+        currentFile = file;
+        nameEl.textContent = file.name;
+        
+        try {
+          const ab = await Utils.readAsArrayBuffer(file);
+          const pdfDoc = await PDFLib.PDFDocument.load(ab, { ignoreEncryption: true });
+          const count = pdfDoc.getPageCount();
+          metaEl.textContent = `${count} page${count > 1 ? 's' : ''} · ${Utils.formatBytes(file.size)}`;
+          area.style.display = 'block';
+          Shell.toast('PDF loaded', 'success');
+        } catch (e) {
+          Shell.toast('Failed to load PDF. It might be encrypted.', 'error');
+          currentFile = null;
+        }
+      }
+
+      zone.onclick = () => input.click();
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+      zone.ondragleave = () => zone.classList.remove('drag-over');
+      zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+      input.onchange = () => { if(input.files[0]) handleFile(input.files[0]); input.value = ''; };
+
+      clearBtn.onclick = () => {
+        currentFile = null;
+        area.style.display = 'none';
+        input.value = '';
+      };
+
+      rotateBtn.onclick = async () => {
+        if (!currentFile) return;
+
+        rotateBtn.disabled = true;
+        rotateBtn.innerHTML = Utils.spinnerHTML() + ' Rotating…';
+
+        try {
+          const ab = await Utils.readAsArrayBuffer(currentFile);
+          const pdfDoc = await PDFLib.PDFDocument.load(ab, { ignoreEncryption: true });
+          const pages = pdfDoc.getPages();
+          const applyTo = applySelect.value;
+
+          pages.forEach((page, index) => {
+            const pageNum = index + 1;
+            let shouldRotate = false;
+            if (applyTo === 'all') shouldRotate = true;
+            else if (applyTo === 'odd' && pageNum % 2 !== 0) shouldRotate = true;
+            else if (applyTo === 'even' && pageNum % 2 === 0) shouldRotate = true;
+
+            if (shouldRotate) {
+              const currentRotation = page.getRotation().angle;
+              page.setRotation(PDFLib.degrees(currentRotation + selectedAngle));
+            }
+          });
+
+          const bytes = await pdfDoc.save();
+          const blob = new Blob([bytes], { type: 'application/pdf' });
+          const newName = Utils.replaceExt(Utils.safeName(currentFile.name), '_rotated.pdf');
+          Utils.downloadBlob(blob, newName);
+          Shell.toast('PDF rotated and downloaded', 'success');
+        } catch (e) {
+          Shell.toast('Rotation failed: ' + e.message, 'error');
+        } finally {
+          rotateBtn.disabled = false;
+          rotateBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Rotate & Download
+          `;
+        }
+      };
+    });
+  </script>
+</body>
+</html>

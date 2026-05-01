@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Page Numbers to PDF — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'page-numbering';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-numbering">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Page Numbering</p>
+        <p class="nav-subtitle">Add custom page numbers to your PDF documents</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="upload-zone upload-zone-hero" id="numbering-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <p class="upload-main">Select PDF File</p>
+          <p class="upload-sub"><label for="numbering-input">Tap to select</label> or drag here</p>
+          <p class="upload-formats">PDF documents only</p>
+          <input type="file" id="numbering-input" accept=".pdf" />
+        </div>
+      </div>
+
+      <div class="panel-settings-group" id="numbering-settings" style="display:none">
+        <div class="settings-card">
+          <p class="settings-card-title">Numbering Options</p>
+          
+          <div class="settings-row">
+            <span class="settings-label">Vertical Position</span>
+            <select id="num-v-pos">
+              <option value="bottom">Bottom</option>
+              <option value="top">Top</option>
+            </select>
+          </div>
+
+          <div class="settings-row">
+            <span class="settings-label">Horizontal Position</span>
+            <select id="num-h-pos">
+              <option value="center">Center</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+
+          <div class="settings-row">
+            <span class="settings-label">Text Format</span>
+            <input type="text" id="num-format" value="Page {n} of {total}" placeholder="e.g. {n} / {total}" />
+          </div>
+
+          <div class="settings-grid">
+            <div class="settings-row">
+              <span class="settings-label">Font Size</span>
+              <input type="number" id="num-size" value="12" min="6" max="72" />
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Margin (pt)</span>
+              <input type="number" id="num-margin" value="30" min="0" max="200" />
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <span class="settings-label">Color</span>
+            <input type="color" id="num-color" value="#000000" />
+          </div>
+
+          <div class="settings-row">
+            <span class="settings-label">Start Page</span>
+            <input type="number" id="num-start" value="1" min="1" />
+          </div>
+        </div>
+
+        <div class="panel-cta-bar" style="position:static;padding:0;margin-top:20px">
+          <button class="panel-cta-btn" id="numbering-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Apply & Download
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-files-group">
+        <div id="numbering-file-list" class="file-list"></div>
+        <div id="numbering-results" class="results-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/pdf-tools.js"></script>
+  <script src="../../js/app.js"></script>
+
+  <script>
+    (function() {
+      const dropZone = document.getElementById('numbering-drop');
+      const fileInput = document.getElementById('numbering-input');
+      const settingsArea = document.getElementById('numbering-settings');
+      const applyBtn = document.getElementById('numbering-btn');
+      const fileList = document.getElementById('numbering-file-list');
+      const resultsArea = document.getElementById('numbering-results');
+
+      let currentFile = null;
+      let abortController = null;
+
+      async function handleFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+          Shell.toast('Please select a valid PDF file');
+          return;
+        }
+        currentFile = file;
+        fileList.innerHTML = '';
+        fileList.appendChild(FormatUtils.createFileCard(file, () => {
+          currentFile = null;
+          settingsArea.style.display = 'none';
+          fileList.innerHTML = '';
+          resultsArea.innerHTML = '';
+        }));
+        settingsArea.style.display = 'block';
+        resultsArea.innerHTML = '';
+      }
+
+      Utils.setupDropZone(dropZone, fileInput, (files) => handleFile(files[0]));
+
+      applyBtn.onclick = async () => {
+        if (!currentFile) return;
+
+        if (abortController) abortController.abort();
+        abortController = new AbortController();
+
+        applyBtn.disabled = true;
+        applyBtn.innerHTML = 'Processing...';
+
+        try {
+          await Shell.waitForLibs(['PDFLib']);
+          const lib = window.PDFLib;
+          const arrayBuffer = await Utils.readAsArrayBuffer(currentFile);
+          const pdfDoc = await lib.PDFDocument.load(arrayBuffer);
+          const pages = pdfDoc.getPages();
+          const total = pages.length;
+
+          const vPos = document.getElementById('num-v-pos').value;
+          const hPos = document.getElementById('num-h-pos').value;
+          const format = document.getElementById('num-format').value;
+          const fontSize = parseInt(document.getElementById('num-size').value) || 12;
+          const margin = parseInt(document.getElementById('num-margin').value) || 30;
+          const colorHex = document.getElementById('num-color').value;
+          const startNum = parseInt(document.getElementById('num-start').value) || 1;
+
+          const rgb = hexToRgb(colorHex);
+          const textColor = lib.rgb(rgb.r/255, rgb.g/255, rgb.b/255);
+          const font = await pdfDoc.embedFont(lib.StandardFonts.Helvetica);
+
+          for (let i = 0; i < total; i++) {
+            if (abortController.signal.aborted) throw new Error('Aborted');
+            
+            const page = pages[i];
+            const { width, height } = page.getSize();
+            const text = format.replace('{n}', i + startNum).replace('{total}', total);
+            const textWidth = font.widthOfTextAtSize(text, fontSize);
+
+            let x, y;
+
+            if (hPos === 'left') x = margin;
+            else if (hPos === 'right') x = width - textWidth - margin;
+            else x = (width - textWidth) / 2;
+
+            if (vPos === 'top') y = height - margin - fontSize;
+            else y = margin;
+
+            page.drawText(text, {
+              x, y,
+              size: fontSize,
+              font,
+              color: textColor,
+            });
+          }
+
+          const pdfBytes = await pdfDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const outName = currentFile.name.replace(/\.pdf$/i, '') + '_numbered.pdf';
+          
+          resultsArea.innerHTML = '';
+          resultsArea.appendChild(FormatUtils.createResultCard(outName, blob));
+          Shell.toast('Success! Page numbers added.');
+
+        } catch (err) {
+          console.error(err);
+          if (err.message !== 'Aborted') Shell.toast('Error: ' + err.message);
+        } finally {
+          applyBtn.disabled = false;
+          applyBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Apply & Download
+          `;
+          abortController = null;
+        }
+      };
+
+      function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return { r, g, b };
+      }
+    })();
+  </script>
+</body>
+</html>

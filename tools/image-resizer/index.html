@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer — KaruviLab</title>
+  <meta name="description" content="Resize images by pixels or percentage while maintaining quality. Works entirely in your browser.">
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Image Resizer</p>
+        <p class="nav-subtitle">Change image dimensions easily</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload Image to Resize</p>
+          <p class="upload-sub">Supports PNG, JPG, WEBP</p>
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+
+        <div id="resizer-area" style="display:none; margin-top:24px;">
+          <div class="settings-card">
+            <p class="settings-card-title">Dimensions</p>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+              <div class="settings-row" style="flex-direction:column; align-items:flex-start; border:none; padding:0;">
+                <label class="settings-label" style="margin-bottom:8px;">Width (px)</label>
+                <input type="number" id="width-input" class="tool-textarea" style="height:42px; padding:0 12px;" />
+              </div>
+              <div class="settings-row" style="flex-direction:column; align-items:flex-start; border:none; padding:0;">
+                <label class="settings-label" style="margin-bottom:8px;">Height (px)</label>
+                <input type="number" id="height-input" class="tool-textarea" style="height:42px; padding:0 12px;" />
+              </div>
+            </div>
+            <div class="settings-row" style="margin-top:16px;">
+              <label class="settings-label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="lock-aspect" checked style="width:16px; height:16px;" />
+                Lock Aspect Ratio
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-card" style="margin-top:20px;">
+            <p class="settings-card-title">Export Settings</p>
+            <div class="settings-row">
+              <span class="settings-label">Format</span>
+              <select id="export-format">
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+            <div class="settings-row" id="quality-row">
+              <span class="settings-label">Quality</span>
+              <div style="flex:1; display:flex; align-items:center; gap:12px;">
+                <input type="range" id="quality-range" min="10" max="100" value="90" style="flex:1" />
+                <span id="quality-val" style="font-size:0.8rem; font-weight:600; width:30px;">90%</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="panel-cta-btn" id="resize-btn" style="width:100%; margin-top:20px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Resize & Download
+          </button>
+          
+          <div id="preview-area" style="margin-top:24px; display:none;">
+             <p style="font-size:0.8rem; font-weight:600; color:var(--text-3); margin-bottom:12px;">Original Image</p>
+             <div style="padding:12px; background:var(--bg-2); border-radius:8px; text-align:center;">
+               <img id="img-preview" style="max-width:100%; max-height:300px; border-radius:4px;" />
+               <p id="img-info" style="font-size:0.75rem; color:var(--text-3); margin-top:8px;"></p>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>How to resize images</h3>
+        <p>1. Upload your image (JPG, PNG, or WebP).<br>
+           2. Enter your desired width or height.<br>
+           3. Keep "Lock Aspect Ratio" checked to avoid stretching the image.<br>
+           4. Choose your export format and quality, then click "Resize & Download".</p>
+        <h4>Privacy Guaranteed</h4>
+        <p>Like all KaruviLab tools, resizing happens directly in your browser. Your images are never uploaded to any server.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      const zone = el('upload-zone'), input = el('file-input'), area = el('resizer-area');
+      const wIn = el('width-input'), hIn = el('height-input'), lock = el('lock-aspect');
+      const format = el('export-format'), quality = el('quality-range'), qVal = el('quality-val');
+      const qRow = el('quality-row'), btn = el('resize-btn'), preview = el('img-preview'), info = el('img-info');
+
+      let originalImg = null;
+      let originalName = '';
+      let ratio = 1;
+
+      async function handleFile(file) {
+        const check = Utils.validateFile(file, ['jpg', 'jpeg', 'png', 'webp'], 20);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
+
+        try {
+          const dataUrl = await Utils.readAsDataURL(file);
+          originalImg = await Utils.loadImage(dataUrl);
+          originalName = file.name;
+          ratio = originalImg.width / originalImg.height;
+
+          wIn.value = originalImg.width;
+          hIn.value = originalImg.height;
+          preview.src = dataUrl;
+          info.textContent = `${originalImg.width} × ${originalImg.height} · ${Utils.formatBytes(file.size)}`;
+          
+          area.style.display = 'block';
+          el('preview-area').style.display = 'block';
+          Shell.toast('Image loaded', 'success');
+        } catch (e) {
+          Shell.toast('Failed to load image', 'error');
+        }
+      }
+
+      wIn.oninput = () => {
+        if (lock.checked && originalImg) {
+          hIn.value = Math.round(wIn.value / ratio);
+        }
+      };
+
+      hIn.oninput = () => {
+        if (lock.checked && originalImg) {
+          wIn.value = Math.round(hIn.value * ratio);
+        }
+      };
+
+      format.onchange = () => {
+        qRow.style.display = format.value === 'image/png' ? 'none' : 'flex';
+      };
+
+      quality.oninput = () => qVal.textContent = quality.value + '%';
+
+      zone.onclick = () => input.click();
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+      zone.ondragleave = () => zone.classList.remove('drag-over');
+      zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+      input.onchange = () => { if(input.files[0]) handleFile(input.files[0]); input.value = ''; };
+
+      btn.onclick = async () => {
+        if (!originalImg) return;
+        
+        const w = parseInt(wIn.value);
+        const h = parseInt(hIn.value);
+        
+        if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+          Shell.toast('Please enter valid dimensions', 'warn');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = Utils.spinnerHTML() + ' Resizing…';
+
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(originalImg, 0, 0, w, h);
+
+          const mime = format.value;
+          const q = quality.value / 100;
+          const blob = await Utils.canvasToBlob(canvas, mime, q);
+          
+          const ext = Utils.extFromMime(mime);
+          const name = Utils.replaceExt(Utils.safeName(originalName), ext);
+          Utils.downloadBlob(blob, name);
+          Shell.toast('Image resized and downloaded', 'success');
+        } catch (e) {
+          Shell.toast('Resize failed', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Resize & Download
+          `;
+        }
+      };
+    });
+  </script>
+</body>
+</html>

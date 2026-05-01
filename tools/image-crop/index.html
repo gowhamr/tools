@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Image — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+  <script>window.SHELL_ACTIVE = 'image-crop';</script>
+  <style>
+    .crop-container {
+      width: 100%;
+      max-height: 60vh;
+      margin: 20px 0;
+      background: #f0f0f0;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .crop-container img {
+      max-width: 100%;
+      display: block;
+    }
+    .crop-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .crop-btn-icon {
+      padding: 10px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .crop-btn-icon:hover {
+      background: var(--bg-hover);
+    }
+    .crop-btn-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-crop">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Image Cropper</p>
+        <p class="nav-subtitle">Precisely crop and rotate your images</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group" id="crop-upload-group">
+        <div class="upload-zone upload-zone-hero" id="crop-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload Image</p>
+          <p class="upload-sub"><label for="crop-input">Tap to select</label> or drag here</p>
+          <p class="upload-formats">JPG &middot; PNG &middot; WebP &middot; GIF</p>
+          <input type="file" id="crop-input" accept="image/*" />
+        </div>
+      </div>
+
+      <div class="panel-settings-group" id="crop-workspace" style="display:none">
+        <div class="crop-controls">
+          <button class="crop-btn-icon" onclick="setAspectRatio(1)" title="1:1">1:1</button>
+          <button class="crop-btn-icon" onclick="setAspectRatio(4/3)" title="4:3">4:3</button>
+          <button class="crop-btn-icon" onclick="setAspectRatio(16/9)" title="16:9">16:9</button>
+          <button class="crop-btn-icon" onclick="setAspectRatio(0)" title="Free">Free</button>
+          <div style="flex-grow:1"></div>
+          <button class="crop-btn-icon" onclick="rotate(-90)" title="Rotate Left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+          </button>
+          <button class="crop-btn-icon" onclick="rotate(90)" title="Rotate Right">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+          </button>
+        </div>
+
+        <div class="crop-container">
+          <img id="crop-image" src="" alt="To be cropped" />
+        </div>
+
+        <div class="panel-cta-bar" style="position:static;padding:0;margin-top:20px">
+          <button class="panel-cta-btn" id="crop-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/>
+            </svg>
+            Crop & Download
+          </button>
+          <button class="panel-cta-btn btn-secondary" id="crop-cancel-btn" style="margin-top:10px">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-files-group">
+        <div id="crop-results" class="results-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/app.js"></script>
+
+  <script>
+    (function() {
+      const dropZone = document.getElementById('crop-drop');
+      const fileInput = document.getElementById('crop-input');
+      const workspace = document.getElementById('crop-workspace');
+      const uploadGroup = document.getElementById('crop-upload-group');
+      const cropImage = document.getElementById('crop-image');
+      const cropBtn = document.getElementById('crop-btn');
+      const cancelBtn = document.getElementById('crop-cancel-btn');
+      const resultsArea = document.getElementById('crop-results');
+
+      let cropper = null;
+      let currentFile = null;
+
+      async function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+          Shell.toast('Please select a valid image file');
+          return;
+        }
+        
+        await Shell.waitForLibs(['Cropper'], 'Image Cropper');
+        if (!window.Cropper) return;
+
+        currentFile = file;
+        const dataUrl = await Utils.readAsDataURL(file);
+        cropImage.src = dataUrl;
+        
+        uploadGroup.style.display = 'none';
+        workspace.style.display = 'block';
+        resultsArea.innerHTML = '';
+
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(cropImage, {
+          viewMode: 1,
+          dragMode: 'move',
+          autoCropArea: 0.8,
+          restore: false,
+          guides: true,
+          center: true,
+          highlight: false,
+          cropBoxMovable: true,
+          cropBoxResizable: true,
+          toggleDragModeOnDblclick: false,
+        });
+      }
+
+      Utils.setupDropZone(dropZone, fileInput, (files) => handleFile(files[0]));
+
+      window.setAspectRatio = (ratio) => {
+        if (cropper) cropper.setAspectRatio(ratio || NaN);
+      };
+
+      window.rotate = (deg) => {
+        if (cropper) cropper.rotate(deg);
+      };
+
+      cancelBtn.onclick = () => {
+        workspace.style.display = 'none';
+        uploadGroup.style.display = 'block';
+        if (cropper) cropper.destroy();
+        cropper = null;
+      };
+
+      cropBtn.onclick = async () => {
+        if (!cropper) return;
+        
+        cropBtn.disabled = true;
+        cropBtn.innerHTML = 'Processing...';
+
+        try {
+          const canvas = cropper.getCroppedCanvas({
+            maxWidth: 4096,
+            maxHeight: 4096,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high',
+          });
+
+          const blob = await Utils.canvasToBlob(canvas, currentFile.type, 0.9);
+          const outName = currentFile.name.replace(/(\.[\w\d]+)$/, '_cropped$1');
+          
+          resultsArea.innerHTML = '';
+          resultsArea.appendChild(FormatUtils.createResultCard(outName, blob));
+          Shell.toast('Success! Image cropped.');
+          
+          // Show upload again
+          workspace.style.display = 'none';
+          uploadGroup.style.display = 'block';
+        } catch (err) {
+          console.error(err);
+          Shell.toast('Error cropping image');
+        } finally {
+          cropBtn.disabled = false;
+          cropBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/>
+            </svg>
+            Crop & Download
+          `;
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

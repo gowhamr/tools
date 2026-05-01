@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extract Images from PDF — KaruviLab</title>
+  <meta name="description" content="Extract all embedded images from any PDF file instantly. No quality loss, runs entirely in your browser.">
+  <link rel="stylesheet" href="../../css/style.css">
+  <script>window.SHELL_ACTIVE = 'pdf';</script>
+</head>
+<body>
+  <div class="panel tool-panel active">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Extract Images</p>
+        <p class="nav-subtitle">Pull photos and graphics from PDF</p>
+      </div>
+    </div>
+    <div class="panel-scroll">
+      <div class="tool-section">
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload PDF to Extract</p>
+          <p class="upload-sub">PDF files up to 100MB</p>
+          <input type="file" id="file-input" accept=".pdf" hidden />
+        </div>
+
+        <div id="extract-area" style="display:none; margin-top:24px;">
+          <div class="results-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h4 id="status-text">Scanning PDF...</h4>
+            <button class="fmt-btn" id="clear-btn">Clear</button>
+          </div>
+          
+          <div id="images-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:12px;"></div>
+          
+          <div id="empty-state" style="display:none; text-align:center; padding:40px 20px; color:var(--text-3);">
+            <p>No embedded images found in this PDF.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-section info-section">
+        <h3>How to extract images</h3>
+        <p>1. Upload your PDF document.<br>
+           2. The tool will automatically scan all pages for embedded images.<br>
+           3. View the extracted images in the gallery.<br>
+           4. Click on any image to download it to your device.</p>
+        <h4>Privacy First</h4>
+        <p>Extraction happens locally in your browser using <code>pdf.js</code>. Your PDF and extracted images never touch our servers.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script>
+    const PDFJS_WORKER_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ready = await Shell.waitForLibs(['pdfjsLib'], 'Extract Images');
+      if (!ready) return;
+
+      const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_SRC;
+
+      const el = id => document.getElementById(id);
+      const zone = el('upload-zone'), input = el('file-input'), area = el('extract-area');
+      const grid = el('images-grid'), status = el('status-text'), clearBtn = el('clear-btn'), empty = el('empty-state');
+
+      let abortCtrl = null;
+
+      async function handleFile(file) {
+        const check = Utils.validateFile(file, ['pdf'], 100);
+        if (!check.valid) {
+          Shell.toast(check.error, 'error');
+          return;
+        }
+
+        abortCtrl?.abort();
+        abortCtrl = new AbortController();
+        const { signal } = abortCtrl;
+
+        area.style.display = 'block';
+        grid.innerHTML = '';
+        empty.style.display = 'none';
+        status.textContent = 'Opening PDF...';
+        
+        try {
+          const ab = await Utils.readAsArrayBuffer(file);
+          const pdfDoc = await pdfjsLib.getDocument({ data: ab }).promise;
+          const numPages = pdfDoc.numPages;
+          let imageCount = 0;
+
+          for (let i = 1; i <= numPages; i++) {
+            if (signal.aborted) break;
+            status.textContent = `Scanning page ${i} of ${numPages}...`;
+            
+            const page = await pdfDoc.getPage(i);
+            const ops = await page.getOperatorList();
+            
+            for (let j = 0; j < ops.fnArray.length; j++) {
+              if (signal.aborted) break;
+              
+              const fn = ops.fnArray[j];
+              if (fn === pdfjsLib.OPS.paintImageXObject || fn === pdfjsLib.OPS.paintInlineImageXObject) {
+                const imgKey = ops.argsArray[j][0];
+                let img;
+                try {
+                  img = await page.objs.get(imgKey);
+                } catch(e) { continue; }
+                
+                if (img && img.data) {
+                  imageCount++;
+                  displayImage(img, imageCount);
+                }
+              }
+            }
+          }
+
+          if (imageCount === 0) {
+            empty.style.display = 'block';
+            status.textContent = 'Finished scanning';
+          } else {
+            status.textContent = `Extracted ${imageCount} image${imageCount > 1 ? 's' : ''}`;
+            Shell.toast(`Found ${imageCount} images`, 'success');
+          }
+        } catch (e) {
+          if (e.name !== 'AbortError') {
+            Shell.toast('Extraction failed: ' + e.message, 'error');
+            status.textContent = 'Error during extraction';
+          }
+        }
+      }
+
+      function displayImage(img, index) {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        
+        const imageData = ctx.createImageData(img.width, img.height);
+        // pdf.js image data can be RGB or RGBA
+        if (img.data.length === img.width * img.height * 3) {
+           for (let i = 0, j = 0; i < img.data.length; i += 3, j += 4) {
+             imageData.data[j] = img.data[i];
+             imageData.data[j+1] = img.data[i+1];
+             imageData.data[j+2] = img.data[i+2];
+             imageData.data[j+3] = 255;
+           }
+        } else {
+           imageData.data.set(img.data);
+        }
+        ctx.putImageData(imageData, 0, 0);
+
+        const dataUrl = canvas.toDataURL('image/png');
+        const item = document.createElement('div');
+        item.style.cssText = 'background:var(--bg-2); border-radius:8px; overflow:hidden; position:relative; cursor:pointer; aspect-ratio:1; display:flex; align-items:center; justify-content:center; border:1px solid var(--border);';
+        item.innerHTML = `
+          <img src="${dataUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" />
+          <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:white; font-size:10px; padding:4px; text-align:center;">
+            ${img.width}x${img.height}
+          </div>
+        `;
+        item.onclick = () => {
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = `extracted_image_${index}.png`;
+          a.click();
+        };
+        grid.appendChild(item);
+      }
+
+      zone.onclick = () => input.click();
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag-over'); };
+      zone.ondragleave = () => zone.classList.remove('drag-over');
+      zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+      input.onchange = () => { if(input.files[0]) handleFile(input.files[0]); input.value = ''; };
+
+      clearBtn.onclick = () => {
+        abortCtrl?.abort();
+        area.style.display = 'none';
+        grid.innerHTML = '';
+        input.value = '';
+      };
+    });
+  </script>
+</body>
+</html>

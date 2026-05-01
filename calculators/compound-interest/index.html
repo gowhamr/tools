@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compound Interest — Free Online Tool — KaruviLab</title>
   <link rel="stylesheet" href="../../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>window.SHELL_ACTIVE = 'calculators';</script>
   <style>
     /* Premium Design Tokens */
@@ -47,19 +48,15 @@
     /* Chart Visuals */
     .chart-container {
       position: relative;
-      width: 180px;
-      height: 180px;
+      width: 200px;
+      height: 200px;
       margin: 0 auto 32px;
     }
-    .donut-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-    .donut-base { fill: transparent; stroke: var(--blue-light); stroke-width: 12; }
-    .donut-segment { fill: transparent; stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 0.8s var(--ease-spring), stroke-dashoffset 0.8s var(--ease-spring); }
-    .donut-principal { stroke: var(--blue); }
-    .donut-interest { stroke: var(--success); }
     
     .chart-center {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       text-align: center;
+      pointer-events: none;
     }
     .chart-center-val { font-size: 1.1rem; font-weight: 800; color: var(--text); }
     .chart-center-lbl { font-size: 0.6rem; color: var(--text-3); font-weight: 600; text-transform: uppercase; }
@@ -102,12 +99,27 @@
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--bg-input); }
 
+    /* Growth Chart Section */
+    .growth-section {
+      margin-top: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .growth-chart-wrap {
+      height: 300px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
     @media (max-width: 600px) {
       .res-card { padding: 24px; position: static; }
       .res-value-main { font-size: 2rem; }
-      .chart-container { width: 160px; height: 160px; }
+      .chart-container { width: 180px; height: 180px; }
       .metrics-grid { gap: 12px; }
       .cta-row { grid-template-columns: 1fr; }
+      .growth-chart-wrap { height: 200px; }
     }
   </style>
 </head>
@@ -200,11 +212,7 @@
           </div>
 
           <div class="chart-container">
-            <svg class="donut-svg" viewBox="0 0 100 100">
-              <circle class="donut-base" cx="50" cy="50" r="40" />
-              <circle id="donut-p" class="donut-segment donut-principal" cx="50" cy="50" r="40" />
-              <circle id="donut-i" class="donut-segment donut-interest" cx="50" cy="50" r="40" />
-            </svg>
+            <canvas id="ci-donut-chart"></canvas>
             <div class="chart-center">
               <div class="chart-center-val" id="out-yield">0%</div>
               <div class="chart-center-lbl">Profit</div>
@@ -213,12 +221,12 @@
 
           <div class="metrics-grid">
             <div class="metric-item">
-              <div class="metric-label"><span class="metric-dot" style="background:var(--blue)"></span> Principal</div>
+              <div class="metric-label"><span class="metric-dot" style="background:#6366f1"></span> Principal</div>
               <div class="metric-value" id="out-p">₹0</div>
             </div>
             <div class="metric-item">
-              <div class="metric-label"><span class="metric-dot" style="background:var(--success)"></span> Total Interest</div>
-              <div class="metric-value" style="color:var(--success)" id="out-i">₹0</div>
+              <div class="metric-label"><span class="metric-dot" style="background:#10b981"></span> Total Interest</div>
+              <div class="metric-value" style="color:#10b981" id="out-i">₹0</div>
             </div>
             <div class="metric-item" style="grid-column: span 2;">
               <div class="metric-label">Effective APR</div>
@@ -229,6 +237,14 @@
           <div id="status-box" style="display:none; text-align:center; padding:12px; background:var(--blue-light); color:var(--blue); border-radius:12px; font-size:0.8rem; font-weight:700;"></div>
         </div>
 
+      </div>
+
+      <!-- Growth Chart -->
+      <div class="growth-section">
+        <div class="input-title">Wealth Growth Projection</div>
+        <div class="growth-chart-wrap">
+          <canvas id="ci-growth-chart"></canvas>
+        </div>
       </div>
 
       <!-- Growth Table -->
@@ -277,6 +293,88 @@
       const inr = n => '₹' + fmt(n);
 
       const sliders = ['p', 'r', 't'];
+      let donutChart, growthChart;
+
+      function updateCharts(principal, interest, labels, dataPoints) {
+        // Donut Chart
+        const dCtx = el('ci-donut-chart').getContext('2d');
+        if (donutChart) {
+          donutChart.data.datasets[0].data = [principal, interest];
+          donutChart.update();
+        } else {
+          donutChart = new Chart(dCtx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Principal', 'Interest'],
+              datasets: [{
+                data: [principal, interest],
+                backgroundColor: ['#6366f1', '#10b981'],
+                borderWidth: 0,
+                hoverOffset: 4
+              }]
+            },
+            options: {
+              cutout: '80%',
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => context.label + ': ' + inr(context.raw)
+                  }
+                }
+              },
+              maintainAspectRatio: false
+            }
+          });
+        }
+
+        // Growth Chart
+        const gCtx = el('ci-growth-chart').getContext('2d');
+        if (growthChart) {
+          growthChart.data.labels = labels;
+          growthChart.data.datasets[0].data = dataPoints;
+          growthChart.update();
+        } else {
+          growthChart = new Chart(gCtx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Total Balance',
+                data: dataPoints,
+                borderColor: '#4F46E5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#4F46E5'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => 'Balance: ' + inr(context.raw)
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: false,
+                  grid: { color: 'rgba(0,0,0,0.05)' },
+                  ticks: {
+                    callback: (val) => '₹' + (val >= 100000 ? (val/100000).toFixed(1) + 'L' : (val/1000).toFixed(0) + 'K')
+                  }
+                },
+                x: { grid: { display: false } }
+              }
+            }
+          });
+        }
+      }
 
       function calculate() {
         const P = +el('in-p').value;
@@ -291,7 +389,6 @@
 
         const A = P * Math.pow(1 + R/n, n * T);
         const totalInterest = A - P;
-        const profitRatio = totalInterest / A;
         const effectiveAPR = (Math.pow(1 + R/n, n) - 1) * 100;
 
         // Update Text
@@ -301,21 +398,11 @@
         el('out-apr').textContent = effectiveAPR.toFixed(2) + '%';
         el('out-yield').textContent = Math.round((totalInterest/P) * 100) + '%';
 
-        // Update Donut
-        const circumference = 2 * Math.PI * 40;
-        const pSeg = el('donut-p');
-        const iSeg = el('donut-i');
-        
-        const pRatio = P / A;
-        pSeg.style.strokeDasharray = `${circumference * pRatio} ${circumference}`;
-        pSeg.style.strokeDashoffset = 0;
-        
-        iSeg.style.strokeDasharray = `${circumference * (1 - pRatio)} ${circumference}`;
-        iSeg.style.strokeDashoffset = -(circumference * pRatio);
-
-        // Update Table
+        // Update Table & Chart Data
         const tbody = el('res-table').querySelector('tbody');
-        const yearlyData = [];
+        const labels = ['Year 0'];
+        const dataPoints = [P];
+        const tableRows = [];
         let runningBalance = P;
         let cumulativeInterest = 0;
 
@@ -325,16 +412,20 @@
           const yearlyInterest = runningBalance - startBalance;
           cumulativeInterest += yearlyInterest;
 
-          yearlyData.push(`
+          labels.push('Year ' + y);
+          dataPoints.push(runningBalance);
+
+          tableRows.push(`
             <tr>
               <td>Year ${y}</td>
-              <td style="color:var(--success)">+${inr(yearlyInterest)}</td>
+              <td style="color:#10b981">+${inr(yearlyInterest)}</td>
               <td>${inr(cumulativeInterest)}</td>
               <td style="font-weight:700">${inr(runningBalance)}</td>
             </tr>
           `);
         }
-        tbody.innerHTML = yearlyData.join('');
+        tbody.innerHTML = tableRows.join('');
+        updateCharts(P, totalInterest, labels, dataPoints);
       }
 
       sliders.forEach(id => {
@@ -361,6 +452,7 @@
     })();
   
     } catch (e) {
+      console.error(e);
       var s = document.querySelector('.panel-scroll');
       if (s && !s.querySelector('.calc-error')) {
         var d = document.createElement('div');

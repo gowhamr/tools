@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Converter — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'image-converter';</script>
+</head>
+<body>
+  <div class="panel tool-panel active" id="panel-converter">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Image Converter</p>
+        <p class="nav-subtitle">Convert between JPG, PNG, and WebP instantly</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="upload-zone upload-zone-hero" id="convert-drop">
+          <div class="upload-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </div>
+          <p class="upload-main">Upload Images</p>
+          <p class="upload-sub"><label for="convert-input">Tap to select</label> or drag here</p>
+          <p class="upload-formats">JPG &middot; PNG &middot; WebP &middot; HEIC</p>
+          <input type="file" id="convert-input" accept="image/*" multiple />
+        </div>
+      </div>
+
+      <div class="panel-settings-group" id="convert-settings" style="display:none">
+        <div class="settings-card">
+          <p class="settings-card-title">Conversion Settings</p>
+          <div class="settings-row">
+            <span class="settings-label">Convert to</span>
+            <select id="convert-format">
+              <option value="png">PNG (Lossless)</option>
+              <option value="jpeg">JPG (Standard)</option>
+              <option value="webp">WebP (Modern)</option>
+            </select>
+          </div>
+          <div class="slider-row" id="quality-row">
+            <div class="slider-header">
+              <span class="slider-label">Quality</span>
+              <span class="slider-val" id="quality-val">90%</span>
+            </div>
+            <input type="range" id="convert-quality" min="10" max="100" value="90" />
+          </div>
+        </div>
+
+        <div class="panel-cta-bar" style="position:static;padding:0;margin-top:20px">
+          <button class="panel-cta-btn" id="convert-btn">
+            Convert & Download
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-files-group">
+        <div id="convert-file-list" class="file-list"></div>
+        <div id="convert-results" class="results-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script src="../../js/image-tools.js"></script>
+  <script src="../../js/app.js"></script>
+
+  <script>
+    (function() {
+      const dropZone = document.getElementById('convert-drop');
+      const fileInput = document.getElementById('convert-input');
+      const settingsArea = document.getElementById('convert-settings');
+      const convertBtn = document.getElementById('convert-btn');
+      const fileList = document.getElementById('convert-file-list');
+      const resultsArea = document.getElementById('convert-results');
+      const formatSelect = document.getElementById('convert-format');
+      const qualityRow = document.getElementById('quality-row');
+      const qualityInput = document.getElementById('convert-quality');
+      const qualityVal = document.getElementById('quality-val');
+
+      let currentFiles = [];
+
+      async function handleFiles(files) {
+        if (!files.length) return;
+        currentFiles = Array.from(files);
+        
+        fileList.innerHTML = '';
+        currentFiles.forEach((file, idx) => {
+          fileList.appendChild(FormatUtils.createFileCard(file, () => {
+            currentFiles.splice(idx, 1);
+            if (!currentFiles.length) settingsArea.style.display = 'none';
+            handleFiles(currentFiles);
+          }));
+        });
+
+        settingsArea.style.display = 'block';
+        resultsArea.innerHTML = '';
+      }
+
+      Utils.setupDropZone(dropZone, fileInput, handleFiles);
+
+      formatSelect.onchange = () => {
+        qualityRow.style.display = formatSelect.value === 'png' ? 'none' : 'block';
+      };
+
+      qualityInput.oninput = () => {
+        qualityVal.innerText = qualityInput.value + '%';
+      };
+
+      convertBtn.onclick = async () => {
+        if (!currentFiles.length) return;
+
+        convertBtn.disabled = true;
+        convertBtn.innerHTML = 'Converting...';
+        resultsArea.innerHTML = '';
+
+        const targetFmt = formatSelect.value;
+        const quality = parseInt(qualityInput.value) / 100;
+
+        for (const file of currentFiles) {
+          try {
+            const result = await ImageTools.convert(file, targetFmt === 'jpeg' ? 'jpg' : targetFmt, quality);
+            const outName = file.name.replace(/\.[\w\d]+$/, '') + '.' + (targetFmt === 'jpeg' ? 'jpg' : targetFmt);
+            resultsArea.appendChild(FormatUtils.createResultCard(outName, result.blob));
+          } catch (err) {
+            console.error(err);
+            Shell.toast('Error converting ' + file.name);
+          }
+        }
+
+        convertBtn.disabled = false;
+        convertBtn.innerHTML = 'Convert & Download';
+        Shell.toast('Success! Images converted.');
+      };
+    })();
+  </script>
+</body>
+</html>

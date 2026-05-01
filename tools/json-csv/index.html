@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON to CSV Converter — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body class="app-shell">
+  <noscript>
+    <div style="padding: 20px; text-align: center; background: #fee2e2; color: #b91c1c;">
+      This tool requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
+
+  <div class="panel tool-panel active" id="panel-json-csv">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">JSON to CSV</p>
+        <p class="nav-subtitle">Convert JSON arrays to CSV files</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="tool-section">
+          <label class="tool-label">Input JSON</label>
+          <textarea class="tool-textarea" id="json-input" placeholder='Paste JSON array here... e.g. [{"name": "John", "age": 30}]' rows="10" spellcheck="false"></textarea>
+        </div>
+
+        <div class="tool-output-wrap" id="csv-output-wrap" hidden>
+          <div class="tool-output-header">
+            <span class="tool-output-label">CSV Preview</span>
+            <div style="display:flex; gap:8px">
+              <button class="tool-copy-btn" id="csv-copy">Copy</button>
+              <button class="tool-copy-btn" id="csv-download" style="background:var(--blue); color:#white; border-color:var(--blue)">Download CSV</button>
+            </div>
+          </div>
+          <textarea class="tool-textarea tool-output" id="csv-output" rows="10" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Actions</p>
+          <button class="panel-cta-btn" id="json-csv-run" style="width:100%; margin-bottom:12px">✓ Convert to CSV</button>
+          <button class="fmt-btn" id="json-csv-clear" style="width:100%">Clear</button>
+        </div>
+        <p class="tool-error" id="json-csv-error" hidden style="margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/format-utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      const input = el('json-input');
+      const preview = el('csv-preview');
+      const downloadBtn = el('csv-download');
+
+      function update() {
+        const jsonText = input.value.trim();
+        if (!jsonText) {
+          preview.textContent = '';
+          downloadBtn.disabled = true;
+          return;
+        }
+
+        try {
+          const data = JSON.parse(jsonText);
+          const csv = FormatUtils.jsonToCsv(Array.isArray(data) ? data : [data]);
+          preview.textContent = csv;
+          downloadBtn.disabled = !csv;
+        } catch (e) {
+          preview.textContent = 'Invalid JSON: ' + e.message;
+          preview.style.color = 'var(--error)';
+          downloadBtn.disabled = true;
+        }
+      }
+
+      input.oninput = Utils.debounce(update, 300);
+
+      downloadBtn.onclick = () => {
+        const csv = preview.textContent;
+        if (!csv || csv.startsWith('Invalid JSON')) return;
+        const blob = new Blob([csv], { type: 'text/csv' });
+        Utils.downloadBlob(blob, `export-${Date.now()}.csv`);
+        Shell.toast('CSV downloaded!', 'success');
+      };
+    });
+  </script>
+</body>
+</html>

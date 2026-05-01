@@ -168,7 +168,28 @@ const FormatUtils = (() => {
     return (FORMAT_INFO[key] || {}).color || '#6366f1';
   }
 
+  /**
+   * Convert JSON array to CSV string.
+   * @param {any[]} arr
+   * @returns {string}
+   */
+  function jsonToCsv(arr) {
+    if (!Array.isArray(arr) || !arr.length) return '';
+    const headers = Object.keys(arr[0]);
+    const csvRows = [];
+    csvRows.push(headers.join(','));
+    for (const row of arr) {
+      const values = headers.map(header => {
+        const val = row[header];
+        const escaped = ('' + val).replace(/"/g, '\\"');
+        return `"${escaped}"`;
+      });
+      csvRows.push(values.join(','));
+    }
+    return csvRows.join('\n');
+  }
+
   return { FORMAT_INFO, ALL_IMAGE_EXTS, isImage, needsSpecialRead,
            loadAny, loadHeic, loadTiff, encodeTiff, encodeBmp,
-           drawElement, colorFor };
+           drawElement, colorFor, jsonToCsv };
 })();

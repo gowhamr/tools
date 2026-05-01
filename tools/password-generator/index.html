@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Generator — KaruviLab</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <script>window.SHELL_ACTIVE = 'tools';</script>
+</head>
+<body class="app-shell">
+  <noscript>
+    <div style="padding: 20px; text-align: center; background: #fee2e2; color: #b91c1c;">
+      This tool requires JavaScript to function. Please enable it in your browser settings.
+    </div>
+  </noscript>
+
+  <div class="panel tool-panel active" id="panel-password-gen">
+    <div class="panel-nav">
+      <div class="nav-back" onclick="Shell.goHome()" role="button" tabindex="0" aria-label="Go home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div class="nav-head">
+        <p class="nav-title">Password Generator</p>
+        <p class="nav-subtitle">Secure, random passwords generated locally</p>
+      </div>
+    </div>
+
+    <div class="panel-scroll">
+      <div class="panel-upload-group">
+        <div class="tool-section">
+          <div class="tool-output-wrap" style="margin-bottom: 24px;">
+            <div class="tool-output-header">
+              <span class="tool-output-label">Generated Password</span>
+              <div style="display:flex; gap:8px">
+                <button class="tool-copy-btn" id="pass-regen">Regenerate</button>
+                <button class="tool-copy-btn" id="pass-copy">Copy</button>
+              </div>
+            </div>
+            <input type="text" class="tool-textarea" id="pass-output" readonly style="font-family: monospace; font-size: 1.25rem; text-align: center; height: auto; padding: 16px;" value="••••••••••••">
+            
+            <div class="strength-meter-wrap" style="margin-top: 12px;">
+              <div style="display:flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                <span style="color: var(--text-3)">Strength</span>
+                <span id="strength-text" style="font-weight: 600; color: var(--text-2)">Weak</span>
+              </div>
+              <div style="height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden;">
+                <div id="strength-bar" style="height: 100%; width: 25%; background: #ef4444; transition: all 0.3s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-grid" style="display: grid; gap: 20px;">
+            <div class="setting-item">
+              <div style="display:flex; justify-content: space-between; margin-bottom: 8px;">
+                <label class="tool-label" style="margin:0">Length</label>
+                <span id="length-val" style="font-weight: 600; color: var(--blue)">16</span>
+              </div>
+              <input type="range" id="pass-length" min="4" max="64" value="16" style="width: 100%; accent-color: var(--blue);">
+            </div>
+
+            <div class="setting-item">
+              <label class="tool-label">Characters</label>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <label style="display:flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" id="opt-upper" checked style="width:18px; height:18px"> Uppercase (A-Z)
+                </label>
+                <label style="display:flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" id="opt-lower" checked style="width:18px; height:18px"> Lowercase (a-z)
+                </label>
+                <label style="display:flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" id="opt-number" checked style="width:18px; height:18px"> Numbers (0-9)
+                </label>
+                <label style="display:flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" id="opt-symbol" checked style="width:18px; height:18px"> Symbols (!@#$)
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-settings-group">
+        <div class="settings-card">
+          <p class="settings-card-title">Security Note</p>
+          <p style="font-size: 0.85rem; color: var(--text-3); line-height: 1.5;">Passwords are generated locally in your browser using the <code>crypto.getRandomValues</code> API. They are never sent to any server.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/shell.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="../../js/utils.js"></script>
+  <script src="../../js/security-tools.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = id => document.getElementById(id);
+      
+      function update() {
+        const length = +el('pass-length').value;
+        el('length-val').textContent = length;
+        
+        const options = {
+          upper: el('opt-upper').checked,
+          lower: el('opt-lower').checked,
+          number: el('opt-number').checked,
+          symbol: el('opt-symbol').checked
+        };
+        
+        const password = SecurityTools.generatePassword(length, options);
+        el('pass-output').value = password || 'Select options...';
+        
+        const strength = SecurityTools.getPasswordStrength(password);
+        el('strength-text').textContent = strength.label;
+        el('strength-text').style.color = strength.color;
+        el('strength-bar').style.width = strength.pct + '%';
+        el('strength-bar').style.background = strength.color;
+      }
+
+      el('pass-length').oninput = update;
+      el('pass-regen').onclick = update;
+      ['opt-upper', 'opt-lower', 'opt-number', 'opt-symbol'].forEach(id => {
+        el(id).onchange = update;
+      });
+
+      el('pass-copy').onclick = () => {
+        const pass = el('pass-output').value;
+        if (!pass || pass === 'Select options...') return;
+        navigator.clipboard.writeText(pass).then(() => {
+          Shell.toast('Password copied!', 'success');
+        });
+      };
+
+      update();
+    });
+  </script>
+</body>
+</html>
