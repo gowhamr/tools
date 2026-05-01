@@ -539,8 +539,26 @@ body.app-shell {
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (min-width: 641px) {
+  .cat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+}
+@media (min-width: 1025px) {
+  .cat-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+@media (min-width: 1441px) {
+  .cat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+  }
 }
 .cat-btn {
   background: var(--surface); border: 1px solid var(--border-2);
@@ -999,7 +1017,10 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 /* Image Creator */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
 .section-sub { font-size: .77rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin: 14px 0 8px; }
-.preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+@media (min-width: 641px) {
+  .preset-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+}
 .preset-btn {
   display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 6px;
   border: 1.5px solid var(--border); border-radius: var(--radius-sm);
@@ -1087,6 +1108,18 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 8px !important;
+}
+@media (min-width: 641px) {
+  #calc-embed-container .mch-grid-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 12px !important;
+  }
+}
+@media (min-width: 1025px) {
+  #calc-embed-container .mch-grid-cards {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
 }
 #calc-embed-container .mch-card {
   flex-direction: row !important;
@@ -1676,7 +1709,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .home-hero-title { font-size: 2rem; }
   .home-hero-sub { font-size: 0.95rem; margin-bottom: 24px; }
   .home-hero-ctas { gap: 10px; }
-  .cat-grid     { gap: 8px; }
+
   .cat-btn      { padding: 12px 10px; gap: 10px; }
   .cat-icon     { width: 40px; height: 40px; border-radius: 11px; }
   .cat-icon svg { width: 18px; height: 18px; }
@@ -1697,7 +1730,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
    TABLET  ≥ 768px
    ════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  .cat-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
   .cat-btn-desc { display: block; }
   .home-hero-title { font-size: 2.2rem; }
   .home-hero-banner { padding: 40px 28px 36px; }
@@ -1710,7 +1743,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 }
 @media (min-width: 900px) {
   .home-wrap    { padding: 0 20px 40px; }
-  .cat-grid     { gap: 12px; }
+
   .cat-btn      { padding: 18px 10px 16px; }
   .cat-icon     { width: 52px; height: 52px; }
   .cat-icon svg { width: 24px; height: 24px; }
@@ -1908,7 +1941,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .home-footer { padding: 48px 48px 40px; }
   .home-footer-nav { gap: 8px 32px; }
   .cat-label { font-size: .7rem; margin-bottom: 16px; margin-left: 0; }
-  .cat-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+
   .cat-btn { padding: 20px 18px; border-radius: 20px; border-color: var(--border); }
   .cat-icon { width: 52px; height: 52px; border-radius: 14px; }
   .cat-icon svg { width: 24px; height: 24px; }
@@ -2025,7 +2058,7 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 @media (min-width: 1280px) {
   .app-sidebar { width: 240px; }
   .home-wrap { padding: 40px 48px 56px; }
-  .cat-grid { gap: 16px; }
+
   .panel-scroll { padding: 32px 48px 48px; }
   .panel-nav { padding: 24px 48px 20px; }
   .panel-cta-bar { padding: 0 48px 40px; }

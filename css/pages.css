@@ -148,10 +148,20 @@ a { color: var(--primary); }
 /* ── Feature grid (About) ── */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   margin-top: 14px;
 }
+@media (min-width: 641px) {
+  .feature-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+}
+@media (min-width: 1025px) {
+  .feature-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+}
+@media (min-width: 1441px) {
+  .feature-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+}
+
 .feature-item {
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -196,7 +206,21 @@ a { color: var(--primary); }
 .owner-links a:hover { text-decoration: underline; }
 
 /* ── Contact cards ── */
-.contact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 14px 0; }
+.contact-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 14px 0;
+}
+@media (min-width: 641px) {
+  .contact-cards { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+}
+@media (min-width: 1025px) {
+  .contact-cards { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+}
+@media (min-width: 1441px) {
+  .contact-cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+}
 .contact-card {
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -219,8 +243,18 @@ a { color: var(--primary); }
 /* ── Guide cards (guides.html) ── */
 .guide-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px; margin-top: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+@media (min-width: 641px) {
+  .guide-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+}
+@media (min-width: 1025px) {
+  .guide-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+}
+@media (min-width: 1441px) {
+  .guide-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
 }
 .guide-card {
   background: var(--bg-card);
@@ -282,8 +316,11 @@ a { color: var(--primary); }
 /* ── Stats row (guides / about) ── */
 .stat-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px; margin: 24px 0;
+}
+@media (min-width: 641px) {
+  .stat-row { grid-template-columns: repeat(3, 1fr); gap: 16px; }
 }
 .stat-box {
   text-align: center; padding: 18px 10px;
