@@ -6,12 +6,25 @@
   <title>Guides &amp; How-To Articles – KaruviLab</title>
   <meta name="description" content="Step-by-step guides for every KaruviLab tool — compress images for government portals, convert formats, create passport photos, merge PDFs, and calculate SIP returns." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://karuvilab.vercel.app/pages/guides.html" />
+  <link rel="canonical" id="canonical-tag" href="https://karuvilab.vercel.app/pages/guides.html" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Guides &amp; How-To Articles – KaruviLab" />
   <meta property="og:description" content="Learn how to compress images for government portals, convert formats, create passport photos, merge PDFs, and more — all free, all in your browser." />
-  <meta property="og:url" content="https://karuvilab.vercel.app/pages/guides.html" />
-  <meta property="og:image" content="https://karuvilab.vercel.app/icons/og-image.png" />
+  <meta property="og:url" id="og-url" content="https://karuvilab.vercel.app/pages/guides.html" />
+  <meta property="og:image" id="og-image" content="https://karuvilab.vercel.app/icons/og-image.png" />
+  <!-- Sync canonical and OG tags to the actual domain at runtime -->
+  <script>
+    (function() {
+      var origin = window.location.origin;
+      var href = window.location.href;
+      var c = document.getElementById('canonical-tag');
+      if (c) c.href = href;
+      var u = document.getElementById('og-url');
+      if (u) u.content = href;
+      var i = document.getElementById('og-image');
+      if (i) i.content = origin + '/icons/og-image.png';
+    })();
+  </script>
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Guides &amp; How-To Articles – KaruviLab" />
   <meta name="twitter:description" content="Step-by-step guides for image compression, format conversion, passport photos, PDF tools and financial calculators." />

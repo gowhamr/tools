@@ -64,6 +64,11 @@
       </div>
     </div>
     <div class="panel-scroll">
+  <noscript>
+    <div style="padding:16px;margin:16px;background:#fee2e2;border-radius:8px;color:#b91c1c;text-align:center;font-weight:600">
+      This calculator requires JavaScript. Please enable JavaScript.
+    </div>
+  </noscript>
       <div class="tool-section">
         <div class="calc-wrap">
           <div class="calc-sub" id="bc-sub"></div>
@@ -100,10 +105,13 @@
     </div>
   </div>
 
-  <script src="../../../js/shell.js"></script>
-  <script src="../../../js/theme.js"></script>
-  <script src="../../../js/utils.js"></script>
+  <script src="../../../js/shell.js" defer></script>
+  <script src="../../../js/theme.js" defer></script>
+  <script src="../../../js/utils.js" defer></script>
   <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+
     (function() {
       const display = document.getElementById('bc-display');
       const sub = document.getElementById('bc-sub');
@@ -164,6 +172,18 @@
       };
       updateDisplay();
     })();
-  </script>
+  
+    } catch (e) {
+      var s = document.querySelector('.panel-scroll');
+      if (s && !s.querySelector('.calc-error')) {
+        var d = document.createElement('div');
+        d.className = 'calc-error';
+        d.style.cssText = 'padding:16px;margin:16px;background:#fee2e2;border-radius:8px;color:#b91c1c;text-align:center;font-weight:600';
+        d.textContent = 'Calculator failed to load. Please refresh.';
+        s.prepend(d);
+      }
+    }
+  });
+</script>
 </body>
 </html>

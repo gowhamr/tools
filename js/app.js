@@ -290,9 +290,11 @@ document.addEventListener('DOMContentLoaded', () => {
   //  COMPRESSOR
   // ══════════════════════════════════════════════════════
   const compressBtn = document.getElementById('compress-btn');
+  let compressProcessing = false;
+  let compressAbortCtrl = null;
 
   function syncCompressBtn() {
-    if (compressBtn) compressBtn.disabled = compressorFiles.length === 0;
+    if (compressBtn) compressBtn.disabled = compressorFiles.length === 0 || compressProcessing;
   }
 
   const compressorFiles = setupDropZone('compressor-drop','compressor-input','compressor-file-list', () => { syncCompressBtn(); });
@@ -300,38 +302,72 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('compressor-input')?.addEventListener('change', () => setTimeout(runCompressor, 120));
   compressBtn?.addEventListener('click', runCompressor);
 
+  // Abort any in-flight compression when the page unloads
+  window.addEventListener('pagehide', () => compressAbortCtrl?.abort());
+
   async function runCompressor() {
+    if (compressProcessing) return;
     const resultsEl = document.getElementById('compressor-results');
     if (!compressorFiles.length) { resultsEl.innerHTML = ''; return; }
+
+    // Abort any previous run and create a fresh controller
+    compressAbortCtrl?.abort();
+    compressAbortCtrl = new AbortController();
+    const { signal } = compressAbortCtrl;
+
+    compressProcessing = true;
+    if (compressBtn) { compressBtn.disabled = true; compressBtn.innerHTML = Utils.spinnerHTML() + ' Processing…'; }
+
     resultsEl.innerHTML = processingMsg(`Processing ${compressorFiles.length} file(s)…`);
     const targetKB = Number(document.getElementById('img-target-kb').value) || 100;
     const maxWidth = Number(document.getElementById('img-max-width').value)  || 1000;
     const resultBlobs = [];
     let html = '';
-    for (const file of compressorFiles) {
-      try {
-        if (/\.pdf$/i.test(file.name)) {
-          resultsEl.innerHTML = processingMsg(`Compressing PDF: ${file.name}…`);
-          const blob = await PdfTools.compressPdf(file, 0.6);
-          resultBlobs.push(blob);
-          html += buildResultCard(file, blob, 'compressed', 'pdf');
-        } else {
-          const { blob, fmtKey } = await ImageTools.compress(file, { targetKB, maxWidth });
-          resultBlobs.push(blob);
-          html += buildResultCard(file, blob, 'compressed', 'img', fmtKey);
+    try {
+      for (const file of compressorFiles) {
+        if (signal.aborted) break;
+        try {
+          if (/\.pdf$/i.test(file.name)) {
+            resultsEl.innerHTML = processingMsg(`Compressing PDF: ${file.name}…`);
+            const blob = await PdfTools.compressPdf(file, 0.6, null, signal);
+            resultBlobs.push(blob);
+            html += buildResultCard(file, blob, 'compressed', 'pdf');
+          } else {
+            const { blob, fmtKey } = await ImageTools.compress(file, { targetKB, maxWidth, signal });
+            resultBlobs.push(blob);
+            html += buildResultCard(file, blob, 'compressed', 'img', fmtKey);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') break;
+          html += errorCard(file.name, err.message);
+          resultBlobs.push(null);
         }
-      } catch (err) { html += errorCard(file.name, err.message); resultBlobs.push(null); }
+      }
+    } finally {
+      compressProcessing = false;
+      if (compressBtn) {
+        compressBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14V4h10l6 6v10H4v-2"/><path d="M14 4v6h6"/><path d="M7 14l5-5 5 5"/></svg> Compress Now`;
+        syncCompressBtn();
+      }
     }
-    resultsEl.innerHTML = html;
-    attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    if (!signal.aborted) {
+      resultsEl.innerHTML = html;
+      attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    }
   }
 
   // ══════════════════════════════════════════════════════
   //  CONVERTER
   // ══════════════════════════════════════════════════════
+  let convertProcessing = false;
+  let convertAbortCtrl = null;
+
   const converterFiles = setupDropZone('converter-drop','converter-input','converter-file-list', files => {
-    document.getElementById('convert-btn').disabled = files.length === 0;
+    const btn = document.getElementById('convert-btn');
+    if (btn) btn.disabled = files.length === 0 || convertProcessing;
   });
+
+  window.addEventListener('pagehide', () => convertAbortCtrl?.abort());
 
   const fmtNoteEl = document.getElementById('modern-fmt-note');
   document.getElementById('convert-to-format')?.addEventListener('change', function () {
@@ -349,36 +385,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('convert-btn')?.addEventListener('click', async () => {
+  const convertBtn = document.getElementById('convert-btn');
+  convertBtn?.addEventListener('click', async () => {
+    if (convertProcessing) return;
     const resultsEl = document.getElementById('converter-results');
     if (!converterFiles.length) return;
+
+    convertAbortCtrl?.abort();
+    convertAbortCtrl = new AbortController();
+    const { signal } = convertAbortCtrl;
+
+    convertProcessing = true;
+    if (convertBtn) { convertBtn.disabled = true; convertBtn.innerHTML = Utils.spinnerHTML() + ' Converting…'; }
+
     const targetFmt = document.getElementById('convert-to-format').value;
     const quality   = Number(document.getElementById('convert-quality').value);
     resultsEl.innerHTML = processingMsg('Converting…');
     const resultBlobs = [];
     let html = '';
-    for (const file of converterFiles) {
-      try {
-        const srcExt = Utils.getExt(file.name);
-        if (targetFmt === 'pdf') {
-          const blob = await PdfTools.imagesToPdf([file], 'fit', 'portrait');
-          resultBlobs.push(blob);
-          html += buildResultCard(file, blob, 'converted', 'pdf', 'pdf');
-        } else if (srcExt === 'pdf') {
-          const fmtArg = ['png','bmp','tiff'].includes(targetFmt) ? targetFmt : 'jpeg';
-          const { blob } = await PdfTools.pdfPageToImage(file, 1, fmtArg, 2);
-          resultBlobs.push(blob);
-          html += buildResultCard(file, blob, 'converted', 'img', targetFmt);
-        } else {
-          const { blob, fmtKey, fallback } = await ImageTools.convert(file, targetFmt, quality);
-          resultBlobs.push(blob);
-          const note = fallback ? `<em style="color:var(--warn)">(browser fallback → JPG)</em>` : '';
-          html += buildResultCard(file, blob, 'converted', 'img', fmtKey, note);
+    try {
+      for (const file of converterFiles) {
+        if (signal.aborted) break;
+        try {
+          const srcExt = Utils.getExt(file.name);
+          if (targetFmt === 'pdf') {
+            const blob = await PdfTools.imagesToPdf([file], 'fit', 'portrait', signal);
+            resultBlobs.push(blob);
+            html += buildResultCard(file, blob, 'converted', 'pdf', 'pdf');
+          } else if (srcExt === 'pdf') {
+            const fmtArg = ['png','bmp','tiff'].includes(targetFmt) ? targetFmt : 'jpeg';
+            const { blob } = await PdfTools.pdfPageToImage(file, 1, fmtArg, 2);
+            resultBlobs.push(blob);
+            html += buildResultCard(file, blob, 'converted', 'img', targetFmt);
+          } else {
+            const { blob, fmtKey, fallback } = await ImageTools.convert(file, targetFmt, quality);
+            resultBlobs.push(blob);
+            const note = fallback ? `<em style="color:var(--warn)">(browser fallback → JPG)</em>` : '';
+            html += buildResultCard(file, blob, 'converted', 'img', fmtKey, note);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') break;
+          html += errorCard(file.name, err.message);
+          resultBlobs.push(null);
         }
-      } catch (err) { html += errorCard(file.name, err.message); resultBlobs.push(null); }
+      }
+    } finally {
+      convertProcessing = false;
+      if (convertBtn) {
+        convertBtn.textContent = 'Convert Now';
+        convertBtn.disabled = converterFiles.length === 0;
+      }
     }
-    resultsEl.innerHTML = html;
-    attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    if (!signal.aborted) {
+      resultsEl.innerHTML = html;
+      attachClipboardBtns(resultsEl, i => resultBlobs[i]);
+    }
   });
 
   // ══════════════════════════════════════════════════════
