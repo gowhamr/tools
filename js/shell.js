@@ -11,9 +11,7 @@
 
   const shell = {
     init() {
-      if (!document.body.classList.contains('app-shell')) {
-        this.render();
-      }
+      this.render();
       this.setupTheme();
       this.setupEffects();
       this.setupErrorHandling();
@@ -29,22 +27,28 @@
     },
 
     render() {
+      if (document.getElementById('shell-rendered')) return;
+      
       const active = window.SHELL_ACTIVE || 'home';
       document.body.classList.add('app-shell');
       const base = window.KARUVI_BASE || '/';
 
       // SVG Sprite
-      const sprite = document.createElement('div');
-      sprite.style.display = 'none';
-      sprite.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></symbol>
-            <symbol id="ic-apps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
-          </defs>
-        </svg>
-      `;
-      document.body.appendChild(sprite);
+      let sprite = document.getElementById('ic-sprite');
+      if (!sprite) {
+        sprite = document.createElement('div');
+        sprite.id = 'ic-sprite';
+        sprite.style.display = 'none';
+        sprite.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+              <symbol id="ic-apps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </defs>
+          </svg>
+        `;
+        document.body.appendChild(sprite);
+      }
 
       // Create Header
       const header = document.createElement('header');
@@ -102,16 +106,21 @@
       `;
 
       document.body.prepend(header);
-      document.body.appendChild(dock);
       
       if (!document.querySelector('.viewport')) {
         const viewport = document.createElement('div');
         viewport.className = 'viewport';
-        const children = Array.from(document.body.children).filter(c => c !== header && c !== dock && c !== sprite);
+        const children = Array.from(document.body.children).filter(c => c !== header && c !== sprite);
         children.forEach(c => viewport.appendChild(c));
         document.body.appendChild(viewport);
-        document.body.appendChild(dock);
       }
+      
+      document.body.appendChild(dock);
+
+      const marker = document.createElement('div');
+      marker.id = 'shell-rendered';
+      marker.style.display = 'none';
+      document.body.appendChild(marker);
     },
 
     setupTheme() {
@@ -160,11 +169,9 @@
     setupErrorHandling() {
       const self = this;
       window.addEventListener('error', (e) => {
-        // Catch errors from tool JS files and inline scripts (no filename for inline)
         const fromToolFile = e.filename && (e.filename.includes('/js/') || e.filename.includes('tool'));
         const fromInline = !e.filename;
         if (!fromToolFile && !fromInline) return;
-
         console.error('KaruviLab Tool Error:', e.message, e.filename || '(inline)');
         self.showFallbackError();
       });
@@ -187,16 +194,9 @@
       }
     },
 
-    /**
-     * Check if required libraries are loaded.
-     * @param {string[]} libs - Keys to check on window
-     * @param {string} toolName
-     * @returns {Promise<boolean>}
-     */
     async waitForLibs(libs, toolName) {
       let attempts = 0;
-      const maxAttempts = 50; // 5 seconds
-      
+      const maxAttempts = 50; 
       return new Promise((resolve) => {
         const check = () => {
           const missing = libs.filter(l => !window[l] && !(l.includes('.') && l.split('.').reduce((o,i)=>o[i], window)));
@@ -222,40 +222,14 @@
         container.id = 'ts-toast-container';
         document.body.appendChild(container);
       }
-      
       const el = document.createElement('div');
       el.className = `ts-toast ts-toast-${type}`;
-      
       let icon = 'ℹ️';
       if (type === 'success') icon = '✅';
       if (type === 'error')   icon = '❌';
       if (type === 'warn')    icon = '⚠️';
-      
       el.innerHTML = `<span class="ts-toast-icon">${icon}</span><span class="ts-toast-msg">${msg}</span>`;
       container.appendChild(el);
-      
-      setTimeout(() => {
-        el.classList.add('out');
-        setTimeout(() => el.remove(), 400);
-      }, duration);
-    }
-  };
-
-  window.Shell = shell;
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => shell.init());
-  } else {
-    shell.init();
-  }
-})();
-'success') icon = '✅';
-      if (type === 'error')   icon = '❌';
-      if (type === 'warn')    icon = '⚠️';
-      
-      el.innerHTML = `<span class="ts-toast-icon">${icon}</span><span class="ts-toast-msg">${msg}</span>`;
-      container.appendChild(el);
-      
       setTimeout(() => {
         el.classList.add('out');
         setTimeout(() => el.remove(), 400);

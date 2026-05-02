@@ -412,6 +412,76 @@ a { color: var(--primary); }
   --shadow-lg:   0 12px 40px rgba(0,0,0,.6);
 }
 
+/* ── Shell Components (Header & Dock) ── */
+.app-shell .top-stripe {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 52px; z-index: 200;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px) saturate(180%); -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px;
+  transition: all 0.3s ease;
+}
+.app-shell .top-stripe.scrolled { 
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.08); 
+}
+.ts-brand { display: flex; align-items: center; gap: 10px; }
+.ts-logo {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.ts-brand-text { display: flex; flex-direction: column; }
+.ts-name { font-size: 0.95rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+.ts-tagline { font-size: .62rem; color: var(--text-3); font-weight: 500; }
+.ts-desktop-nav { display: none; }
+.ts-badge {
+  font-size: .62rem; font-weight: 700; color: #059669; background: #ECFDF5; 
+  border: 1px solid #D1FAE5; border-radius: 6px; padding: 3px 8px;
+  display: flex; align-items: center; gap: 4px;
+}
+
+.app-shell .viewport {
+  position: fixed; top: 52px; bottom: 64px; left: 0; right: 0; z-index: 1;
+  overflow-y: auto; overflow-x: hidden;
+}
+
+.app-shell .dock {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 64px; z-index: 200;
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 2px;
+}
+.dock-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 2px; color: var(--text-3); text-decoration: none;
+}
+.dock-btn.active { color: var(--primary); }
+.dock-icon { width: 21px; height: 21px; }
+.dock-lbl  { font-size: .52rem; font-weight: 700; }
+
+@media (min-width: 1024px) {
+  .app-shell .top-stripe { position: sticky; height: 64px; background: var(--bg-card); }
+  .app-shell .viewport { position: static; height: auto; min-height: calc(100vh - 64px); display: block; }
+  .app-shell .dock { display: none !important; }
+  .ts-desktop-nav { display: flex; align-items: center; gap: 6px; margin-left: 32px; }
+  .ts-nav-link { 
+    padding: 8px 16px; border-radius: 10px; font-size: .85rem; font-weight: 600; 
+    color: var(--text-2); text-decoration: none; transition: all .2s;
+  }
+  .ts-nav-link:hover { background: var(--bg-input); }
+  .ts-nav-link.active { color: var(--primary); background: var(--primary-light); }
+}
+
+[data-theme="dark"] .app-shell .top-stripe { background: rgba(15, 23, 42, 0.72); border-bottom-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .app-shell .dock { background: rgba(2, 6, 23, 0.72); border-top-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .dock-btn { color: var(--text-3); }
+[data-theme="dark"] .dock-btn.active { color: #A5B4FC; }
+
 /* ── Dark mode overrides ── */
 [data-theme="dark"] .hero { background: linear-gradient(135deg, #3730a3 0%, #4c1d95 55%, #5b21b6 100%); }
 [data-theme="dark"] .page-card { border-color: var(--border); }

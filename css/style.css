@@ -238,7 +238,7 @@ body.app-shell {
 .ts-desktop-nav { display: none; }
 .ts-badge {
   font-size: .62rem; font-weight: 700; letter-spacing: .02em;
-  color: #059669; background: #ECFDF5; border: 1px solid #D1FAE5;
+  color: #059669; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.2);
   border-radius: 6px; padding: 3px 8px; white-space: nowrap; flex-shrink: 0;
   display: flex; align-items: center; gap: 4px;
 }
@@ -1825,16 +1825,14 @@ input[type=range]:focus { outline: none; box-shadow: none; }
   .ts-nav-link:hover { background: var(--bg); color: var(--text-2); }
   .ts-nav-link.active { color: var(--blue); background: var(--blue-light); }
 
-  /* ── Viewport: flex row — sidebar + content ── */
+  /* ── Viewport: reset fixed positioning ── */
   .app-shell .viewport {
     position: static;
     top: auto; bottom: auto;
     height: auto;
     min-height: calc(100vh - 64px);
     overflow: visible;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
+    display: block;
   }
 
   /* ── Sidebar: visible on desktop ── */
