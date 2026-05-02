@@ -50,4 +50,6 @@
       setTheme(e.matches ? 'dark' : 'light');
     }
   });
+
+  window.THEME_MANAGER_LOADED = true;
 })();

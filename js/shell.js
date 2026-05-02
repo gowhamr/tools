@@ -114,6 +114,20 @@
       }
     },
 
+    setupTheme() {
+      const toggle = document.getElementById('theme-toggle');
+      if (!toggle) return;
+      toggle.addEventListener('click', () => {
+        if (window.THEME_MANAGER_LOADED) return;
+        const current = document.documentElement.getAttribute('data-theme') || (localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', next === 'dark' ? '#0F172A' : '#4F46E5');
+      });
+    },
+
     setupEffects() {
       const stripe = document.querySelector('.top-stripe');
       if (stripe) {
