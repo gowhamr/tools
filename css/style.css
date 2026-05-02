@@ -8,14 +8,10 @@
 a, button { touch-action: manipulation; }
 input, select, textarea { font-size: max(16px, 1em); }
 
-/* Apply global theme transition */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Specific elements that need to ignore the global transition for performance/logic */
-.ripple, .ripple *, .mock-3d-window, .mock-3d-window *, .mock-icon, .mock-icon * {
-  transition: none !important;
+/* Apply theme transition only when requested (prevents load flicker/jank) */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: background 0.35s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease, fill 0.35s ease, stroke 0.35s ease !important;
 }
 
 /* ── Design tokens ── */
@@ -2210,7 +2206,16 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 [data-theme="dark"] .badge-success { background: rgba(16,185,129,.15); color: #34D399; }
 [data-theme="dark"] .badge-error   { background: rgba(239,68,68,.15);  color: #FCA5A5; }
 [data-theme="dark"] .badge-warn    { background: rgba(245,158,11,.15); color: #FCD34D; }
-[data-theme="dark"] .tool-error { background: rgba(220,38,38,.1); border-color: rgba(220,38,38,.25); color: #FCA5A5; }
+[data-theme="dark"] .tool-error { background: rgba(220,38,38,.15); border-color: rgba(220,38,38,.3); color: #FCA5A5; }
+
+/* Noscript/Fallback Error styling for dark mode */
+[data-theme="dark"] noscript > div,
+[data-theme="dark"] .calc-error,
+[data-theme="dark"] .tool-error-fallback {
+  background: rgba(220,38,38,.15) !important;
+  color: #FCA5A5 !important;
+  border: 1px solid rgba(220,38,38,.3) !important;
+}
 
 /* ── Dark: upload zones ── */
 [data-theme="dark"] .upload-zone-hero { background: rgba(255, 255, 255, 0.02) !important; border-color: var(--border) !important; }
@@ -2232,6 +2237,18 @@ input[type=range]:focus { outline: none; box-shadow: none; }
 [data-theme="dark"] .cat-btn:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
 [data-theme="dark"] .preset-chip.active .preset-chip-desc { color: #A5B4FC; }
 [data-theme="dark"] .slider-val { background: rgba(79,70,229,.2); }
+
+/* Range Slider Dark Mode */
+[data-theme="dark"] .slider-pro,
+[data-theme="dark"] input[type="range"] {
+  background: var(--border) !important;
+}
+[data-theme="dark"] .slider-pro::-webkit-slider-thumb,
+[data-theme="dark"] input[type="range"]::-webkit-slider-thumb {
+  background: var(--text) !important;
+  border-color: var(--blue) !important;
+}
+
 [data-theme="dark"] .regex-highlighted mark { background: rgba(253,230,138,.15); color: #FCD34D; }
 [data-theme="dark"] .workspace-input:focus { background: var(--surface); }
 

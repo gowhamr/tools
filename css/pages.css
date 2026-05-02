@@ -23,14 +23,21 @@
   --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* ── Base ── */
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+/* Apply theme transition only when requested */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: background 0.35s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease, fill 0.35s ease, stroke 0.35s ease !important;
+}
+
 body {
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;
   color: var(--text);
-  background: #f1f5f9;
+  background: var(--bg-body, #f1f5f9);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -396,6 +403,7 @@ a { color: var(--primary); }
   --text-2:      #CBD5E1;
   --text-3:      #94A3B8;
   --border:      #334155;
+  --bg-body:     #0F172A;
   --bg-card:     #1E293B;
   --bg-input:    #0F172A;
   --primary-light: rgba(79,70,229,.15);
@@ -405,7 +413,6 @@ a { color: var(--primary); }
 }
 
 /* ── Dark mode overrides ── */
-[data-theme="dark"] body { background: #0F172A; }
 [data-theme="dark"] .hero { background: linear-gradient(135deg, #3730a3 0%, #4c1d95 55%, #5b21b6 100%); }
 [data-theme="dark"] .page-card { border-color: var(--border); }
 [data-theme="dark"] .page-section { border-bottom-color: var(--border); }
@@ -444,4 +451,6 @@ a { color: var(--primary); }
 .theme-icon-sun { display: none; }
 [data-theme="dark"] .theme-icon-moon { display: none; }
 [data-theme="dark"] .theme-icon-sun  { display: block; }
+
+
 

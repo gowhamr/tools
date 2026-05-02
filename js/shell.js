@@ -111,25 +111,10 @@
         children.forEach(c => viewport.appendChild(c));
         document.body.appendChild(viewport);
         document.body.appendChild(dock);
-      }
-    },
+      }, 400);
+      },
 
-    setupTheme() {
-      const toggle = document.getElementById('theme-toggle');
-      if (!toggle) return;
-      const getTheme = () => localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      const setTheme = (t) => {
-        document.documentElement.setAttribute('data-theme', t);
-        localStorage.setItem('theme', t);
-      };
-      setTheme(getTheme());
-      toggle.addEventListener('click', () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        setTheme(next);
-      });
-    },
-
-    setupEffects() {
+      setupEffects() {
       const stripe = document.querySelector('.top-stripe');
       if (stripe) {
         document.addEventListener('scroll', (e) => {
@@ -229,6 +214,28 @@
       
       let icon = 'ℹ️';
       if (type === 'success') icon = '✅';
+      if (type === 'error')   icon = '❌';
+      if (type === 'warn')    icon = '⚠️';
+      
+      el.innerHTML = `<span class="ts-toast-icon">${icon}</span><span class="ts-toast-msg">${msg}</span>`;
+      container.appendChild(el);
+      
+      setTimeout(() => {
+        el.classList.add('out');
+        setTimeout(() => el.remove(), 400);
+      }, duration);
+    }
+  };
+
+  window.Shell = shell;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => shell.init());
+  } else {
+    shell.init();
+  }
+})();
+'success') icon = '✅';
       if (type === 'error')   icon = '❌';
       if (type === 'warn')    icon = '⚠️';
       

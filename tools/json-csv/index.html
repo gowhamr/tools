@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JSON to CSV Converter — KaruviLab</title>
   <link rel="stylesheet" href="../../css/style.css" />
+  <script>(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
   <script>window.SHELL_ACTIVE = 'tools';</script>
 </head>
 <body class="app-shell">
@@ -38,7 +39,7 @@
             <span class="tool-output-label">CSV Preview</span>
             <div style="display:flex; gap:8px">
               <button class="tool-copy-btn" id="csv-copy">Copy</button>
-              <button class="tool-copy-btn" id="csv-download" style="background:var(--blue); color:#white; border-color:var(--blue)">Download CSV</button>
+              <button class="tool-copy-btn" id="csv-download" style="background:var(--blue); color:white; border-color:var(--blue)">Download CSV</button>
             </div>
           </div>
           <textarea class="tool-textarea tool-output" id="csv-output" rows="10" readonly spellcheck="false"></textarea>
