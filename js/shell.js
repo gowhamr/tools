@@ -111,10 +111,10 @@
         children.forEach(c => viewport.appendChild(c));
         document.body.appendChild(viewport);
         document.body.appendChild(dock);
-      }, 400);
-      },
+      }
+    },
 
-      setupEffects() {
+    setupEffects() {
       const stripe = document.querySelector('.top-stripe');
       if (stripe) {
         document.addEventListener('scroll', (e) => {

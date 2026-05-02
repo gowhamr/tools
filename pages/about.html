@@ -3,42 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Us – KaruviLab</title>
-  <meta name="description" content="Learn about KaruviLab — a free, private browser utility for compressing, converting and validating images and PDFs. Built by R Gowtham under the Wanderseven brand." />
+  <title>Help & Settings – KaruviLab</title>
+  <meta name="description" content="KaruviLab Help and Settings. Configure your preferences and learn how our private browser tools work." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://wanderseven.com/pages/about.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="About Us – KaruviLab" />
-  <meta property="og:description" content="Free, private browser-based image and PDF utility. No uploads, no tracking — built by R Gowtham at Wanderseven." />
+  <meta property="og:title" content="Help & Settings – KaruviLab" />
+  <meta property="og:description" content="Configure KaruviLab preferences and learn how our 100% private browser tools work." />
   <meta property="og:url" content="https://wanderseven.com/pages/about.html" />
   <meta property="og:image" content="https://wanderseven.com/icons/og-image.png" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="About Us – KaruviLab" />
-  <meta name="twitter:description" content="Free, private browser-based image and PDF utility. No uploads, no tracking." />
+  <meta name="twitter:title" content="Help & Settings – KaruviLab" />
+  <meta name="twitter:description" content="Configure KaruviLab preferences and learn how our 100% private browser tools work." />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#2563EB" />
   <!-- Theme: applied before paint to prevent flash of unstyled content -->
   <script>(function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/pages.css" />
+  <style>
+    .settings-group { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
+    .settings-item { 
+      display: flex; align-items: center; justify-content: space-between; 
+      padding: 16px; background: var(--bg-input); border: 1px solid var(--border); 
+      border-radius: 12px; transition: border-color .2s;
+    }
+    .settings-item:hover { border-color: var(--primary); }
+    .settings-info h3 { font-size: 0.95rem; margin-bottom: 4px; color: var(--text); }
+    .settings-info p { font-size: 0.8rem; color: var(--text-3); margin: 0; }
+    .theme-options { display: flex; gap: 8px; }
+    .theme-btn { 
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); 
+      background: var(--bg-card); color: var(--text-2); cursor: pointer; 
+      font-size: 0.8rem; font-weight: 600; transition: all .2s;
+    }
+    .theme-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .danger-btn { color: var(--error); border-color: var(--error); background: transparent; }
+    .danger-btn:hover { background: var(--error); color: #fff; }
+    
+    @media (max-width: 600px) {
+      .settings-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .theme-options { width: 100%; justify-content: space-between; }
+      .theme-btn { flex: 1; text-align: center; }
+    }
+  </style>
 </head>
 <body>
   <header class="hero hero-sm">
     <div class="hero-inner">
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-        <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </button>
       <a href="../index.html" class="hero-back">&#8592; Back to Tool</a>
-      <h1 class="hero-title">About Us</h1>
-      <p class="hero-sub">Learn about KaruviLab and the team behind it</p>
+      <h1 class="hero-title">Help & Settings</h1>
+      <p class="hero-sub">Configure KaruviLab and learn how it works</p>
     </div>
   </header>
 
   <main class="page-main">
     <article class="page-card">
+
+      <section class="page-section">
+        <h2>App Settings</h2>
+        <div class="settings-group">
+          <div class="settings-item">
+            <div class="settings-info">
+              <h3>Appearance</h3>
+              <p>Choose how KaruviLab looks to you.</p>
+            </div>
+            <div class="theme-options" id="theme-selector">
+              <button class="theme-btn" data-mode="light">Light</button>
+              <button class="theme-btn" data-mode="dark">Dark</button>
+              <button class="theme-btn" data-mode="auto">System</button>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-info">
+              <h3>Data & Cache</h3>
+              <p>Clear locally stored settings and cached files.</p>
+            </div>
+            <button class="theme-btn danger-btn" id="clear-storage">Clear Data</button>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-info">
+              <h3>App Version</h3>
+              <p>KaruviLab v3.2.0 (Stable)</p>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 700; background: rgba(16,185,129,0.1); padding: 4px 8px; border-radius: 6px;">UP TO DATE</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <h2>How it works (FAQ)</h2>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <details style="border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+            <summary style="font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+              🔒 Is my data safe?
+              <span style="font-size: 1.2rem; color: var(--text-4);">+</span>
+            </summary>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: var(--text-2); line-height: 1.6;">Yes, 100%. KaruviLab uses client-side JavaScript and WebAssembly to process files. Your documents never leave your device and are never uploaded to our servers.</p>
+          </details>
+          
+          <details style="border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+            <summary style="font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+              🌍 Does it work without internet?
+              <span style="font-size: 1.2rem; color: var(--text-4);">+</span>
+            </summary>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: var(--text-2); line-height: 1.6;">Most tools work completely offline once the page has loaded. This is part of our commitment to privacy and performance.</p>
+          </details>
+
+          <details style="border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+            <summary style="font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;">
+              🇮🇳 Can I use this for Govt. applications?
+              <span style="font-size: 1.2rem; color: var(--text-4);">+</span>
+            </summary>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: var(--text-2); line-height: 1.6;">Absolutely. We specifically design our compressors and validators to meet the requirements of Indian government portals (SSO, Passport, Exam forms, etc.).</p>
+          </details>
+        </div>
+      </section>
 
       <section class="page-section">
         <h2>What is KaruviLab?</h2>
@@ -152,5 +236,48 @@
     </div>
   </footer>
   <script src="../js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeSelector = document.getElementById('theme-selector');
+      const clearStorageBtn = document.getElementById('clear-storage');
+      
+      // Update active state of theme buttons
+      const updateThemeButtons = () => {
+        const currentTheme = localStorage.getItem('theme');
+        const mode = currentTheme || 'auto';
+        document.querySelectorAll('.theme-btn[data-mode]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+      };
+      
+      updateThemeButtons();
+      
+      themeSelector.addEventListener('click', (e) => {
+        const btn = e.target.closest('.theme-btn');
+        if (!btn) return;
+        
+        const mode = btn.dataset.mode;
+        if (mode === 'auto') {
+          localStorage.removeItem('theme');
+          const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        } else {
+          localStorage.setItem('theme', mode);
+          document.documentElement.setAttribute('data-theme', mode);
+        }
+        updateThemeButtons();
+        
+        // Dispatch event for other components if needed
+        window.dispatchEvent(new Event('storage'));
+      });
+      
+      clearStorageBtn.addEventListener('click', () => {
+        if (confirm('This will clear all saved preferences and reset the app. Are you sure?')) {
+          localStorage.clear();
+          location.reload();
+        }
+      });
+    });
+  </script>
 </body>
 </html>

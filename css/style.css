@@ -684,14 +684,17 @@ body.app-shell {
 .faq-sheet {
   background: var(--surface); border-radius: 22px 22px 0 0;
   width: 100%; max-width: 900px;
-  max-height: 85dvh; overflow-y: auto;
-  padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  max-height: 90dvh; display: flex; flex-direction: column;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   transform: translateY(0); transition: transform .42s cubic-bezier(.34,1.1,.64,1);
-  box-shadow: 0 -8px 32px rgba(0,0,0,.1);
+  box-shadow: 0 -8px 32px rgba(0,0,0,.2);
 }
 .faq-overlay.hidden .faq-sheet { transform: translateY(100%); }
-.faq-drag-handle { width: 32px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
-.faq-sheet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.faq-drag-handle { width: 32px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; flex-shrink: 0; }
+.faq-sheet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
+.faq-scroll { flex: 1; overflow-y: auto; margin-right: -4px; padding-right: 4px; }
+.faq-scroll::-webkit-scrollbar { width: 4px; }
+.faq-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .faq-sheet-header h2 { font-size: 1.05rem; font-weight: 800; color: var(--text); }
 .faq-close {
   width: 28px; height: 28px; border: none; background: var(--bg-input); color: var(--text-3);
